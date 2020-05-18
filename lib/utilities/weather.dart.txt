@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+// import 'package:weather/weather_library.dart';
+
+import '../dashboard/dashboard.dart';
+import 'colors.dart';
+
+// WeatherStation weatherStation = new WeatherStation("baa5ee1094f9f173005067c6b168c3c8");
+/*
+class MyWeather extends State<DashboardScreen> {
+  String _res = 'Unknown';
+  String key = 'baa5ee1094f9f173005067c6b168c3c8';
+  WeatherStation ws;
+
+  @override
+  void initState() {
+    super.initState();
+    ws = new WeatherStation(key);
+    initPlatformState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    queryWeather();
+  }
+
+  void queryForecast() async {
+    List<Weather> f = await ws.fiveDayForecast();
+    setState(() {
+      _res = f.toString();
+    });
+  }
+
+  void queryWeather() async {
+    Weather w = await ws.currentWeather();
+    setState(() {
+      _res = w.toString();
+    });
+  }
+
+  Future<String> getWeatherNow() async {
+    queryWeather();
+    return _res;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FutureBuilder(
+          future: ws.currentWeather(),
+          builder: (BuildContext context, AsyncSnapshot<Weather> snapshot) {
+            if (snapshot.hasData) {
+              Weather w = snapshot.data;
+              print(w.toString());
+              return new Container(
+                margin: EdgeInsets.fromLTRB(16, 24, 0, 0),
+                child: Text(
+                  '${((w.temperature.celsius * 10).round() / 10).toString()}°C\n${w.weatherDescription}',
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w300,
+                      color: MyColors.font,
+                      fontSize: 20),
+                ),
+              );
+            } else {
+              return new Container(
+                margin: EdgeInsets.fromLTRB(16, 24, 0, 0),
+              );
+            }
+          }),
+    );
+  }
+}
+*/

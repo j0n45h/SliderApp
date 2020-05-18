@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="28" viewBox="0 0 28 28">
+  <defs>
+    <filter id="Ellipse_4" x="0" y="0" width="28" height="28" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#fff" flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Gruppe_211" data-name="Gruppe 211" transform="translate(9 6.015)">
+    <g transform="matrix(1, 0, 0, 1, -9, -6.01)" filter="url(#Ellipse_4)">
+      <circle id="Ellipse_4-2" data-name="Ellipse 4" cx="5" cy="5" r="5" transform="translate(9 6)" fill="#fff"/>
+    </g>
+    <g id="Gruppe_213" data-name="Gruppe 213" transform="translate(3.052 2.544)">
+      <line id="Linie_22" data-name="Linie 22" y1="4.943" x2="3.845" fill="none" stroke="#000" stroke-linecap="round" stroke-width="0.7"/>
+      <line id="Linie_23" data-name="Linie 23" y1="2.746" transform="translate(3.845)" fill="none" stroke="#000" stroke-linecap="round" stroke-width="0.7"/>
+      <line id="Linie_24" data-name="Linie 24" y1="0.549" x2="2.746" transform="translate(1.099)" fill="none" stroke="#000" stroke-linecap="round" stroke-width="0.7"/>
+    </g>
+  </g>
+</svg>
