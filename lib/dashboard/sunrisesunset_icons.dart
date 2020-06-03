@@ -15,6 +15,7 @@ class SunriseSunsetIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     onBuild(context);
+    // return Container(color: Colors.red, width: 40, height: 20,);
     return Consumer<ProvideLocationState>(builder: (context, locationState, _) {
       _space = iconSpacing(locationState, MediaQuery.of(context).size);
       return Container(
@@ -60,17 +61,14 @@ class SunriseSunsetIcons extends StatelessWidget {
     return space;
   }
 
-  void onBuild(BuildContext context) {
-    if (SunriseSunsetIcons._didBuild) return;
-    final locationStateProvider =
-        Provider.of<ProvideLocationState>(context, listen: false); // Location
-    future() async {
-      await locationStateProvider.updateMyGeoLocation(context);
-    }
-    future().then((_){
-      print('got Location');
-    });
-    SunriseSunsetIcons._didBuild = true;
+  void onBuild(BuildContext context) async {
+    if (_didBuild) return;
+    print('_didBuild called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------------!!!!!!!!!!!!!!');
+    final locationStateProvider = Provider.of<ProvideLocationState>(context, listen: false);
+    await locationStateProvider.updateMyGeoLocation(context);
+
+    print('got Location');
+    _didBuild = true;
   }
 }
 
