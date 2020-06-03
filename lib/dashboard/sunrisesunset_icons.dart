@@ -1,64 +1,142 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
-import 'package:sunrise_sunset_calc/sunrise_sunset_calc.dart';
 
 class SunriseSunsetIcons extends StatelessWidget {
+  static bool _didBuild = false;
+  static double _space;
+
+  const SunriseSunsetIcons();
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProvideLocationState>(
-        builder: (context, locationState, _) {
-          if (locationState.available()) {
-            var sunriseSunset = getSunriseSunset(locationState.getLatitude, locationState.getLongitude, 0, DateTime.now().toUtc());
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  child: Image.asset(
-                    'assets/icons/SunArrow.png',
-                    scale: 8,
-                  ),
-                ),
-                Text(
-                  '${sunriseSunset.sunrise
-                      .toLocal()
-                      .hour}:${sunriseSunset.sunrise
-                      .toLocal()
-                      .minute}',
-                  style: const TextStyle(
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.font,
-                      fontSize: 14),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(120, 0, 10, 0),
-                  child: Transform.rotate(
-                    angle: pi / 2,
-                    child: Image.asset(
-                      'assets/icons/SunArrow.png',
-                      scale: 8,
-                    ),
-                  ),
-                ),
-                Text(
-                  '${sunriseSunset.sunset.toLocal().hour}:${sunriseSunset.sunset.toLocal().minute}',
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w200,
-                    color: MyColors.font,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Container(height: 20, width: MediaQuery.of(context).size.width,);
-          }
-        }
+    onBuild(context);
+    return Consumer<ProvideLocationState>(builder: (context, locationState, _) {
+      _space = iconSpacing(locationState, MediaQuery.of(context).size);
+      return Container(
+        alignment: Alignment.center,
+        height: 20,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: <Widget>[
+            AnimatedPositioned(
+              duration: const Duration(seconds: 2),
+              curve: Curves.easeInOut,
+              left: _space,
+              height: 20,
+              // width: 70,
+              child: SunRiseIcon(locationState),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(seconds: 2),
+              curve: Curves.easeInOut,
+              right: _space,
+              height: 20,
+              // width: 70,
+              child: SunSetIcon(locationState),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  double iconSpacing(ProvideLocationState locationStateProvider, Size size) {
+    // if (!locationStateProvider.available()) return 0;
+    if (locationStateProvider.sunSetTime == null) return 20;
+
+    // TODO use [SunPath.calculate(sunSetHeight, size).dx]
+    Duration halfDuration = locationStateProvider.sunSetTime
+        .difference(locationStateProvider.sunRiseTime);
+
+    double space = map(halfDuration.inMilliseconds.toDouble(), 0,
+        Duration(hours: 24).inMilliseconds.toDouble(), size.width / 2 - 30, 0);
+
+    if (space < 15) return 15;
+    return space;
+  }
+
+  void onBuild(BuildContext context) {
+    if (SunriseSunsetIcons._didBuild) return;
+    final locationStateProvider =
+        Provider.of<ProvideLocationState>(context, listen: false); // Location
+    future() async {
+      await locationStateProvider.updateMyGeoLocation(context);
+    }
+    future().then((_){
+      print('got Location');
+    });
+    SunriseSunsetIcons._didBuild = true;
+  }
+}
+
+
+
+
+
+
+class SunRiseIcon extends StatelessWidget {
+  final ProvideLocationState _locationState;
+
+  SunRiseIcon(this._locationState);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+          child: Image.asset(
+            'assets/icons/SunArrow.png',
+            scale: 8,
+          ),
+        ),
+        Text(
+          _locationState.sunRiseTimeStr,
+          style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w200,
+              color: MyColors.font,
+              fontSize: 14),
+        ),
+      ],
+    );
+  }
+}
+
+class SunSetIcon extends StatelessWidget {
+  final ProvideLocationState _locationState;
+
+  SunSetIcon(this._locationState);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+          child: Transform.rotate(
+            angle: pi / 2,
+            child: Image.asset(
+              'assets/icons/SunArrow.png',
+              scale: 8,
+            ),
+          ),
+        ),
+        Text(
+          _locationState.sunSetTimeStr,
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w200,
+            color: MyColors.font,
+            fontSize: 14,
+          ),
+        ),
+      ],
     );
   }
 }

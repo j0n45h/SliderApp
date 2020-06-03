@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
@@ -16,18 +19,24 @@ class ProvideWeatherState with ChangeNotifier {
   bool available() {
     return (_weather != null);
   }
-/*
-  updateWeather(dynamic context) async {
-    final locationState = Provider.of<ProvideLocationState>(context, listen: false);
-    if (locationState.available()) {
-      try {
-        _weather = await _weatherStation.currentWeather(locationState.getLatitude, locationState.getLongitude);
-      } catch (e) {
-        print('Could not get Weather information: $e');
-      }
-      notifyListeners();
+
+  Future<void> updateWeather(BuildContext context) async {
+    final locationState = context.read<ProvideLocationState>();
+    if (!locationState.available()) return;
+    print('getting weather');
+    try {
+      _weather = await compute(getTreadWeather, [locationState.getLatitude, locationState.getLongitude]).timeout(Duration(seconds: 15));
+     // _weather = await _weatherStation.currentWeather(locationState.getLatitude, locationState.getLongitude).timeout(Duration(seconds: 10));
+
+    } on TimeoutException catch (e){
+      print('no internet connection, could not load weather');
+    } catch (e) {
+      print('Could not get Weather information: $e');
     }
+    notifyListeners();
   }
 
- */
+  static Future<Weather> getTreadWeather(List<double> location) async {
+    return await _weatherStation.currentWeather(location[0], location[1]);
+  }
 }

@@ -4,26 +4,28 @@ import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
 
-
-import 'drawer.dart';
-import 'dashboard/dashboard.dart';
-
-import 'timelapse.dart';
-import 'advanced_timelapse.dart';
-import 'video.dart';
-import 'connection.dart';
 import 'Settings/settings.dart';
+import 'advanced_timelapse.dart';
+import 'connection.dart';
+import 'dashboard/dashboard.dart';
+import 'drawer.dart';
+import 'timelapse.dart';
+import 'video.dart';
 
-void main() => runApp(MainPage());
+void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    runApp(MainPage());
+}
 
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        InheritedProvider<ProvideBtState>(create: (context) => ProvideBtState()),
-        InheritedProvider<ProvideLocationState>(create: (context) => ProvideLocationState()),
-        InheritedProvider<ProvideWeatherState>(create: (context) => ProvideWeatherState()),
+        ChangeNotifierProvider<ProvideBtState>(create: (context) => ProvideBtState()),
+        ChangeNotifierProvider<ProvideLocationState>(create: (context) => ProvideLocationState()),
+        ChangeNotifierProvider<ProvideWeatherState>(create: (context) => ProvideWeatherState()),
       ],
       child: MaterialApp(
         title: 'Slider',

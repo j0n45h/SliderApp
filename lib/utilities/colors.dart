@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 class MyColors extends StatelessWidget {
   static const AppBar = const Color(0xff1D2629);
   static const BgGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomLeft,
+    begin: FractionalOffset.topLeft,
+    end: FractionalOffset.bottomRight,
     colors: [Color(0xff242F33), Color(0xff000000)],
-    tileMode: TileMode.clamp,
+    stops: [0.0, 0.9],
+    //tileMode: TileMode.repeated,
   );
   static const StatusBar = const Color(0xff17242A);
   static const green = Color(0xff00FF3C);

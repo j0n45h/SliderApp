@@ -1,17 +1,12 @@
-import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
-
-import 'package:sliderappflutter/dashboard/dashboard.dart';
-
-import 'package:sliderappflutter/utilities/colors.dart';
-import 'drawer.dart';
 import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
+import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
+
+import 'drawer.dart';
 
 class ConnectionScreen extends StatefulWidget {
   static const routeName = '/connection-screen';
@@ -115,11 +110,9 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
             return BluetoothDeviceListEntry(
               device: result.device,
               rssi: result.rssi,
-              onTap: () async{
-                var file = await CustomCacheManager().putFile('btDevideAddress', Uint8List.fromList(result.device.address.toString().codeUnits), fileExtension: 'txt');
-                file.openRead();
-                print(file.readAsBytes());
-                // Navigator.of(context).pop(result.device);
+              onTap: () {
+                CustomCacheManager.storeDeviceAddress(result.device.address.toString());
+                print('getting Devices address');
               },
               onLongPress: () async {
                 try {

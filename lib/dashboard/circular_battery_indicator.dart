@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
 import 'package:sliderappflutter/utilities/colors.dart';
 
 
 class CircularBatteryIndicator extends StatelessWidget {
   final int batteryPercentage;
 
-  CircularBatteryIndicator(this.batteryPercentage);
+  const CircularBatteryIndicator(this.batteryPercentage);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(40, 35, 20, 45),
+      margin: EdgeInsets.fromLTRB(40, 35, 10, 45),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),

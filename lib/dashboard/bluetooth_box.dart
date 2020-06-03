@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
@@ -5,8 +7,8 @@ import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 
 class BluetoothBox extends StatelessWidget {
 
-  Widget btIcon(dynamic context, ProvideBtState btStateProvider, ProvideBtState btStateBuilder){
-    if (btStateBuilder.getConnection != null && btStateBuilder.getConnection.isConnected) {
+  Widget btIcon(BuildContext context, ProvideBtState btStateProvider, ProvideBtState btStateBuilder){
+  if (btStateBuilder.getConnection != null && btStateBuilder.getConnection.isConnected) {
       return InkWell(
         enableFeedback: true,
         child: const Icon(
@@ -17,7 +19,7 @@ class BluetoothBox extends StatelessWidget {
         onTap: () => btStateProvider.disconnect(),
         onLongPress: () => btStateProvider.disconnect(),
       );
-    } else if (btStateBuilder.getLoadingIconState == 1) {
+    } else if (btStateBuilder.getLoadingIconState == 1 && btStateBuilder.getBluetoothState.isEnabled) {
       return const Icon(
         Icons.bluetooth_searching,
         color: MyColors.blue,
@@ -60,22 +62,33 @@ class BluetoothBox extends StatelessWidget {
       return 'NOT\nCONNECTED';
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
+/*
+  Widget buildB(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+      child: Consumer<ProvideBtState>(
+
+      ),
+    );
+  }
+*/
+  @override
+  Widget build(BuildContext context) {
+    // final btStateProvider = Provider.of<ProvideBtState>(context);
+    onBuild(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(21, 0, 15, 0),
       child: Consumer<ProvideBtState>(
         builder: (context, btStateBuilder, _) => Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container( // Bluetooth icon
-              padding: const EdgeInsets.all(14),
-              child: btIcon(context, btStateProvider, btStateBuilder),
+              padding: EdgeInsets.all(14),
+              // padding: const EdgeInsets.all(14),
+              child: btIcon(context, btStateBuilder, btStateBuilder),
             ),
             Text( // Bluetooth text
-              btStatus(btStateProvider),
+              btStatus(btStateBuilder),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: MyColors.font,
@@ -89,5 +102,24 @@ class BluetoothBox extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _didBuild = false;
+  void onBuild(dynamic context) {
+    if (_didBuild) return;
+    print('_didBuild called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------------!!!!!!!!!!!!!!');
+    Timer.run(() {
+      final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
+      btStateProvider.autoConnectToLastDevice(context); // auto connect BT
+
+      // final locationStateProvider = context.read<ProvideLocationState>();
+//      final locationStateProvider = Provider.of<ProvideLocationState>(context, listen: false); // Location
+//      locationStateProvider.updateMyGeoLocation(context);
+
+
+//      final weatherStateProvider = Provider.of<ProvideWeatherState>(context, listen: false); // Weather
+//      weatherStateProvider.updateWeather(context);
+    });
+    _didBuild = true;
   }
 }
