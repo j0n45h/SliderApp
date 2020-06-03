@@ -107,7 +107,6 @@ class BluetoothBox extends StatelessWidget {
   bool _didBuild = false;
   void onBuild(dynamic context) {
     if (_didBuild) return;
-    print('_didBuild called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------------!!!!!!!!!!!!!!');
     Timer.run(() {
       final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
       btStateProvider.autoConnectToLastDevice(context); // auto connect BT

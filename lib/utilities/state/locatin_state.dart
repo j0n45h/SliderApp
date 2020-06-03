@@ -16,6 +16,10 @@ class ProvideLocationState with ChangeNotifier {
   static PermissionStatus _permissionGranted;
   static LocationData _locationData;
 
+  static DateTime _sunRiseTime;
+  static DateTime _sunSetTime;
+
+
   /// Location Latitude
   double get getLatitude {
     if (_locationData == null) return null;
@@ -33,31 +37,33 @@ class ProvideLocationState with ChangeNotifier {
   }
 
   /// Sun Rise
+
   DateTime get sunRiseTime {
-    if (getSunriseSunsetResult() == null) return null;
-    return getSunriseSunsetResult().sunrise.toLocal();
+    return _sunRiseTime;
   }
 
   String get sunRiseTimeStr {
-    if (sunRiseTime == null) return '--:--';
-    return DateFormat('HH:mm').format(sunRiseTime);
+    if (_sunRiseTime == null) return '--:--';
+    return DateFormat('HH:mm').format(_sunRiseTime);
   }
 
   /// Sun Set
+
   DateTime get sunSetTime {
-    if (getSunriseSunsetResult() == null) return null;
-    return getSunriseSunsetResult().sunset.toLocal();
+    return _sunSetTime;
   }
 
   String get sunSetTimeStr {
-    if (sunSetTime == null) return '--:--';
-    return DateFormat('HH:mm').format(sunSetTime);
+    if (_sunSetTime == null) return '--:--';
+    return DateFormat('HH:mm').format(_sunSetTime);
   }
 
-  SunriseSunsetResult getSunriseSunsetResult() {
+  static void getSunriseSunsetResult() {
     if (_locationData == null) return null;
-    return getSunriseSunset(
-        getLatitude, getLongitude, 0, DateTime.now().toUtc());
+    SunriseSunsetResult sunriseSunsetResult = getSunriseSunset(
+        _locationData.latitude, _locationData.longitude, 0, DateTime.now().toUtc());
+    _sunRiseTime = sunriseSunsetResult.sunrise.toLocal();
+    _sunSetTime  = sunriseSunsetResult.sunset.toLocal();
   }
 
   void showSnackBar(BuildContext context) {
@@ -96,19 +102,24 @@ class ProvideLocationState with ChangeNotifier {
     }
 
     location.changeSettings(accuracy: LocationAccuracy.balanced);
+    try {
+      _locationData = await location.getLocation().timeout(Duration(minutes: 2));
+    } on TimeoutException catch (e){
+      print('time out! $e');
+    } catch (e) {
+      print('could not get location $e');
+    }
 
-    _locationData = await location.getLocation();
-    // _locationData = await compute(getLoc, 1);
-
+    getSunriseSunsetResult();
     print('latitude: ${_locationData.latitude}');
     print('longitude: ${_locationData.longitude}');
 
     return 0;
   }
 
-  static Future<LocationData> getLoc(int k) async {
-    return await location.getLocation();
-  }
+
+
+
 
   Future<void> updateMyGeoLocation(BuildContext context) async {
     int check;
@@ -127,81 +138,6 @@ class ProvideLocationState with ChangeNotifier {
       return;
     }
 
-    /*
-    if (_serviceStatus == ServiceStatus.unknown) {
-      _serviceStatus = await LocationPermissions().checkServiceStatus();
-      if (_serviceStatus == ServiceStatus.notApplicable) {
-        print('Device has no Location Service');
-        return;
-      }
-    }
-    if (_permissionStatus == PermissionStatus.unknown)
-      _permissionStatus = await LocationPermissions().requestPermissions(permissionLevel: LocationPermissionLevel.locationWhenInUse);
-
-    switch (_permissionStatus) {
-      case PermissionStatus.denied:
-        bool isOpened = false;
-        final SnackBar snackBar = SnackBar(
-          content: Text('Location Permission denied'),
-          duration: Duration(seconds: 15),
-          action: SnackBarAction(
-            label: 'Open Settings',
-            onPressed: () async {
-              isOpened = await LocationPermissions().openAppSettings();
-              if (!isOpened) return;
-              updateMyGeoLocation(context);
-              return;
-            },
-          ),
-        );
-        Scaffold.of(context).showSnackBar(snackBar);
-        return;
-      case PermissionStatus.granted:
-        print('Location Permission granted');
-        break;
-      case PermissionStatus.restricted:
-        print('granted restricted location services access (only on iOS).');
-        break;
-      case PermissionStatus.unknown:
-        print('Location permission status UNKNOWN');
-        return;
-    }
-
-    _serviceStatus = await LocationPermissions().checkServiceStatus();
-    if (_serviceStatus == ServiceStatus.disabled){
-      print('Location Service is Disabled');
-      // TODO Turn on GPS
-      return;
-    }
-
-
-
-    try {
-      _geolocationStatus = await Geolocator()
-          .checkGeolocationPermissionStatus(); // TODO make request to enable GPS if off (Time off)
-      if (_geolocationStatus == GeolocationStatus.denied) {
-        print('Location Permission not given');
-        await showDialog<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return _locationAlertDialog(context);
-          },
-        );
-      }
-    } catch (e) {
-      print('Failed to access location status: $e');
-    }
-
-    try {
-      _position = await Geolocator().getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.low,
-          locationPermissionLevel: GeolocationPermission.locationWhenInUse);
-    } catch (e) {
-      print('Could not get user Position data: $e');
-    }
-
-     */
-
     notifyListeners();
 
     // get weather update
@@ -209,8 +145,13 @@ class ProvideLocationState with ChangeNotifier {
         Provider.of<ProvideWeatherState>(context, listen: false); // Weather
 
     weatherStateProvider.updateWeather(context);
-    notifyListeners();
   }
+
+
+
+
+
+
 
   Widget _locationAlertDialog(BuildContext context) {
     return AlertDialog(
