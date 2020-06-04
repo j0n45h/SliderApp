@@ -18,7 +18,6 @@ class _SunPositionWaveState extends State<SunPositionWave>
   AnimationController controller;
   bool _hasSunPosition = false;
   double _height;
-  Size size;
 
   @override
   void initState() {
@@ -43,56 +42,51 @@ class _SunPositionWaveState extends State<SunPositionWave>
     super.dispose();
   }
 
-  void currentSunPosition(
+  double currentSunPosition(
       ProvideLocationState locationStateProvider, Size size) {
-    // final locationStateProvider = context.watch<ProvideLocationState>();
-    if (!locationStateProvider.available()) return;
-    if (_hasSunPosition) return;
+    if (!locationStateProvider.available()){
+      return size.height / 2;
+    }
+    if (_hasSunPosition) return _height;
+
+    DateTime halfTime = locationStateProvider.sunSetTime.subtract(
+        locationStateProvider.sunRiseTime
+            .difference(locationStateProvider.sunSetTime));
+
+    DateTime beginTime = halfTime.subtract(Duration(hours: 12));
+    DateTime endTime = halfTime.add(Duration(hours: 12));
+
+    double position = map(
+        DateTime.now().millisecondsSinceEpoch.toDouble(),
+        beginTime.millisecondsSinceEpoch.toDouble(),
+        endTime.millisecondsSinceEpoch.toDouble(),
+        0.0,
+        1.0);
+    position %= 1;
+
     Timer.run(() {
-      DateTime halfTime = locationStateProvider.sunSetTime.subtract(
-          locationStateProvider.sunRiseTime
-              .difference(locationStateProvider.sunSetTime));
-
-      DateTime beginTime = halfTime.subtract(Duration(hours: 12));
-      DateTime endTime = halfTime.add(Duration(hours: 12));
-
-      double position = map(
-          DateTime.now().millisecondsSinceEpoch.toDouble(),
-          beginTime.millisecondsSinceEpoch.toDouble(),
-          endTime.millisecondsSinceEpoch.toDouble(),
-          0.0,
-          1.0);
-      position %= 1;
-
       controller.forward(from: position);
-
-      double sunSetHeight = map(
-          locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
-          beginTime.millisecondsSinceEpoch.toDouble(),
-          endTime.millisecondsSinceEpoch.toDouble(),
-          0.0,
-          1.0);
-      sunSetHeight %= 1;
-
-      _height = SunPath.calculate(sunSetHeight, size).dy;
-
-      _hasSunPosition = true;
     });
+
+    double sunSetHeight = map(
+        locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
+        beginTime.millisecondsSinceEpoch.toDouble(),
+        endTime.millisecondsSinceEpoch.toDouble(),
+        0.0,
+        1.0);
+    sunSetHeight %= 1;
+
+    _hasSunPosition = true;
+    return SunPath.calculate(sunSetHeight, size).dy;
   }
 
-  void onBuild(BuildContext context) {
-    if (size != null) return;
-    size = Size(MediaQuery.of(context).size.width, 80);
-    _height = size.height / 2;
-  }
 
   @override
   Widget build(BuildContext context) {
-    onBuild(context);
-    // print('height: ${SunPath.calculate(animation.value, size).dy}');
+    final size = Size(MediaQuery.of(context).size.width, 80);
     return Consumer<ProvideLocationState>(
       builder: (context, locationStateProvider, _) {
-        currentSunPosition(locationStateProvider, size);
+        _height = currentSunPosition(locationStateProvider, size);
         return Container(
           alignment: Alignment.center,
           height: size.height + 20,
@@ -146,7 +140,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                 ),
               ),
               AnimatedPositioned(
-                duration: Duration(milliseconds: 1000),
+                duration: Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
                 top: _height,
                 width: size.width,

@@ -9,7 +9,6 @@ import 'package:sliderappflutter/dashboard/weather_widget.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 
 import '../drawer.dart';
-import 'bluetooth_box.dart';
 import 'circular_battery_indicator.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -71,7 +70,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        BluetoothBox(),
+                        // BluetoothBox(),
                         Container(
                           margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                           child: WeatherWidget(),
