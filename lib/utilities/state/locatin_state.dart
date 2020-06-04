@@ -81,7 +81,17 @@ class ProvideLocationState with ChangeNotifier {
     return;
   }
 
+  /// prevent calling [getLocation] on each rebuild
+  static bool _reCallBlocked = false;
+  static void blockReCall() async {
+    _reCallBlocked = true;
+    await Future.delayed(Duration(seconds: 30));
+    _reCallBlocked = false;
+  }
+
   static Future<int> getLocation() async {
+    if (_reCallBlocked) return 0;
+    blockReCall();
     _permissionGranted = await location.hasPermission();
     print('permission: ${_permissionGranted.toString()}');
     if (_permissionGranted == PermissionStatus.denied) {
