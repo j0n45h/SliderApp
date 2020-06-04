@@ -127,13 +127,12 @@ class ProvideBtState with ChangeNotifier {
   static bool _reCallBlocked = false;
   void autoConnectToLastDevice(BuildContext context) async {
     if (_connection != null) return;
-    if(!_reCallBlocked) {
-      blockReCall();
-      connect(context);
-    }
+    if(_reCallBlocked) return;
+    blockReCall();
+    connect(context);
   }
 
-  // prevent calling [connect()] on each rebuild
+  /// prevent calling [autoConnectToLastDevice] on each rebuild
   void blockReCall() async {
     _reCallBlocked = true;
     await Future.delayed(Duration(seconds: 15));
