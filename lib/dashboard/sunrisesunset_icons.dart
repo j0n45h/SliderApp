@@ -25,7 +25,7 @@ class SunriseSunsetIcons extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             AnimatedPositioned(
-              duration: const Duration(seconds: 2),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               left: _space,
               height: 20,
@@ -33,7 +33,7 @@ class SunriseSunsetIcons extends StatelessWidget {
               child: SunRiseIcon(locationState),
             ),
             AnimatedPositioned(
-              duration: const Duration(seconds: 2),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               right: _space,
               height: 20,
@@ -46,9 +46,9 @@ class SunriseSunsetIcons extends StatelessWidget {
     });
   }
 
+
   double iconSpacing(ProvideLocationState locationStateProvider, Size size) {
-    // if (!locationStateProvider.available()) return 0;
-    if (locationStateProvider.sunSetTime == null) return 20;
+    if (locationStateProvider.sunSetTime == null) return 80;
 
     // TODO use [SunPath.calculate(sunSetHeight, size).dx]
     Duration halfDuration = locationStateProvider.sunSetTime
@@ -63,11 +63,10 @@ class SunriseSunsetIcons extends StatelessWidget {
 
   void onBuild(BuildContext context) async {
     if (_didBuild) return;
-    print('_didBuild called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------------!!!!!!!!!!!!!!');
+
     final locationStateProvider = Provider.of<ProvideLocationState>(context, listen: false);
     await locationStateProvider.updateMyGeoLocation(context);
 
-    print('got Location');
     _didBuild = true;
   }
 }

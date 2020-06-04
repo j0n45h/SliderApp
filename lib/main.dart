@@ -29,9 +29,9 @@ class MainPage extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Slider',
-        /*theme: ThemeData(
-          primarySwatch: Colors.amber,
-        ),*/
+        theme: ThemeData(
+          primarySwatch: Colors.deepOrange,
+        ),
         // home: DashboardScreen(),
         initialRoute: DashboardScreen.routeName,
         routes: {
