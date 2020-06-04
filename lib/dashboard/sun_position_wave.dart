@@ -7,40 +7,59 @@ import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 
 class SunPositionWave extends StatefulWidget {
-  const SunPositionWave();
+  const SunPositionWave({Key key}) : super(key: key);
   @override
   _SunPositionWaveState createState() => _SunPositionWaveState();
 }
 
 class _SunPositionWaveState extends State<SunPositionWave>
-    with SingleTickerProviderStateMixin {
-  Animation animation;
-  AnimationController controller;
+    with TickerProviderStateMixin {
+  Animation _sunAnimation;
+  AnimationController _sunAnimationController;
+  Animation _colorGradientAnimation;
+  AnimationController _colorGradientAnimationController;
   bool _hasSunPosition = false;
-  double _height;
+  static double _height;
 
   @override
   void initState() {
     super.initState();
-    controller =
+    setupSunAnimation();
+    _colorGradientAnimationController =
+        AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _sunAnimationController.dispose();
+    _colorGradientAnimationController.dispose();
+    super.dispose();
+  }
+
+  void setupSunAnimation() {
+    _sunAnimationController =
         AnimationController(duration: const Duration(hours: 24), vsync: this);
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller)
+
+    _sunAnimation = Tween(begin: 0.0, end: 1.0).animate(_sunAnimationController)
       ..addListener(() {
         setState(() {});
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          controller.reset();
-          controller.forward();
+          _sunAnimationController.reset();
+          _sunAnimationController.forward();
         }
       });
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
+  void setupColorGradientAnimation(double newHeight) {
+    _colorGradientAnimation =
+        Tween<double>(begin: _height, end: newHeight).animate(_colorGradientAnimationController)
+          ..addListener(() {
+            setState(() {});
+          });
   }
+
 
   double currentSunPosition(
       ProvideLocationState locationStateProvider, Size size) {
@@ -64,9 +83,6 @@ class _SunPositionWaveState extends State<SunPositionWave>
         1.0);
     position %= 1;
 
-    Timer.run(() {
-      controller.forward(from: position);
-    });
 
     double sunSetHeight = map(
         locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
@@ -76,8 +92,16 @@ class _SunPositionWaveState extends State<SunPositionWave>
         1.0);
     sunSetHeight %= 1;
 
+    final height = SunPath.calculate(sunSetHeight, size).dy;
+
+    setupColorGradientAnimation(height);
+
+    Timer.run(() {
+      _sunAnimationController.forward(from: position);
+      _colorGradientAnimationController.forward();
+    });
     _hasSunPosition = true;
-    return SunPath.calculate(sunSetHeight, size).dy;
+    return height;
   }
 
 
@@ -103,13 +127,19 @@ class _SunPositionWaveState extends State<SunPositionWave>
                   height: size.height,
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                        Color(0xff000000).withOpacity(0),
-                        Color(0xff000000).withOpacity(0),
-                        Color(0xff007FFF).withOpacity(0.16),
-                        Color(0xff0022FF).withOpacity(0.28),
+                      begin: Alignment(
+                        0, map(_colorGradientAnimation == null
+                          ? _height
+                          : _colorGradientAnimation.value * 0.8,
+                          0, size.height, -1, 1)
+                          // * _colorGradientAnimation.value
+                      ),
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF000000).withOpacity(0.00),
+                        Color(0xFF004DD1).withOpacity(0.28),
+                        Color(0xFF0048EB).withOpacity(0.35),
+                        Color(0xFF0101FC).withOpacity(0.54),
                       ])),
                 ),
               ),
@@ -120,13 +150,19 @@ class _SunPositionWaveState extends State<SunPositionWave>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        end: Alignment(
+                            0, map(_colorGradientAnimation == null
+                            ? _height
+                            : _colorGradientAnimation.value * 1.2,
+                            0, size.height, -1, 1)
+                              // * _colorGradientAnimation.value
+                        ),
                         colors: [
-                          Color(0xFFFF9900).withOpacity(0.62),
-                          Color(0xFFFF4900).withOpacity(0.40),
-                          Color(0xFF601C00).withOpacity(0.24),
-                          Color(0xFF242F33).withOpacity(0.00),
-                          Color(0xFF242F33).withOpacity(0.00),
+                          Color(0xFFFF9900).withOpacity(0.80),
+                          Color(0xFFFF5900).withOpacity(0.57),
+                          Color(0xFFB23300).withOpacity(0.61),
+                          Color(0xFF601C00).withOpacity(0.58),
+                          Color(0xFF000000).withOpacity(0.00),
                         ]),
                   ),
                 ),
@@ -151,8 +187,8 @@ class _SunPositionWaveState extends State<SunPositionWave>
                 ),
               ),
               Positioned(
-                top: SunPath.calculate(animation.value, size).dy,
-                left: SunPath.calculate(animation.value, size).dx,
+                top: SunPath.calculate(_sunAnimation.value, size).dy,
+                left: SunPath.calculate(_sunAnimation.value, size).dx,
                 child: Container(
                   height: 20,
                   width: 20,

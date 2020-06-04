@@ -6,9 +6,12 @@ import 'dashboard/dashboard.dart';
 
 class VideoScreen extends StatelessWidget {
   static const routeName = '/video-screen';
+
   void navigateHome(BuildContext context) {
     Navigator.of(context).pushNamed(DashboardScreen.routeName);
   }
+
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

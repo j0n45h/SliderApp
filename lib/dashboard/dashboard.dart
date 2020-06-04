@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sliderappflutter/dashboard/bluetooth_box.dart';
 import 'package:sliderappflutter/dashboard/sun_position_wave.dart';
 import 'package:sliderappflutter/dashboard/sunrisesunset_icons.dart';
 import 'package:sliderappflutter/dashboard/weather_widget.dart';
@@ -70,7 +71,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        // BluetoothBox(),
+                        BluetoothBox(),
                         Container(
                           margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                           child: WeatherWidget(),
@@ -88,25 +89,4 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-/*
-  static bool _didBuild = false;
-  void onBuild(dynamic context) {
-    if (_didBuild) return;
-    Timer.run(() {
-      final btStateProvider = context.read<ProvideBtState>();
-      // final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
-      btStateProvider.autoConnectToLastDevice(context); // auto connect BT
-
-      final locationStateProvider = context.read<ProvideLocationState>();
-      // final locationStateProvider = Provider.of<ProvideLocationState>(context, listen: false); // Location
-      locationStateProvider.updateMyGeoLocation(context);
-
-      final weatherStateProvider = context.read<ProvideWeatherState>();
-      // final weatherStateProvider = Provider.of<ProvideWeatherState>(context, listen: false); // Weather
-      weatherStateProvider.updateWeather(context);
-    });
-    _didBuild = true;
-  }
-
- */
 }
