@@ -53,13 +53,15 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
       backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 1.0,
-        /*leading: Transform.scale( // TODO Fix drawerIcon onPress:
-          scale: 0.65,
-          child: IconButton(
-            onPressed: () { _scaffoldKey.currentState.openDrawer();},
-            icon: Image.asset('assets/icons/DrawerIcon.png'),
+        leading: Builder(
+          builder: (context) => Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+            child: IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: Image.asset('assets/icons/DrawerIcon.png'),
+            ),
           ),
-        ),*/
+        ),
         title: const Text(
           'J Slide',
           style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
