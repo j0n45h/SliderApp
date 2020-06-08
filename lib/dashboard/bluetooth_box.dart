@@ -104,7 +104,7 @@ class BluetoothBox extends StatelessWidget {
     );
   }
 
-  bool _didBuild = false;
+  static bool _didBuild = false;
   void onBuild(dynamic context) {
     if (_didBuild) return;
     Timer.run(() {

@@ -1,16 +1,14 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sliderappflutter/dashboard/bluetooth_box.dart';
+import 'package:sliderappflutter/dashboard/circular_battery_indicator.dart';
 import 'package:sliderappflutter/dashboard/sun_position_wave.dart';
 import 'package:sliderappflutter/dashboard/sunrisesunset_icons.dart';
 import 'package:sliderappflutter/dashboard/weather_widget.dart';
+import 'package:sliderappflutter/drawer.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-
-import '../drawer.dart';
-import 'circular_battery_indicator.dart';
 
 class DashboardScreen extends StatelessWidget {
   static const routeName = '/';
