@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/connection.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/popup/popup.dart';
+import 'package:sliderappflutter/utilities/popup/popup_content.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 
 class BluetoothBox extends StatelessWidget {
@@ -40,7 +43,8 @@ class BluetoothBox extends StatelessWidget {
           size: 30,
         ),
         onTap: () => btStateProvider.disable(),
-        onLongPress: () => btStateProvider.connect(context),
+        // onLongPress: () => btStateProvider.connect(context),
+        onLongPress: () => ConnectionScreen().showPopup(context),
       );
     } else {
       return InkWell(

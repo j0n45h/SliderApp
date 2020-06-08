@@ -2,14 +2,33 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:sliderappflutter/dashboard/bluetooth_box.dart';
 import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
+import 'package:sliderappflutter/utilities/popup/popup.dart';
+import 'package:sliderappflutter/utilities/popup/popup_content.dart';
 
 import 'drawer.dart';
 
 class ConnectionScreen extends StatefulWidget {
   static const routeName = '/connection-screen';
+
+  /// POP UP
+  showPopup(BuildContext context, {BuildContext popupContext}) {
+    Navigator.push(
+      context,
+      PopupLayout(
+        top: 90,
+        left: 35,
+        right: 35,
+        bottom: 80,
+        child: PopupContent(
+          content: ConnectionScreen(),
+        ),
+      ),
+    );
+  }
 
   @override
   _ConnectionScreenState createState() => _ConnectionScreenState();
@@ -69,14 +88,24 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   @override
   Widget build(BuildContext context) {
     print('Discovery Page: ${isDiscovering.toString()}');
-    print('Devides found: ${results.length}');
+    print('Devices found: ${results.length}');
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(
+          leading: new Builder(builder: (context) {
+            return IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                try {
+                  Navigator.pop(context); //close the popup
+                } catch (e) {}
+              },
+            );
+          }),
           backgroundColor: MyColors.AppBar,
           elevation: 1,
           title: const Text(
-            'Connection',
+            'Searching for Devices',
             style: TextStyle(
               fontFamily: 'Bellezza',
               letterSpacing: 5,
