@@ -9,6 +9,7 @@ import 'package:sliderappflutter/dashboard/weather_widget.dart';
 import 'package:sliderappflutter/drawer.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/dashboard/circular_battery_indicator.dart';
+import 'package:sliderappflutter/utilities/popup/new_popup/popUp.dart';
 
 
 class DashboardScreen extends StatelessWidget {
@@ -83,6 +84,13 @@ class DashboardScreen extends StatelessWidget {
             ),
             const SunriseSunsetIcons(),
             const SunPositionWave(),
+            Container(height: 20,),
+            MaterialButton(
+              enableFeedback: true,
+              color: Colors.red,
+              child: Text('POPUP'),
+              onPressed: () => SearchingDialog().showMyDialog(context),
+            ),
           ],
         ),
       ),

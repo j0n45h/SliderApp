@@ -105,7 +105,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
           backgroundColor: MyColors.AppBar,
           elevation: 1,
           title: const Text(
-            'Searching for Devices',
+            'Searching',
             style: TextStyle(
               fontFamily: 'Bellezza',
               letterSpacing: 5,
@@ -138,9 +138,8 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
             BluetoothDiscoveryResult result = results[index];
             return BluetoothDeviceListEntry(
               device: result.device,
-              rssi: result.rssi,
               onTap: () {
-                CustomCacheManager.storeDeviceAddress(result.device.address.toString());
+                // CustomCacheManager.storeDeviceAddress(result.device.address.toString());
                 print('getting Devices address');
               },
               onLongPress: () async {

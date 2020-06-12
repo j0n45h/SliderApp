@@ -1,11 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sliderappflutter/connection.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-import 'package:sliderappflutter/utilities/popup/popup.dart';
-import 'package:sliderappflutter/utilities/popup/popup_content.dart';
+import 'package:sliderappflutter/utilities/popup/new_popup/popUp.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 
 class BluetoothBox extends StatelessWidget {
@@ -20,7 +17,7 @@ class BluetoothBox extends StatelessWidget {
           size: 30,
         ),
         onTap: () => btStateProvider.disconnect(),
-        onLongPress: () => btStateProvider.disconnect(),
+        onLongPress: () => SearchingDialog().showMyDialog(context),
       );
     } else if (btStateBuilder.getLoadingIconState == 1 && btStateBuilder.getBluetoothState.isEnabled) {
       return const Icon(
@@ -44,7 +41,7 @@ class BluetoothBox extends StatelessWidget {
         ),
         onTap: () => btStateProvider.disable(),
         // onLongPress: () => btStateProvider.connect(context),
-        onLongPress: () => ConnectionScreen().showPopup(context),
+        onLongPress: () => SearchingDialog().showMyDialog(context),
       );
     } else {
       return InkWell(
@@ -54,7 +51,7 @@ class BluetoothBox extends StatelessWidget {
           color: Colors.grey[200],
           size: 30,
         ),
-        onTap: () => btStateProvider.enable(),
+        onTap: () => btStateProvider.connect(),
       );
     }
   }
@@ -108,20 +105,12 @@ class BluetoothBox extends StatelessWidget {
     );
   }
 
-  bool _didBuild = false;
+  static bool _didBuild = false;
   void onBuild(dynamic context) {
     if (_didBuild) return;
     Timer.run(() {
       final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
-      btStateProvider.autoConnectToLastDevice(context); // auto connect BT
-
-      // final locationStateProvider = context.read<ProvideLocationState>();
-//      final locationStateProvider = Provider.of<ProvideLocationState>(context, listen: false); // Location
-//      locationStateProvider.updateMyGeoLocation(context);
-
-
-//      final weatherStateProvider = Provider.of<ProvideWeatherState>(context, listen: false); // Weather
-//      weatherStateProvider.updateWeather(context);
+      btStateProvider.autoConnectToLastDevice(); // auto connect BT
     });
     _didBuild = true;
   }

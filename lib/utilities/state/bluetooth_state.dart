@@ -12,6 +12,9 @@ class ProvideBtState with ChangeNotifier {
   static BluetoothConnection _connection;
   static int _loadingIconState = 0;
 
+  static BtDevice _connectedBtDevice;
+
+
   ProvideBtState(){
     setup();
   }
@@ -28,6 +31,10 @@ class ProvideBtState with ChangeNotifier {
     return _loadingIconState;
   }
 
+  BtDevice get connectedBtDevice {
+    return _connectedBtDevice;
+  }
+
   set setBluetoothState(BluetoothState bState) {
     _bluetoothState = bState;
     notifyListeners();
@@ -36,6 +43,20 @@ class ProvideBtState with ChangeNotifier {
   set setConnection(BluetoothConnection c) {
     _connection = c;
     notifyListeners();
+  }
+
+  bool get isConnected {
+    if (_connection == null) return false;
+    return _connection.isConnected;
+  }
+
+  bool isConnectedTo(BtDevice btDevice) {
+    if (!isConnected) return false;
+    return btDevice.address == _connectedBtDevice.address;
+  }
+
+  void resetLoadingIconState() {
+    _loadingIconState = 0;
   }
 
   Future<void> disconnect() async {
@@ -49,9 +70,13 @@ class ProvideBtState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> connect(BuildContext context) async {
+  Future<void> connect({BtDevice btDeviceToConnectTo}) async {
     _loadingIconState = 1;
     notifyListeners();
+
+    if (_connection != null) {
+      await disconnect();
+    }
 
     if (!await FlutterBluetoothSerial.instance.isEnabled) {
       bool enabled = await enable();
@@ -64,16 +89,24 @@ class ProvideBtState with ChangeNotifier {
 
     print('connecting...');
 
-    String address = await CustomCacheManager.getLastBtDeviceAddress();
-    if (address == null) {
-      _loadingIconState = 0;
-      notifyListeners();
-      return; // TODO: add popup dialog to search for new Device
+    /// figure out which address to connect to
+    if (btDeviceToConnectTo == null) {
+      btDeviceToConnectTo = await CustomCacheManager.getLastBtDevice();
+
+      if (btDeviceToConnectTo == null) {
+        _loadingIconState = 0;
+        notifyListeners();
+        return; // TODO: add popup dialog to search for new Device
+      }
+    } else {
+      CustomCacheManager.storeDevice(btDeviceToConnectTo);
     }
-    try { // BT Connection
+
+    try { /// Bluetooth Connection
       print('waiting for device');
-      _connection = await BluetoothConnection.toAddress(address).timeout(
-          const Duration(seconds: 10));
+      _connection = await BluetoothConnection.toAddress(btDeviceToConnectTo.address).timeout(
+          const Duration(seconds: 15));
+      _connectedBtDevice = btDeviceToConnectTo;
     }
     on TimeoutException catch (e) {
       print('connection time out');
@@ -90,7 +123,7 @@ class ProvideBtState with ChangeNotifier {
 
     listenToConnectedDevice();
 
-    print('Connected to the device $address');
+    print('Connected to the device $btDeviceToConnectTo.address');
 
 
     _loadingIconState = 0;
@@ -125,11 +158,11 @@ class ProvideBtState with ChangeNotifier {
   }
 
   static bool _reCallBlocked = false;
-  void autoConnectToLastDevice(BuildContext context) async {
+  void autoConnectToLastDevice() async {
     if (_connection != null) return;
     if(_reCallBlocked) return;
     blockReCall();
-    connect(context);
+    connect();
   }
 
   /// prevent calling [autoConnectToLastDevice] on each rebuild
@@ -187,4 +220,11 @@ class ProvideBtState with ChangeNotifier {
       print('Disconnected by remote request');
     });
   }
+}
+
+
+class BtDevice {
+  String name;
+  String address;
+  BtDevice({@required this.name, @required this.address});
 }
