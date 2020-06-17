@@ -50,40 +50,49 @@ class DashboardScreen extends StatelessWidget {
         backgroundColor: MyColors.AppBar,
       ),
       drawer: MyDrawer(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: MyColors.BgGradient,
-        ),
-        child: ListView(
-          children: <Widget>[
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const CircularBatteryIndicator(75),
-                  Container(
-                    // Weather and BT Box
-                    alignment: Alignment.topLeft,
-                    margin: const EdgeInsets.fromLTRB(0, 16, 15, 5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        BluetoothBox(),
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                          child: WeatherWidget(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: MyColors.bgRadialGradient(1),
             ),
-            const SunriseSunsetIcons(),
-            const SunPositionWave(),
-          ],
-        ),
+          ),
+          ListView(
+            children: <Widget>[
+              Divider(
+                color: Colors.white,
+                thickness: 0.15,
+                height: 1,
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const CircularBatteryIndicator(75),
+                    Container(
+                      // Weather and BT Box
+                      alignment: Alignment.topLeft,
+                      margin: const EdgeInsets.fromLTRB(0, 16, 15, 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          BluetoothBox(),
+                          Container(
+                            margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                            child: WeatherWidget(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SunriseSunsetIcons(),
+              const SunPositionWave(),
+            ],
+          ),
+        ],
       ),
     );
   }

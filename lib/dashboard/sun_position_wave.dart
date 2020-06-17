@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/dashboard/custom_painter.dart';
+import 'package:sliderappflutter/dashboard/sun.dart';
 import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 
@@ -190,31 +191,18 @@ class _SunPositionWaveState extends State<SunPositionWave>
                 top: SunPath.calculate(_sunAnimation.value, size).dy,
                 left: SunPath.calculate(_sunAnimation.value, size).dx,
                 child: Container(
-                  height: 20,
-                  width: 20,
-                  transform: Matrix4.translationValues(-10, -10, 0),
+                  height: 30,
+                  width: 30,
+                  transform: Matrix4.translationValues(-15, -15, 0),
                   child: AnimatedCrossFade(
                     crossFadeState: _hasSunPosition
                         ? CrossFadeState.showFirst
                         : CrossFadeState.showSecond,
                     duration: Duration(milliseconds: 2000),
-                    firstChild: Container(
-                      // Sun
-                      height: 20,
-                      width: 20,
-                      decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                        colors: [
-                          Color(0xffff6e00),
-                          Color(0xffff7e00),
-                          Color(0xffff7e00).withOpacity(0)
-                        ],
-                        // center: Alignment.topLeft,
-                      )),
-                    ),
+                    firstChild: const Sun(),
                     secondChild: Container(
-                      height: 20,
-                      width: 20,
+                      height: 22,
+                      width: 22,
                     ),
                   ),
                 ),

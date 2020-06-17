@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyColors extends StatelessWidget {
-  static const AppBar = const Color(0xff1D2629);
+  static const AppBar = const Color(0xff000000); // Color(0xff161616);
   static const BgGradient = LinearGradient(
     begin: FractionalOffset.topLeft,
     end: FractionalOffset.bottomRight,
@@ -10,7 +10,16 @@ class MyColors extends StatelessWidget {
     stops: [0.0, 0.9],
     //tileMode: TileMode.repeated,
   );
-  static const StatusBar = const Color(0xff17242A);
+  static RadialGradient bgRadialGradient(double r) {
+    return RadialGradient(
+      radius: r,
+        colors: [
+          Color(0xff161616),
+          Color(0xff000000),
+        ]
+    );
+  }
+  static const StatusBar = const Color(0xff161616);
   static const green = Color(0xff00FF3C);
   static const blue = Color(0xff0099FF);
   static const font = Color(0xffffffff);
