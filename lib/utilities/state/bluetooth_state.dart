@@ -27,6 +27,7 @@ class ProvideBtState with ChangeNotifier {
     return _connection;
   }
 
+  /// -1 on disconnect | 1 on connect | else 0
   int get getLoadingIconState {
     return _loadingIconState;
   }

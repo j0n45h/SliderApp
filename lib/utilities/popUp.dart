@@ -3,11 +3,13 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
+import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class SearchingDialog extends StatefulWidget {
@@ -45,6 +47,13 @@ class _SearchingDialogState extends State<SearchingDialog>
 
   @override
   Widget build(BuildContext context) {
+    final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
+    final height = MediaQuery.of(context).size.height * 0.65;
+    final width = MediaQuery.of(context).size.width * 0.9;
+    final isPortrait =
+        MediaQuery
+            .of(context)
+            .orientation == Orientation.portrait;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -53,98 +62,133 @@ class _SearchingDialogState extends State<SearchingDialog>
       backgroundColor: Colors.transparent,
       child: Container(
         alignment: Alignment.center,
-        height: 450,
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: MyColors.popup.withOpacity(0.2),
-                    // color: MyColors.bg.withOpacity(0.5),
+        height: height,
+        width: width > 500 ? 500 : width,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                // color: MyColors.popup.withOpacity(0.2),
+                // color: MyColors.bg.withOpacity(0.5),
+                // color: Colors.black12.withOpacity(0.3),
+                color: Colors.white.withOpacity(0.05),
+              ),
+              child: Stack(
+                children: <Widget>[
+                  OrientationBuilder(
+                    builder: (context, orientation) {
+                      if (orientation == Orientation.portrait) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              alignment: Alignment.topCenter,
+                              padding: const EdgeInsets.fromLTRB(0, 25, 0, 15),
+                              child: btIcon(btStateProvider),
+                            ),
+                            discoveredDevicesText(),
+                            Divider(
+                              color: Colors.deepOrange.withOpacity(0.6),
+                              height: 30,
+                              indent: 20,
+                              endIndent: 20,
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  child: btIcon(btStateProvider),
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                ),
+                                discoveredDevicesText(),
+                              ],
+                            ),
+                            Divider(
+                              color: Colors.deepOrange.withOpacity(0.6),
+                              height: 10,
+                              indent: 60,
+                              endIndent: 60,
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
-                ),
+                  Column(
+                    children: <Widget>[
+                      Container(height: isPortrait ? 125 : 70),
+                      Divider(
+                        color: Colors.black38.withOpacity(0.5),
+                        height: 0,
+                        thickness: 1,
+                      ),
+                      Container(
+                        height: isPortrait
+                            ? height - 125 - 60
+                            : height - 70 - 60,
+                        color: Colors.black.withOpacity(0.3),
+                        child: listView(),
+                      ),
+                      Divider(
+                        color: Colors.black38.withOpacity(0.5),
+                        height: 0,
+                        thickness: 1,
+                      ),
+                      InkWell(
+                        focusColor: MyColors.bg,
+                        highlightColor: Colors.white.withOpacity(0.01),
+                        borderRadius: BorderRadius.circular(15.0),
+                        splashColor: Colors.white.withOpacity(0.2),
+                        // splashColor: MyColors.popup.withOpacity(0.2),
+                        onTap: () => _restartDiscovery(),
+                        child: Container(
+                          height: 60,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Search',
+                            style: MyTextStyle.normal(fontSize: 18.0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.topCenter,
-                  padding: const EdgeInsets.fromLTRB(0, 25, 0, 15),
-                  child: Transform(
-                    transform: Matrix4.identity()
-                      ..setEntry(3, 2, 0.0011)
-                      ..rotateY(2 * pi * _animation.value),
-                    alignment: FractionalOffset.center,
-                    child: Icon(
-                      Icons.bluetooth,
-                      size: 30,
-                      color: _animation.value > 0.25 && _animation.value < 0.75
-                          ? Colors.blue
-                          : Colors.white,
-                      // color: Color.lerp(Colors.blue, Colors.white, sin(_animation.value * 2 * pi + pi/2) * 0.5 + 0.5),
-                    ),
-                  ),
-                ),
-                Text(
-                  'Discovered Devices:',
-                  style: MyTextStyle.normal(fontSize: 18.0),
-                ),
-                Divider(
-                  color: Colors.deepOrange.withOpacity(0.6),
-                  height: 30,
-                  indent: 20,
-                  endIndent: 20,
-                ),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Container(
-                  height: 125,
-                ),
-                Divider(
-                  color: Colors.black38.withOpacity(0.5),
-                  height: 1,
-                  thickness: 1,
-                ),
-                Container(
-                  height: 250,
-                  color: Colors.black.withOpacity(0.3),
-                  child: listView(),
-                ),
-                Divider(
-                  color: Colors.black38.withOpacity(0.5),
-                  height: 1,
-                  thickness: 1,
-                ),
-                Container(
-                  height: 73,
-                  alignment: Alignment.center,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(35.0)),
-                    child: MaterialButton(
-                      elevation: 24,
-                      height: 55,
-                      minWidth: 250,
-                      child: Text(
-                        'Search',
-                        style: MyTextStyle.normal(fontSize: 18.0),
-                      ),
-                      color: MyColors.bg.withOpacity(0.6),
-                      onPressed: () => _restartDiscovery(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget btIcon(ProvideBtState btStateProvider) {
+    return Transform(
+      transform: Matrix4.identity()
+        ..setEntry(3, 2, 0.0011)
+        ..rotateY(2 * pi * _animation.value),
+      alignment: FractionalOffset.center,
+      child: SizedBox(
+        width: 70,
+        child: BtStateIcon(btStateProvider),
+      ),
+    );
+  }
+
+  Widget discoveredDevicesText() {
+    return Text(
+      'Discovered Devices:',
+      style: MyTextStyle.normal(fontSize: 18.0),
     );
   }
 
@@ -173,17 +217,17 @@ class _SearchingDialogState extends State<SearchingDialog>
     _animationController.forward();
     _streamSubscription =
         FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
-      setState(() {
-        for (BluetoothDiscoveryResult i in results) {
-          if (i.device.address == r.device.address){
-            results.insert(results.indexOf(i), r);
-            results.remove(i);
-            return;
-          }
-        }
-        results.add(r);
-      });
-    });
+          setState(() {
+            for (BluetoothDiscoveryResult i in results) {
+              if (i.device.address == r.device.address) {
+                results.insert(results.indexOf(i), r);
+                results.remove(i);
+                return;
+              }
+            }
+            results.add(r);
+          });
+        });
 
     _streamSubscription.onDone(() {
       setState(() {
@@ -206,19 +250,22 @@ class _SearchingDialogState extends State<SearchingDialog>
 
   void addConnectedDeviceToList(ProvideBtState btStateProvider) {
     setState(() {
-      results.insert(0, BluetoothDiscoveryResult(
-        device: BluetoothDevice(
-          name: btStateProvider.connectedBtDevice.name,
-          isConnected: btStateProvider.getConnection.isConnected,
-          address: btStateProvider.connectedBtDevice.address,
-          bondState: BluetoothBondState.bonded,
-          type: BluetoothDeviceType.unknown,
-        ),
-      ));
+      results.insert(
+          0,
+          BluetoothDiscoveryResult(
+            device: BluetoothDevice(
+              name: btStateProvider.connectedBtDevice.name,
+              isConnected: btStateProvider.getConnection.isConnected,
+              address: btStateProvider.connectedBtDevice.address,
+              bondState: BluetoothBondState.bonded,
+              type: BluetoothDeviceType.unknown,
+            ),
+          ));
     });
   }
 
   static bool _connectedDeviceAdded = false;
+
   Widget listView() {
     final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
     if (!_connectedDeviceAdded && btStateProvider.isConnected) {
@@ -232,7 +279,8 @@ class _SearchingDialogState extends State<SearchingDialog>
         return BluetoothDeviceListEntry(
           device: result.device,
           onTap: () async {
-            final BtDevice btDevice = BtDevice(name: result.device.name, address: result.device.address);
+            final BtDevice btDevice = BtDevice(
+                name: result.device.name, address: result.device.address);
 
             if (btStateProvider.isConnectedTo(btDevice)) {
               await btStateProvider.disconnect();
@@ -267,7 +315,9 @@ class _SearchingDialogState extends State<SearchingDialog>
                 bonded = await FlutterBluetoothSerial.instance
                     .bondDeviceAtAddress(result.device.address);
                 print(
-                    'Bonding with ${result.device.address} has ${bonded ? 'succed' : 'failed'}.');
+                    'Bonding with ${result.device.address} has ${bonded
+                        ? 'succed'
+                        : 'failed'}.');
               }
               setState(() {
                 results[results.indexOf(result)] = BluetoothDiscoveryResult(
@@ -310,7 +360,7 @@ class _SearchingDialogState extends State<SearchingDialog>
     _animationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     final Animation curve =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
     _animation = Tween(begin: 0.0, end: 1.0).animate(curve)
       ..addListener(() {
         setState(() {});
@@ -318,11 +368,15 @@ class _SearchingDialogState extends State<SearchingDialog>
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           if (_isDiscovering) {
+            // btIcon = Icons.bluetooth_searching;
             _animationController.reset();
             _animationController.forward();
           } else {
             _animationController.reset();
+            // btIcon = Icons.bluetooth;
           }
+        } else if (_isDiscovering) {
+          // btIcon = Icons.bluetooth_searching;
         }
       });
   }

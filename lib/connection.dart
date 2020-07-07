@@ -1,34 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:sliderappflutter/dashboard/bluetooth_box.dart';
 import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
-import 'package:sliderappflutter/utilities/popup/popup.dart';
-import 'package:sliderappflutter/utilities/popup/popup_content.dart';
 
 import 'drawer.dart';
 
 class ConnectionScreen extends StatefulWidget {
   static const routeName = '/connection-screen';
-
-  /// POP UP
-  showPopup(BuildContext context, {BuildContext popupContext}) {
-    Navigator.push(
-      context,
-      PopupLayout(
-        top: 90,
-        left: 35,
-        right: 35,
-        bottom: 80,
-        child: PopupContent(
-          content: ConnectionScreen(),
-        ),
-      ),
-    );
-  }
 
   @override
   _ConnectionScreenState createState() => _ConnectionScreenState();
