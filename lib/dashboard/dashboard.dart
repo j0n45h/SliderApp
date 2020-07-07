@@ -9,8 +9,6 @@ import 'package:sliderappflutter/dashboard/sunrisesunset_icons.dart';
 import 'package:sliderappflutter/dashboard/weather_widget.dart';
 import 'package:sliderappflutter/drawer.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-import 'package:sliderappflutter/dashboard/circular_battery_indicator.dart';
-import 'file:///C:/Users/jonas/Documents/Slider_Source/App/slider_app_flutter/lib/utilities/popUp.dart';
 
 class DashboardScreen extends StatelessWidget {
   static const routeName = '/';

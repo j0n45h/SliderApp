@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MyColors extends StatelessWidget {
+class MyColors {
   static const AppBar = const Color(0xff000000); // Color(0xff161616);
   static const BgGradient = LinearGradient(
     begin: FractionalOffset.topLeft,
@@ -26,10 +26,4 @@ class MyColors extends StatelessWidget {
   static const red = Color(0xffb81904);
   static const bg = Color(0xff242f33);
   static const popup = Color(0xff316f7f);
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return null;
-  }
-
 }
