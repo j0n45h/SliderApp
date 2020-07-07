@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 import 'drawer.dart';
 
@@ -69,14 +67,24 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   @override
   Widget build(BuildContext context) {
     print('Discovery Page: ${isDiscovering.toString()}');
-    print('Devides found: ${results.length}');
+    print('Devices found: ${results.length}');
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(
+          leading: new Builder(builder: (context) {
+            return IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                try {
+                  Navigator.pop(context); //close the popup
+                } catch (e) {}
+              },
+            );
+          }),
           backgroundColor: MyColors.AppBar,
           elevation: 1,
           title: const Text(
-            'Connection',
+            'Searching',
             style: TextStyle(
               fontFamily: 'Bellezza',
               letterSpacing: 5,
@@ -109,9 +117,8 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
             BluetoothDiscoveryResult result = results[index];
             return BluetoothDeviceListEntry(
               device: result.device,
-              rssi: result.rssi,
               onTap: () {
-                CustomCacheManager.storeDeviceAddress(result.device.address.toString());
+                // CustomCacheManager.storeDeviceAddress(result.device.address.toString());
                 print('getting Devices address');
               },
               onLongPress: () async {
