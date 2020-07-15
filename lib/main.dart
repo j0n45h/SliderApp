@@ -5,11 +5,11 @@ import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
 
 import 'Settings/settings.dart';
-import 'advanced_timelapse.dart';
+import 'advanced_timelapse/advanced_timelapse.dart';
 import 'connection.dart';
 import 'dashboard/dashboard.dart';
 import 'drawer.dart';
-import 'timelapse.dart';
+import 'timelapse/timelapse.dart';
 import 'video.dart';
 
 void main() {
@@ -32,8 +32,7 @@ class MainPage extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.deepOrange,
         ),
-        // home: DashboardScreen(),
-        initialRoute: DashboardScreen.routeName,
+        initialRoute: TimelapseScreen.routeName,
         routes: {
           MyDrawer.routeName: (_) => MyDrawer(),
           DashboardScreen.routeName: (_) => DashboardScreen(),

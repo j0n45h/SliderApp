@@ -26,4 +26,5 @@ class MyColors {
   static const red = Color(0xffb81904);
   static const bg = Color(0xff242f33);
   static const popup = Color(0xff316f7f);
+  static const slider = Color(0xff00667B);
 }

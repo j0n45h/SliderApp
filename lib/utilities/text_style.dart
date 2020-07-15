@@ -5,12 +5,18 @@ class MyTextStyle {
   static double fontSize;
   static Color color = MyColors.font;
 
-  static TextStyle normal({@required fontSize}) {
+  const MyTextStyle();
+
+  static TextStyle normal({
+    @required double fontSize,
+    double letterSpacing = 1,
+  }) {
     return TextStyle(
       fontSize: fontSize,
       color: color,
       fontFamily: 'Roboto',
       fontWeight: FontWeight.w200,
+      letterSpacing: letterSpacing,
     );
   }
   static TextStyle normalStdSize() {
@@ -21,12 +27,12 @@ class MyTextStyle {
     );
   }
 
-  static TextStyle fet({@required fontSize}) {
+  static TextStyle fet({@required double fontSize}) {
     return TextStyle(
       fontSize: fontSize,
       color: color,
       fontFamily: 'Roboto',
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w300,
       letterSpacing: 1,
     );
   }
@@ -34,7 +40,7 @@ class MyTextStyle {
     return TextStyle(
       color: color,
       fontFamily: 'Roboto',
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w300,
       letterSpacing: 1,
     );
   }

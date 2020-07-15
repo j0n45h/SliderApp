@@ -59,7 +59,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           ListView(
             children: <Widget>[
-              Divider(
+              const Divider(
                 color: Colors.white,
                 thickness: 0.15,
                 height: 1,

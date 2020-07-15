@@ -6,8 +6,8 @@ import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 import 'dashboard/dashboard.dart';
-import 'timelapse.dart';
-import 'advanced_timelapse.dart';
+import 'timelapse/timelapse.dart';
+import 'advanced_timelapse/advanced_timelapse.dart';
 import 'video.dart';
 import 'connection.dart';
 import 'Settings/settings.dart';
