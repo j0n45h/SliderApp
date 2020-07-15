@@ -2,34 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/box_decoraation_frame.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 
-class FramedTextField extends StatefulWidget {
+class FramedTextField extends StatelessWidget {
   final double width;
   final double height;
   final FramedTF lock;
   final Widget textField;
-  final ValueChanged<FramedTF> onLockLongPress;
+  final VoidCallback onLockLongPress;
+  // final ValueChanged<FramedTF> onLockLongPress;
 
 
   FramedTextField({
     @required this.textField,
     @required this.width,
-    this.height,
     this.lock = FramedTF.notLockable,
+    this.height,
     this.onLockLongPress,
   });
 
-  @override
-  _FramedTextFieldState createState() => _FramedTextFieldState();
-}
 
-class _FramedTextFieldState extends State<FramedTextField> {
-  FramedTF locked;
-
-  @override
-  void initState() {
-    locked = widget.lock;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,28 +28,19 @@ class _FramedTextFieldState extends State<FramedTextField> {
       children: <Widget>[
         Container(
           decoration: BoxDecorationFrame().thinFrame,
-          height: widget.height,
-          width: widget.width,
+          height: height,
+          width: width,
         ),
         Container(
           margin: const EdgeInsets.fromLTRB(0, 0, 3, 0),
           width: 27,
           child: InkWell(
-            onLongPress: () {
-              setState(() {
-                if (locked == FramedTF.open)
-                  locked = FramedTF.locked;
-                else if (locked == FramedTF.locked)
-                  locked = FramedTF.open;
-              });
-              if (locked != FramedTF.notLockable && widget.onLockLongPress != null)
-                widget.onLockLongPress(locked);
-            },
+            onLongPress: () => onLockLongPress(),
             borderRadius: BorderRadius.circular(10),
-            child: locked != FramedTF.notLockable
+            child: lock != FramedTF.notLockable
                 ? Transform.scale(
                     scale: 0.75,
-                    child: locked == FramedTF.locked
+                    child: lock == FramedTF.locked
                         ? Icon(
                             Icons.lock_outline,
                             color: const Color(0xffBC3930),
@@ -73,12 +54,12 @@ class _FramedTextFieldState extends State<FramedTextField> {
           ),
         ),
         Container(
-          padding: locked == FramedTF.open || locked == FramedTF.notLockable
+          padding: lock == FramedTF.open || lock == FramedTF.notLockable
               ? const EdgeInsets.fromLTRB(20, 0, 20, 0)
               : const EdgeInsets.fromLTRB(10, 0, 25, 0),
           alignment: Alignment.center,
-          width: widget.width,
-          child: widget.textField,
+          width: width,
+          child: textField,
         ),
       ],
     );

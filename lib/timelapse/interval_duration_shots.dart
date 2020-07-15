@@ -3,18 +3,28 @@ import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+
+void setDefaultTimelapseValues(){
+  TLInterval.tfController.text = '10';
+  TLDuration.hoursTFController.text = '1';
+  TLDuration.minutesTFController.text = '30';
+  TLInterval.onTFEdited();
+  TLDuration.onTFEdited();
+}
+
 class TLInterval{ /// Interval
   static double interval;
-  static FramedTF lock;
+  static FramedTF lock = FramedTF.open;
   static var tfController = TextEditingController();
 
-  TLInterval(){
-    lock = FramedTF.open;
-  }
 
   static void onTFEdited(){
     interval = double.parse(tfController.text);
-    _updateSlider();
+    if (interval < 1) {
+      tfController.text = '1';
+      interval = 1;
+    }
+    updateSlider();
     _notifyChange();
   }
   static void onSliderChanged(double sliderValue){
@@ -32,7 +42,7 @@ class TLInterval{ /// Interval
   static void update(){
     _reCalc();
     _updateTF();
-    _updateSlider();
+    updateSlider();
   }
 
   static void _reCalc() {
@@ -43,9 +53,9 @@ class TLInterval{ /// Interval
     tfController.text = interval.round().toString();
   }
 
-  static void _updateSlider() {
+  static void updateSlider() {
     var value = interval;
-    if (value < 100)
+    if (value > 100)
       value = 100;
     else if (value < 1)
       value = interval = 1;
@@ -58,8 +68,8 @@ class TLInterval{ /// Interval
 
 
 class TLDuration{ /// Duration
-  static Duration duration;
-  static FramedTF lock;
+  static FramedTF lock = FramedTF.open;
+  static var duration = Duration();
   static var hoursTFController   = TextEditingController();
   static var minutesTFController = TextEditingController();
 
@@ -89,7 +99,7 @@ class TLDuration{ /// Duration
       hours: hours,
       minutes: min,
     );
-    _updateSlider();
+    updateSlider();
     _notifyChange();
   }
 
@@ -113,7 +123,7 @@ class TLDuration{ /// Duration
   static void update() {
     _reCalc();
     _updateTF();
-    _updateSlider();
+    updateSlider();
   }
 
   static void _updateTF() {
@@ -121,7 +131,7 @@ class TLDuration{ /// Duration
     minutesTFController.text = (duration.inMinutes - (60 * duration.inHours)).toString();
   }
 
-  static void _updateSlider(){
+  static void updateSlider(){
     if (lock != FramedTF.open) return;
     double value = duration.inSeconds.toDouble();
     if (value > 86400)
@@ -141,7 +151,7 @@ class TLDuration{ /// Duration
 
 class TLShots{ /// Shots
   static int shots;
-  static FramedTF lock;
+  static FramedTF lock = FramedTF.open;
   static var tfController = TextEditingController();
 
   TLShots(){
@@ -150,26 +160,41 @@ class TLShots{ /// Shots
 
   static void onTFEdited(){
     shots = int.parse(tfController.text);
-    _updateSlider();
+    if (shots < 1) {
+      tfController.text = '1';
+      shots = 1;
+    }
+    updateSlider();
     _notifyChange();
   }
   static void onSliderChanged(double sliderValue){
-
+    shots = sliderValue.round();
+    _updateTF();
+    _notifyChange();
   }
   static void _notifyChange(){
     if (TLDuration.lock == FramedTF.open)
       TLDuration.update();
     else if (TLInterval.lock == FramedTF.open)
       TLInterval.update();
+    TLVideo.update();
   }
 
   static void update(){
-    shots = (TLDuration.duration.inSeconds / TLInterval.interval).round();
-    tfController.text = shots.toString();
-    if (TLDuration.lock == FramedTF.locked)
-      _updateSlider();
+    _reCalc();
+    _updateTF();
+    updateSlider();
+    TLVideo.update();
   }
-  static void _updateSlider(){
+
+  static void _reCalc(){
+    shots = (TLDuration.duration.inSeconds / TLInterval.interval).round();
+  }
+  static void _updateTF() {
+    tfController.text = shots.toString();
+  }
+  static void updateSlider(){
+    if (TLDuration.lock != FramedTF.locked) return;
     var value = shots.toDouble();
     if (value > 5000)
       value = 5000;
@@ -182,14 +207,68 @@ class TLShots{ /// Shots
 }
 
 
+class TLVideo{
+  static int videoLength;
+  static FramedTF lock = FramedTF.open;
+  static var tfController = TextEditingController();
+
+  static int _fpsIndex = 0;
+  static List<int> _fpsArray = [24, 25, 30, 50, 60, 100, 120];
+
+  static int get fps {
+    return _fpsArray[_fpsIndex];
+  }
+
+  static void toggleFPS() {
+    _fpsIndex++;
+    if (_fpsIndex >= _fpsArray.length) _fpsIndex = 0;
+    update();
+  }
+
+  static void onTFEdited() {
+    videoLength = int.parse(tfController.text);
+    if (videoLength < 1){
+      tfController.text = '1';
+      videoLength = 1;
+    }
+    updateSlider();
+    _notifyChange();
+  }
+  static void onSliderChanged(double sliderValue) {
+    videoLength = sliderValue.round();
+    _updateTF();
+    _notifyChange();
+  }
+  static void update() {
+    _reCalc();
+    _updateTF();
+    // updateSlider();
+  }
+  static void updateSlider() {
+    TLShots.updateSlider();
+  }
+
+  static void _notifyChange() {
+    TLShots.update();
+  }
+  static void _reCalc() {
+    videoLength = (TLShots.shots / fps).round();
+  }
+  static void _updateTF() {
+    tfController.text = videoLength.toString();
+  }
+
+  }
+
 
 
 class UpperSlider{
   static double value;
 
   static void onChanged(double newValue) {
-    value = 99 * (newValue * newValue) + 1;
-    TLInterval.onSliderChanged(value);
+    value = newValue;
+    newValue = 99 * (newValue * newValue) + 1;
+    TLInterval.onSliderChanged(newValue);
   }
 }
 
@@ -200,11 +279,11 @@ class LowerSlider{
   static void onChanged(double newValue){
     value = newValue;
     if (TLDuration.lock == FramedTF.open){
-      value = 86340 * (value * value) + 60;
-      TLDuration.onSliderChanged(value);
+      newValue = 86340 * (newValue * newValue) + 60;
+      TLDuration.onSliderChanged(newValue);
     } else if (TLShots.lock == FramedTF.open){
-      value = (4990 * (value * value) + 10);
-      TLShots.onSliderChanged(value);
+      newValue = (4990 * (newValue * newValue) + 10);
+      TLShots.onSliderChanged(newValue);
     }
   }
 }

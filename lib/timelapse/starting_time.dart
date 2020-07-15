@@ -10,8 +10,8 @@ class StartingTime extends StatefulWidget {
 }
 
 class _StartingTimeState extends State<StartingTime> {
-  TextEditingController hoursTEC;
-  TextEditingController minutesTEC;
+  var hoursTEC   = TextEditingController();
+  var minutesTEC = TextEditingController();
 
   bool boolean = false;
 
@@ -48,32 +48,42 @@ class _StartingTimeState extends State<StartingTime> {
           'STARTING TIME',
           style: MyTextStyle.normal(fontSize: 12, letterSpacing: 1.3),
         ),
-//        Container(
-//          alignment: Alignment.centerRight,
-//          child: FramedTextField(
-//            width: 120,
-//            height: 30,
-//            textField: Row(
-//              children: <Widget>[
-//                Container(
-//                  width: 30,
-//                  child: MyTextField(
-//                    textController: hoursTEC,
-//                    fontSize: 12,
-//                  ),
-//                ),
-//                Container(
-//                  width: 30,
-//                  child: MyTextField(
-//                    textController: minutesTEC,
-//                    fontSize: 12,
-//
-//                  ),
-//                ),
-//              ],
-//            ),
-//          ),
-//        ),
+        Expanded(
+          child: InkWell(
+            onTap: null,
+            radius: 15,
+            child: FramedTextField(
+              width: 100,
+              height: 30,
+              textField: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      width: 25,
+                      child: MyTextField(
+                        textController: hoursTEC,
+                        fontSize: 12,
+                        enabled: false,
+                      ),
+                    ),
+                    Text(
+                      ':',
+                      style: MyTextStyle.fet(fontSize: 12),
+                    ),
+                    Container(
+                      width: 25,
+                      child: MyTextField(
+                        textController: minutesTEC,
+                        fontSize: 12,
+                        enabled: false,
+                      ),
+                    ),
+                  ],
+                ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 25),
       ],
     );
   }
