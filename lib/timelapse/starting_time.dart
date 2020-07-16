@@ -10,7 +10,7 @@ class StartingTime extends StatefulWidget {
 }
 
 class _StartingTimeState extends State<StartingTime> {
-  var hoursTEC   = TextEditingController();
+  var hoursTEC = TextEditingController();
   var minutesTEC = TextEditingController();
 
   bool boolean = false;
@@ -25,65 +25,71 @@ class _StartingTimeState extends State<StartingTime> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Container(
-          width: 60,
-          height: 20,
-          child: Switch(
-            activeColor: Colors.white,
-            activeTrackColor: MyColors.slider,
-            inactiveThumbColor: Colors.grey[400],
-            inactiveTrackColor: Colors.grey[700],
-            onChanged: (bool value) {
-              print(value);
-              setState(() {
-                boolean = !boolean;
-              });
-            },
-            value: boolean,
-          ),
+        Row(
+          children: <Widget>[
+            Container(
+              width: 60,
+              height: 20,
+              child: Switch(
+                activeColor: Colors.white,
+                activeTrackColor: MyColors.slider,
+                inactiveThumbColor: Colors.grey[400],
+                inactiveTrackColor: Colors.grey[700],
+                onChanged: (bool value) {
+                  print(value);
+                  setState(() {
+                    boolean = !boolean;
+                  });
+                },
+                value: boolean,
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              'STARTING TIME',
+              style: MyTextStyle.normal(fontSize: 12, letterSpacing: 1.3),
+            ),
+          ],
         ),
-        const SizedBox(width: 15),
-        Text(
-          'STARTING TIME',
-          style: MyTextStyle.normal(fontSize: 12, letterSpacing: 1.3),
-        ),
-        Expanded(
+        Padding(
+          padding: const EdgeInsets.only(right: 25),
           child: InkWell(
-            onTap: null,
-            radius: 15,
+            enableFeedback: true,
+            borderRadius: BorderRadius.circular(20),
+            onTap: () => print('press'),
             child: FramedTextField(
               width: 100,
               height: 30,
               textField: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 25,
-                      child: MyTextField(
-                        textController: hoursTEC,
-                        fontSize: 12,
-                        enabled: false,
-                      ),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: 25,
+                    child: MyTextField(
+                      textController: hoursTEC,
+                      fontSize: 12,
+                      enabled: false,
                     ),
-                    Text(
-                      ':',
-                      style: MyTextStyle.fet(fontSize: 12),
+                  ),
+                  Text(
+                    ':',
+                    style: MyTextStyle.fet(fontSize: 12),
+                  ),
+                  Container(
+                    width: 25,
+                    child: MyTextField(
+                      textController: minutesTEC,
+                      fontSize: 12,
+                      enabled: false,
                     ),
-                    Container(
-                      width: 25,
-                      child: MyTextField(
-                        textController: minutesTEC,
-                        fontSize: 12,
-                        enabled: false,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        const SizedBox(width: 25),
       ],
     );
   }

@@ -120,14 +120,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                 lock: TLShots.lock,
                                 onLockLongPress: () {
                                   setState(() {
-                                    if (TLShots.lock == FramedTF.notLockable)
-                                      return;
-                                    if (TLShots.lock == FramedTF.open)
-                                      TLShots.lock = FramedTF.locked;
-                                    else
-                                      TLShots.lock = FramedTF.open;
-                                    if (TLDuration.lock == FramedTF.locked)
-                                      TLDuration.lock = FramedTF.open;
+                                    toggleShotsAndVideoLock();
                                   });
                                 },
                                 width: 90,
@@ -139,6 +132,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                   enabled: true,
                                   onEditingComplete: () {
                                     setState(() {
+                                      lockShotsAndVideo();
                                       TLVideo.onTFEdited();
                                     });
                                   },
@@ -190,16 +184,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                             lock: TLDuration.lock,
                             onLockLongPress: () {
                               setState(() {
-                                if (TLDuration.lock == FramedTF.notLockable)
-                                  return;
-                                if (TLDuration.lock == FramedTF.open)
-                                  TLDuration.lock = FramedTF.locked;
-                                else
-                                  TLDuration.lock = FramedTF.open;
-                                if (TLShots.lock == FramedTF.locked)
-                                  TLShots.lock = FramedTF.open;
-                                TLShots.updateSlider();
-                                TLDuration.updateSlider();
+                                toggleDurationLock();
                               });
                             },
                             textField: Row(
@@ -214,6 +199,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     unit: 'h',
                                     onEditingComplete: () {
                                       setState(() {
+                                        lockDuration();
                                         TLDuration.onTFEdited();
                                       });
                                     },
@@ -232,6 +218,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     unit: 'min',
                                     onEditingComplete: () {
                                       setState(() {
+                                        lockDuration();
                                         TLDuration.onTFEdited();
                                       });
                                     },
@@ -261,14 +248,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                             lock: TLShots.lock,
                             onLockLongPress: () {
                               setState(() {
-                                if (TLShots.lock == FramedTF.notLockable)
-                                  return;
-                                if (TLShots.lock == FramedTF.open)
-                                  TLShots.lock = FramedTF.locked;
-                                else
-                                  TLShots.lock = FramedTF.open;
-                                if (TLDuration.lock == FramedTF.locked)
-                                  TLDuration.lock = FramedTF.open;
+                                toggleShotsAndVideoLock();
                               });
                             },
                             textField: MyTextField(
@@ -276,6 +256,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                               textController: TLShots.tfController,
                               onEditingComplete: () {
                                 setState(() {
+                                  lockShotsAndVideo();
                                   TLShots.onTFEdited();
                                 });
                               },
@@ -322,6 +303,40 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
     controller.selection = TextSelection.fromPosition(TextPosition(
       offset: controller.text.length),
     );
+  }
+
+  void toggleShotsAndVideoLock() {
+    if (TLShots.lock == FramedTF.notLockable)
+      return;
+    if (TLShots.lock == FramedTF.open)
+      TLShots.lock = FramedTF.locked;
+    else
+      TLShots.lock = FramedTF.open;
+    if (TLDuration.lock == FramedTF.locked)
+      TLDuration.lock = FramedTF.open;
+  }
+  void lockShotsAndVideo() {
+    if (TLDuration.lock == FramedTF.locked)
+      TLDuration.lock = FramedTF.open;
+    TLShots.lock = FramedTF.locked;
+  }
+
+  void toggleDurationLock() {
+    if (TLDuration.lock == FramedTF.notLockable)
+      return;
+    if (TLDuration.lock == FramedTF.open)
+      TLDuration.lock = FramedTF.locked;
+    else
+      TLDuration.lock = FramedTF.open;
+    if (TLShots.lock == FramedTF.locked)
+      TLShots.lock = FramedTF.open;
+    TLShots.updateSlider();
+    TLDuration.updateSlider();
+  }
+  void lockDuration() {
+    if (TLShots.lock == FramedTF.locked)
+      TLShots.lock = FramedTF.open;
+    TLDuration.lock = FramedTF.locked;
   }
 
 }
