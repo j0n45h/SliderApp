@@ -20,6 +20,8 @@ class TimelapseScreen extends StatefulWidget {
 
 class _TimelapseScreenState extends State<TimelapseScreen> {
   static double tfHeight = 30;
+  final GlobalKey<StartingTimeState> _startingTimeKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final tlDuration = Provider.of<TLDuration>(context, listen: false);
@@ -74,6 +76,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                               onEditingComplete: () {
                                 setState(() {
                                   TLInterval.onTFEdited();
+                                  _startingTimeKey.currentState.calcTime();
                                 });
                               },
                               onTap: () =>
@@ -135,6 +138,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     setState(() {
                                       lockShotsAndVideo(tlDuration);
                                       TLVideo.onTFEdited();
+                                      _startingTimeKey.currentState.calcTime();
                                     });
                                   },
                                   onTap: () =>
@@ -155,6 +159,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                     onChanged: (double value) {
                       setState(() {
                         UpperSlider.onChanged(value);
+                        _startingTimeKey.currentState.calcTime();
                       });
                     },
                     onChangeStart: (_) {
@@ -201,7 +206,8 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     onEditingComplete: () {
                                       setState(() {
                                         lockDuration();
-                                        tlDuration().tfEdited;
+                                        TLDuration.onTFEdited();
+                                        _startingTimeKey.currentState.calcTime();
                                       });
                                     },
                                     onTap: () =>
@@ -220,7 +226,8 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     onEditingComplete: () {
                                       setState(() {
                                         lockDuration();
-                                        tlDuration().tfEdited;
+                                        TLDuration.onTFEdited();
+                                        _startingTimeKey.currentState.calcTime();
                                       });
                                     },
                                     onTap: () =>
@@ -259,6 +266,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                 setState(() {
                                   lockShotsAndVideo(tlDuration);
                                   TLShots.onTFEdited();
+                                  _startingTimeKey.currentState.calcTime();
                                 });
                               },
                               onTap: () => jumpCursorToEnd(TLVideo.tfController),
@@ -275,6 +283,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                     onChanged: (double value) {
                       setState(() {
                         LowerSlider.onChanged(value);
+                        _startingTimeKey.currentState.calcTime();
                       });
                     },
                     onChangeStart: (_) {
@@ -286,8 +295,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                   ),
                 ),
                 const SizedBox(height: 50),
-                StartingTime(),
-                const SizedBox(height: 25),
+                StartingTime(_startingTimeKey),
               ],
             ),
           ],

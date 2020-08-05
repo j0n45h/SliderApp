@@ -12,11 +12,12 @@ import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class StartingTime extends StatefulWidget {
+  StartingTime(Key key) : super(key: key);
   @override
-  _StartingTimeState createState() => _StartingTimeState();
+  StartingTimeState createState() => StartingTimeState();
 }
 
-class _StartingTimeState extends State<StartingTime> {
+class StartingTimeState extends State<StartingTime> {
   bool boolean = false;
   var _startHoursTEC = CustomTextEditingController();
   var _startMinutesTEC = CustomTextEditingController();
@@ -25,18 +26,17 @@ class _StartingTimeState extends State<StartingTime> {
 
   @override
   void initState() {
-    final tlDurationProvider = Provider.of<TLDuration>(context, listen: false);
-    calcTime(tlDurationProvider);
+    calcTime();
     Timer.periodic(
-        Duration(seconds: 10),
-        (Timer t) => setState(() {
-              calcTime(tlDurationProvider);
-            },),);
+      Duration(seconds: 10),
+          (Timer t) => setState(() {
+        calcTime();
+      },),);
 
     super.initState();
   }
 
-  void calcTime(TLDuration tlDurationProvider) {
+  void calcTime() {
     _startHoursTEC.text = DateTime.now().hour.toString();
     _startMinutesTEC.text = DateTime.now().minute.toString();
 
@@ -47,13 +47,14 @@ class _StartingTimeState extends State<StartingTime> {
 
   @override
   Widget build(BuildContext context) {
+    calcTime();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Row(
           children: <Widget>[
             MySwitch(
-              value: true,
+              value: boolean,
               onChanged: (bool value) {
                 print(value);
                 setState(() {
@@ -70,9 +71,7 @@ class _StartingTimeState extends State<StartingTime> {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 25),
-          child: Consumer<TLDuration>(builder: (context, tlDurationProvider, _) {
-            calcTime(tlDurationProvider);
-            return Row(
+          child: Row(
               children: <Widget>[
                 ClickableFramedTF(
                   hoursTEC: _startHoursTEC,
@@ -94,8 +93,7 @@ class _StartingTimeState extends State<StartingTime> {
                   tfWidth: 25,
                 ),
               ],
-            );
-          }),
+            ),
         ),
       ],
     );
