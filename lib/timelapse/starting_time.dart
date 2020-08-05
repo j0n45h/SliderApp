@@ -1,6 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
+import 'package:sliderappflutter/timelapse/interval_duration_shots.dart';
+import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/custom_text_editing_controller.dart';
+import 'package:sliderappflutter/utilities/switch.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -10,16 +17,32 @@ class StartingTime extends StatefulWidget {
 }
 
 class _StartingTimeState extends State<StartingTime> {
-  var hoursTEC = TextEditingController();
-  var minutesTEC = TextEditingController();
-
   bool boolean = false;
+  var _startHoursTEC = CustomTextEditingController();
+  var _startMinutesTEC = CustomTextEditingController();
+  var _endHoursTSC = CustomTextEditingController();
+  var _endMMinutesTSC = CustomTextEditingController();
 
   @override
   void initState() {
-    hoursTEC.text = '10';
-    minutesTEC.text = '30';
+    final tlDurationProvider = Provider.of<TLDuration>(context, listen: false);
+    calcTime(tlDurationProvider);
+    Timer.periodic(
+        Duration(seconds: 10),
+        (Timer t) => setState(() {
+              calcTime(tlDurationProvider);
+            },),);
+
     super.initState();
+  }
+
+  void calcTime(TLDuration tlDurationProvider) {
+    _startHoursTEC.text = DateTime.now().hour.toString();
+    _startMinutesTEC.text = DateTime.now().minute.toString();
+
+    var endTime = DateTime.now().add(TLDuration.duration);
+    _endHoursTSC.text = endTime.hour.toString();
+    _endMMinutesTSC.text = endTime.minute.toString();
   }
 
   @override
@@ -29,24 +52,16 @@ class _StartingTimeState extends State<StartingTime> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Container(
-              width: 60,
-              height: 20,
-              child: Switch(
-                activeColor: Colors.white,
-                activeTrackColor: MyColors.slider,
-                inactiveThumbColor: Colors.grey[400],
-                inactiveTrackColor: Colors.grey[700],
-                onChanged: (bool value) {
-                  print(value);
-                  setState(() {
-                    boolean = !boolean;
-                  });
-                },
-                value: boolean,
-              ),
+            MySwitch(
+              value: true,
+              onChanged: (bool value) {
+                print(value);
+                setState(() {
+                  boolean = !boolean;
+                });
+              },
             ),
-            const SizedBox(width: 15),
+            const SizedBox(width: 0),
             Text(
               'STARTING TIME',
               style: MyTextStyle.normal(fontSize: 12, letterSpacing: 1.3),
@@ -55,40 +70,32 @@ class _StartingTimeState extends State<StartingTime> {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 25),
-          child: InkWell(
-            enableFeedback: true,
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => print('press'),
-            child: FramedTextField(
-              width: 100,
-              height: 30,
-              textField: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 25,
-                    child: MyTextField(
-                      textController: hoursTEC,
-                      fontSize: 12,
-                      enabled: false,
-                    ),
-                  ),
-                  Text(
-                    ':',
+          child: Consumer<TLDuration>(builder: (context, tlDurationProvider, _) {
+            calcTime(tlDurationProvider);
+            return Row(
+              children: <Widget>[
+                ClickableFramedTF(
+                  hoursTEC: _startHoursTEC,
+                  minutesTEC: _startMinutesTEC,
+                  width: 95,
+                  tfWidth: 25,
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 8, right: 8),
+                  child: Text(
+                    '-',
                     style: MyTextStyle.fet(fontSize: 12),
                   ),
-                  Container(
-                    width: 25,
-                    child: MyTextField(
-                      textController: minutesTEC,
-                      fontSize: 12,
-                      enabled: false,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                ),
+                ClickableFramedTF(
+                  hoursTEC: _endHoursTSC,
+                  minutesTEC: _endMMinutesTSC,
+                  width: 95,
+                  tfWidth: 25,
+                ),
+              ],
+            );
+          }),
         ),
       ],
     );

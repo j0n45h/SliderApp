@@ -1,24 +1,31 @@
+import 'dart:js';
+
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
-import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 
 
-void setDefaultTimelapseValues(){
-  TLInterval.tfController.text = '10';
-  TLDuration.hoursTFController.text = '1';
-  TLDuration.minutesTFController.text = '30';
-  TLInterval.onTFEdited();
-  TLDuration.onTFEdited();
+void setDefaultTimelapseValues(BuildContext context) {
+  final tlInterval = Provider.of<TLInterval>(context, listen: false);
+  // final tlShots    = Provider.of<TLShots>   (context, listen: false);
+  final tlDuration = Provider.of<TLDuration>(context, listen: false);
+
+  tlInterval.tfController.text = '10';
+  tlDuration.hoursTFController.text = '1';
+  tlDuration.minutesTFController.text = '30';
+  tlInterval.onTFEdited();
+  tlDuration.setup();
 }
 
-class TLInterval{ /// Interval
-  static double interval;
-  static FramedTF lock = FramedTF.open;
-  static var tfController = TextEditingController();
+class TLInterval with ChangeNotifier { /// Interval
+  double interval;
+  FramedTF lock = FramedTF.open;
+  var tfController = TextEditingController();
 
 
-  static void onTFEdited(){
+  void onTFEdited(){
     interval = double.parse(tfController.text);
     if (interval < 1) {
       tfController.text = '1';
@@ -27,29 +34,32 @@ class TLInterval{ /// Interval
     updateSlider();
     _notifyChange();
   }
-  static void onSliderChanged(double sliderValue){
+  void onSliderChanged(double sliderValue){
     interval = sliderValue;
     _updateTF();
     _notifyChange();
   }
-  static void _notifyChange(){
-    if (TLShots.lock == FramedTF.open)
-      TLShots.update();
-    else if (TLDuration.lock == FramedTF.open)
-      TLDuration.update();
+  void _notifyChange(BuildContext context){
+    final tlShots    = Provider.of<TLShots>   (context, listen: false);
+    final tlDuration = Provider.of<TLDuration>(context, listen: false);
+
+    if (tlShots.lock == FramedTF.open)
+      tlShots.update();
+    else if (tlDuration.lock == FramedTF.open)
+      tlDuration.update();
   }
 
-  static void update(){
+  void update(){
     _reCalc();
     _updateTF();
     updateSlider();
   }
 
-  static void _reCalc() {
-    interval = interval = TLDuration.duration.inSeconds / TLShots.shots;
+  void _reCalc() {
+    interval = interval = TLDuration.duration_.inSeconds / TLShots.shots;
   }
 
-  static void _updateTF() {
+  void _updateTF() {
     tfController.text = interval.round().toString();
   }
 
@@ -67,17 +77,44 @@ class TLInterval{ /// Interval
 
 
 
-class TLDuration{ /// Duration
-  static FramedTF lock = FramedTF.open;
-  static var duration = Duration();
-  static var hoursTFController   = TextEditingController();
-  static var minutesTFController = TextEditingController();
+class TLDuration with ChangeNotifier { /// Duration
+  static FramedTF lock_ = FramedTF.open;
+  static var duration_ = Duration();
+  static var hoursTFController_   = TextEditingController();
+  static var minutesTFController_ = TextEditingController();
 
-  TLDuration(){
-    lock = FramedTF.open;
+  get lock {
+    return lock_;
+  }
+  get duration {
+    return duration_;
+  }
+  get hoursTFController {
+    return hoursTFController_;
+  }
+  get minutesTFController {
+    return minutesTFController_;
   }
 
-  static void onTFEdited(){ // usable from outside
+  TLDuration(){
+    lock_ = FramedTF.open;
+  }
+
+  void setup() {
+    var hours = int.parse(hoursTFController.text);
+    var min   = int.parse(minutesTFController.text);
+    duration_ = Duration(
+      hours: hours,
+      minutes: min,
+    );
+    updateSlider();
+  }
+
+  void tfEdited(BuildContext context) {
+    onTFEdited(context);
+  }
+
+  void onTFEdited(BuildContext context) { // usable from outside
     var hours = int.parse(hoursTFController.text);
     var min   = int.parse(minutesTFController.text);
     if(hours <= 0) {
@@ -95,45 +132,53 @@ class TLDuration{ /// Duration
       minutesTFController.text = '1';
       min = 1;
     }
-    duration = Duration(
+    duration_ = Duration(
       hours: hours,
       minutes: min,
     );
     updateSlider();
-    _notifyChange();
+    _notifyChange(context);
   }
 
-  static void onSliderChanged(double sliderValue){ // usable from outside
-    duration = Duration(seconds: sliderValue.round());
+  void newSliderValue(double newValue, BuildContext context) {
+    onSliderChanged(newValue,context);
+  }
+
+  void onSliderChanged(double sliderValue, BuildContext context){ // usable from outside
+    duration_ = Duration(seconds: sliderValue.round());
     _updateTF();
-    _notifyChange();
+    _notifyChange(context);
+  }
+  void _notifyChange(BuildContext context){
+    if (TLShots.lock == FramedTF.open) {
+      final tlShots = Provider.of<TLShots>(context, listen: false);
+      tlShots.update();
+    }
+    else if (TLInterval.lock == FramedTF.open){
+      final tlInterval = Provider.of<TLInterval>(context, listen: false);
+      tlInterval.update();
+    }
+    notifyListeners();
   }
 
-  static void _notifyChange(){
-    if (TLShots.lock == FramedTF.open)
-      TLShots.update();
-    else if (TLInterval.lock == FramedTF.open)
-      TLInterval.update();
+  void _reCalc() {
+    duration_ = Duration(seconds: (TLShots.shots * TLInterval.interval).round());
   }
 
-  static void _reCalc() {
-    duration = Duration(seconds: (TLShots.shots * TLInterval.interval).round());
-  }
-
-  static void update() {
+  void update() {
     _reCalc();
     _updateTF();
     updateSlider();
   }
 
-  static void _updateTF() {
-    hoursTFController.text = duration.inHours.toString();
-    minutesTFController.text = (duration.inMinutes - (60 * duration.inHours)).toString();
+  void _updateTF() {
+    hoursTFController_.text = duration_.inHours.toString();
+    minutesTFController_.text = (duration_.inMinutes - (60 * duration_.inHours)).toString();
   }
 
-  static void updateSlider(){
-    if (lock != FramedTF.open) return;
-    double value = duration.inSeconds.toDouble();
+  void updateSlider(){
+    if (lock_ != FramedTF.open) return;
+    double value = duration_.inSeconds.toDouble();
     if (value > 86400)
       value = 86400;
     else if (value < 60)
@@ -149,16 +194,16 @@ class TLDuration{ /// Duration
 
 
 
-class TLShots{ /// Shots
-  static int shots;
-  static FramedTF lock = FramedTF.open;
+class TLShots with ChangeNotifier { /// Shots
+  int shots;
+  FramedTF lock = FramedTF.open;
   static var tfController = TextEditingController();
 
   TLShots(){
     lock = FramedTF.open;
   }
 
-  static void onTFEdited(){
+  void onTFEdited(){
     shots = int.parse(tfController.text);
     if (shots < 1) {
       tfController.text = '1';
@@ -167,33 +212,35 @@ class TLShots{ /// Shots
     updateSlider();
     _notifyChange();
   }
-  static void onSliderChanged(double sliderValue){
+  void onSliderChanged(double sliderValue, BuildContext context){
     shots = sliderValue.round();
     _updateTF();
-    _notifyChange();
+    _notifyChange(context);
   }
-  static void _notifyChange(){
-    if (TLDuration.lock == FramedTF.open)
-      TLDuration.update();
-    else if (TLInterval.lock == FramedTF.open)
-      TLInterval.update();
+  void _notifyChange(BuildContext context){
+    final tlDuration = Provider.of<TLDuration>(context, listen: false);
+    final tlInterval = Provider.of<TLInterval>(context, listen: false);
+    if (tlDuration.lock == FramedTF.open)
+      tlDuration.update();
+    else if (tlInterval.lock == FramedTF.open)
+      tlInterval.update();
     TLVideo.update();
   }
 
-  static void update(){
+  void update(){
     _reCalc();
     _updateTF();
     updateSlider();
     TLVideo.update();
   }
 
-  static void _reCalc(){
+  void _reCalc(){
     shots = (TLDuration.duration.inSeconds / TLInterval.interval).round();
   }
-  static void _updateTF() {
+  void _updateTF() {
     tfController.text = shots.toString();
   }
-  static void updateSlider(){
+  void updateSlider(){
     if (TLDuration.lock != FramedTF.locked) return;
     var value = shots.toDouble();
     if (value > 5000)
@@ -280,7 +327,7 @@ class LowerSlider{
     value = newValue;
     if (TLDuration.lock == FramedTF.open){
       newValue = 86340 * (newValue * newValue) + 60;
-      TLDuration.onSliderChanged(newValue);
+      TLDuration().newSliderValue = newValue;
     } else if (TLShots.lock == FramedTF.open){
       newValue = (4990 * (newValue * newValue) + 10);
       TLShots.onSliderChanged(newValue);
