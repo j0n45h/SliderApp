@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/starting_time.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
@@ -24,7 +23,6 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tlDuration = Provider.of<TLDuration>(context, listen: false);
     return WillPopScope(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -102,7 +100,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                 width: 40,
                                 height: 10,
 //                              padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
-                                // margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
+                                //                             margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
                                 child: Text(
                                   (TLVideo.fps).toString() + 'fps',
                                   style: MyTextStyle.normal(fontSize: 10),
@@ -124,7 +122,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                 lock: TLShots.lock,
                                 onLockLongPress: () {
                                   setState(() {
-                                    toggleShotsAndVideoLock(tlDuration);
+                                    toggleShotsAndVideoLock();
                                   });
                                 },
                                 width: 90,
@@ -136,7 +134,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                   enabled: true,
                                   onEditingComplete: () {
                                     setState(() {
-                                      lockShotsAndVideo(tlDuration);
+                                      lockShotsAndVideo();
                                       TLVideo.onTFEdited();
                                       _startingTimeKey.currentState.calcTime();
                                     });
@@ -187,10 +185,10 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                           FramedTextField(
                             width: 128,
                             height: tfHeight,
-                            lock: tlDuration.lock,
+                            lock: TLDuration.lock,
                             onLockLongPress: () {
                               setState(() {
-                                toggleDurationLock(tlDuration);
+                                toggleDurationLock();
                               });
                             },
                             textField: Row(
@@ -200,7 +198,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                   width: 36,
                                   child: MyTextField(
                                     fontSize: 12,
-                                    textController: tlDuration
+                                    textController: TLDuration
                                         .hoursTFController,
                                     unit: 'h',
                                     onEditingComplete: () {
@@ -212,7 +210,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     },
                                     onTap: () =>
                                         jumpCursorToEnd(
-                                          tlDuration.hoursTFController,
+                                          TLDuration.hoursTFController,
                                         ),
                                   ),
                                 ),
@@ -220,7 +218,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                   width: 52,
                                   child: MyTextField(
                                     fontSize: 12,
-                                    textController: tlDuration
+                                    textController: TLDuration
                                         .minutesTFController,
                                     unit: 'min',
                                     onEditingComplete: () {
@@ -232,7 +230,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                                     },
                                     onTap: () =>
                                         jumpCursorToEnd(
-                                          tlDuration().minutesTFController,
+                                            TLDuration.minutesTFController,
                                         ),
                                   ),
                                 ),
@@ -256,7 +254,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                             lock: TLShots.lock,
                             onLockLongPress: () {
                               setState(() {
-                                toggleShotsAndVideoLock(tlDuration);
+                                toggleShotsAndVideoLock();
                               });
                             },
                             textField: MyTextField(
@@ -264,7 +262,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
                               textController: TLShots.tfController,
                               onEditingComplete: () {
                                 setState(() {
-                                  lockShotsAndVideo(tlDuration);
+                                  lockShotsAndVideo();
                                   TLShots.onTFEdited();
                                   _startingTimeKey.currentState.calcTime();
                                 });
@@ -315,41 +313,38 @@ class _TimelapseScreenState extends State<TimelapseScreen> {
     );
   }
 
-  void toggleShotsAndVideoLock(TLDuration tlDuration) {
+  void toggleShotsAndVideoLock() {
     if (TLShots.lock == FramedTF.notLockable)
       return;
     if (TLShots.lock == FramedTF.open)
       TLShots.lock = FramedTF.locked;
     else
       TLShots.lock = FramedTF.open;
-    if (tlDuration.lock == FramedTF.locked)
-      tlDuration.lock = FramedTF.open;
-    TLShots.updateSlider();
-    tlDuration.updateSlider();
+    if (TLDuration.lock == FramedTF.locked)
+      TLDuration.lock = FramedTF.open;
   }
-  void lockShotsAndVideo(TLDuration tlDuration) {
-    if (tlDuration.lock == FramedTF.locked)
-      tlDuration.lock = FramedTF.open;
+  void lockShotsAndVideo() {
+    if (TLDuration.lock == FramedTF.locked)
+      TLDuration.lock = FramedTF.open;
     TLShots.lock = FramedTF.locked;
   }
 
-  void toggleDurationLock(TLDuration tlDuration) {
-    if (tlDuration.lock == FramedTF.notLockable)
+  void toggleDurationLock() {
+    if (TLDuration.lock == FramedTF.notLockable)
       return;
-    if (tlDuration.lock == FramedTF.open)
-      tlDuration.lock = FramedTF.locked;
+    if (TLDuration.lock == FramedTF.open)
+      TLDuration.lock = FramedTF.locked;
     else
-      tlDuration.lock = FramedTF.open;
+      TLDuration.lock = FramedTF.open;
     if (TLShots.lock == FramedTF.locked)
       TLShots.lock = FramedTF.open;
     TLShots.updateSlider();
-    tlDuration.updateSlider();
+    TLDuration.updateSlider();
   }
   void lockDuration() {
     if (TLShots.lock == FramedTF.locked)
       TLShots.lock = FramedTF.open;
-    tlDuration.lock = FramedTF.locked;
-
+    TLDuration.lock = FramedTF.locked;
   }
 
 }
