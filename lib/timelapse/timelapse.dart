@@ -17,15 +17,21 @@ class TimelapseScreen extends StatefulWidget {
 
 class _TimelapseScreenState extends State<TimelapseScreen> with SingleTickerProviderStateMixin {
   TabController _tabController;
-
+  static int _tabIndex = 0;
 
   @override
   void initState() {
     _tabController = TabController(
       length: 2,
-      initialIndex: 0,
+      initialIndex: _tabIndex,
       vsync: this,
     );
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        _tabIndex++;
+        _tabIndex %= 2;
+      }
+    });
     super.initState();
   }
 
@@ -59,6 +65,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> with SingleTickerProv
               ),
             ],
             indicatorColor: Colors.white,
+            indicatorPadding: const EdgeInsets.only(left: 15, right: 15),
             indicatorWeight: 0.5,
           ),
         ),
