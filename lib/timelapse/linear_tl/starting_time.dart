@@ -1,14 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:sliderappflutter/timelapse/framed_textfield.dart';
-import 'package:sliderappflutter/timelapse/interval_duration_shots.dart';
+import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
-import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/custom_text_editing_controller.dart';
 import 'package:sliderappflutter/utilities/switch.dart';
-import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class StartingTime extends StatefulWidget {
@@ -23,17 +19,24 @@ class StartingTimeState extends State<StartingTime> {
   var _startMinutesTEC = CustomTextEditingController();
   var _endHoursTSC = CustomTextEditingController();
   var _endMMinutesTSC = CustomTextEditingController();
+  Timer _timer;
 
   @override
   void initState() {
     calcTime();
-    Timer.periodic(
+    _timer = Timer.periodic(
       Duration(seconds: 10),
           (Timer t) => setState(() {
         calcTime();
       },),);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void calcTime() {

@@ -19,11 +19,12 @@ class MyTextStyle {
       letterSpacing: letterSpacing,
     );
   }
-  static TextStyle normalStdSize() {
+  static TextStyle normalStdSize({double letterSpacing = 0}) {
     return TextStyle(
       color: color,
       fontFamily: 'Roboto',
       fontWeight: FontWeight.w200,
+      letterSpacing: letterSpacing,
     );
   }
 

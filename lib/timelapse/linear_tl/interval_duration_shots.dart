@@ -1,5 +1,4 @@
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
-import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 

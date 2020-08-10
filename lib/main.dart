@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
-import 'package:sliderappflutter/timelapse/interval_duration_shots.dart';
+import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 
 import 'Settings/settings.dart';
 import 'advanced_timelapse/advanced_timelapse.dart';
