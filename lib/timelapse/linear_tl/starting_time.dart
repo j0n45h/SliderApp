@@ -26,9 +26,12 @@ class StartingTimeState extends State<StartingTime> {
     calcTime();
     _timer = Timer.periodic(
       Duration(seconds: 10),
-          (Timer t) => setState(() {
-        calcTime();
-      },),);
+      (Timer t) => setState(
+        () {
+          if (!StartTime.picked) calcTime();
+        },
+      ),
+    );
 
     super.initState();
   }
@@ -40,10 +43,19 @@ class StartingTimeState extends State<StartingTime> {
   }
 
   void calcTime() {
-    _startHoursTEC.text = DateTime.now().hour.toString();
-    _startMinutesTEC.text = DateTime.now().minute.toString();
+    // if time is not picked use current time
+    DateTime sTime;
+    if (StartTime.picked)
+      sTime = StartTime.time;
+    else
+      sTime = DateTime.now();
 
-    var endTime = DateTime.now().add(TLDuration.duration);
+    // Set fist TF
+    _startHoursTEC.text = sTime.hour.toString();
+    _startMinutesTEC.text = sTime.minute.toString();
+
+    // Calc ending time and set second TF
+    var endTime = sTime.add(TLDuration.duration);
     _endHoursTSC.text = endTime.hour.toString();
     _endMMinutesTSC.text = endTime.minute.toString();
   }
@@ -57,11 +69,11 @@ class StartingTimeState extends State<StartingTime> {
         Row(
           children: <Widget>[
             MySwitch(
-              value: boolean,
+              value: StartTime.picked,
               onChanged: (bool value) {
                 print(value);
                 setState(() {
-                  boolean = !boolean;
+                  StartTime.picked = !StartTime.picked;
                 });
               },
             ),
@@ -75,30 +87,56 @@ class StartingTimeState extends State<StartingTime> {
         Padding(
           padding: const EdgeInsets.only(right: 25),
           child: Row(
-              children: <Widget>[
-                ClickableFramedTF(
-                  hoursTEC: _startHoursTEC,
-                  minutesTEC: _startMinutesTEC,
-                  width: 95,
-                  tfWidth: 25,
+            children: <Widget>[
+              ClickableFramedTF(
+                // TODO change to Text widget and add AM/PM
+                hoursTEC: _startHoursTEC,
+                minutesTEC: _startMinutesTEC,
+                width: 95,
+                tfWidth: 25,
+                onTap: _showTimePicker,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 8, right: 8),
+                child: Text(
+                  '-',
+                  style: MyTextStyle.fet(fontSize: 12),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(left: 8, right: 8),
-                  child: Text(
-                    '-',
-                    style: MyTextStyle.fet(fontSize: 12),
-                  ),
-                ),
-                ClickableFramedTF(
-                  hoursTEC: _endHoursTSC,
-                  minutesTEC: _endMMinutesTSC,
-                  width: 95,
-                  tfWidth: 25,
-                ),
-              ],
-            ),
+              ),
+              ClickableFramedTF(
+                hoursTEC: _endHoursTSC,
+                minutesTEC: _endMMinutesTSC,
+                width: 95,
+                tfWidth: 25,
+              ),
+            ],
+          ),
         ),
       ],
     );
+  }
+
+  Future<void> _showTimePicker() async { // TODO make ios and Android different
+    if (StartTime.time == null) StartTime.time = DateTime.now();
+
+    final picked = await showTimePicker( // TODO change theme color to match design
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(StartTime.time),
+      helpText: 'The Time you want the Timelapse to start at',
+    );
+    if (picked != null) {
+      setState(() {
+        StartTime.time = timeOfDayToDateTime(picked);
+        calcTime();
+        StartTime.picked = true;
+      });
+    }
+  }
+
+  DateTime timeOfDayToDateTime(TimeOfDay t) {
+    final now = DateTime.now();
+    var dateTime = DateTime(now.year, now.month, now.day, t.hour, t.minute);
+    if (dateTime.isBefore(now)) dateTime.add(Duration(days: 1));
+    return dateTime;
   }
 }

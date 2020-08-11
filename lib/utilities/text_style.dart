@@ -3,7 +3,7 @@ import 'package:sliderappflutter/utilities/colors.dart';
 
 class MyTextStyle {
   static double fontSize;
-  static Color color = MyColors.font;
+  static const Color color = MyColors.font;
 
   const MyTextStyle();
 
@@ -19,9 +19,12 @@ class MyTextStyle {
       letterSpacing: letterSpacing,
     );
   }
-  static TextStyle normalStdSize({double letterSpacing = 0}) {
+  static TextStyle normalStdSize({
+    double letterSpacing = 0,
+    Color newColor = color,
+  }) {
     return TextStyle(
-      color: color,
+      color: newColor,
       fontFamily: 'Roboto',
       fontWeight: FontWeight.w200,
       letterSpacing: letterSpacing,
@@ -37,12 +40,16 @@ class MyTextStyle {
       letterSpacing: 1,
     );
   }
-  static TextStyle fetStdSize() {
+  static TextStyle fetStdSize({
+    double letterSpacing = 1,
+    Color newColor = color,
+    FontWeight fontWight = FontWeight.w300,
+  }) {
     return TextStyle(
-      color: color,
+      color: newColor,
       fontFamily: 'Roboto',
       fontWeight: FontWeight.w300,
-      letterSpacing: 1,
+      letterSpacing: letterSpacing,
     );
   }
 

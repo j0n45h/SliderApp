@@ -286,3 +286,9 @@ class LowerSlider{
     }
   }
 }
+
+
+class StartTime {
+  static DateTime time;
+  static bool picked = false;
+}
