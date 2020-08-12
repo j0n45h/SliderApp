@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 class TLData {
@@ -59,6 +60,12 @@ class TLData {
     final json = await CustomCacheManager.getTLDataAsJson();
     if (json == null) return;
     fromJson(json);
+  }
+
+  Future<void> openFromAssets() async {
+    final jsonFromAssets = await rootBundle.loadString('assets/slider_example.json');
+    final jsonOBJ = json.decode(jsonFromAssets);
+    fromJson(jsonOBJ);
   }
 
 }

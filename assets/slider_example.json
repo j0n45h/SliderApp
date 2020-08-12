@@ -1,0 +1,78 @@
+{
+  "LinearTL": [
+    {
+      "Index": 0,
+      "Interval": 6,
+      "Name": "Street",
+      "Shots": 350
+    },
+    {
+      "Index": 1,
+      "Interval": 35,
+      "Name": "Stars",
+      "Shots": 800
+    }
+  ],
+  "RampedTL": [
+    {
+      "Index": 0,
+      "Name": "Night",
+      "Points": [
+        {
+          "End": 800,
+          "Interval": 10,
+          "Start": 500
+        },
+        {
+          "End": 1800,
+          "Interval": 18,
+          "Start": 1100
+        },
+        {
+          "End": 2500,
+          "Interval": 8,
+          "Start": 2000
+        }
+      ]
+    },
+    {
+      "Index": 1,
+      "Name": "SunsetToNight",
+      "Points": [
+        {
+          "End": 800,
+          "Interval": 10,
+          "Start": 500
+        },
+        {
+          "End": 1800,
+          "Interval": 18,
+          "Start": 1100
+        },
+        {
+          "End": 2500,
+          "Interval": 8,
+          "Start": 2000
+        }
+      ]
+    }
+  ],
+  "Video": [
+    {
+      "Index": 0,
+      "Name": "Interview",
+      "Acceleration": 10,
+      "Deceleration": 40,
+      "Infinite": true,
+      "Speed": 20
+    },
+    {
+      "Index": 1,
+      "Name": "Close-up",
+      "Acceleration": 10,
+      "Deceleration": 40,
+      "Infinite": false,
+      "Speed": 10
+    }
+  ]
+}

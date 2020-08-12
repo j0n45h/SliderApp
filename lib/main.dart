@@ -20,10 +20,13 @@ void main() {
     runApp(MainPage());
 }
 
+TLData tlData;
+
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     setDefaultTimelapseValues();
+    tlData = TLData();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ProvideBtState>      (create: (context) => ProvideBtState()),
