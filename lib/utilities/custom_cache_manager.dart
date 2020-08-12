@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -8,6 +9,7 @@ import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 class CustomCacheManager extends BaseCacheManager {
   static const _addressKey = 'btDeviceAddress';
   static const _nameKey = 'btDeviceName';
+  static const _TLDataKey = 'TLData';
 
   static CustomCacheManager _instance;
 
@@ -53,6 +55,36 @@ class CustomCacheManager extends BaseCacheManager {
 
     } catch (e) {
       print('no address of last connected device: $e');
+      return null;
+    }
+  }
+
+  /// TLData
+  static storeTLDataAsJson(Map<String, dynamic> jsonOBJ) async {
+    final jsonString = json.encode(jsonOBJ);
+    try {
+      await CustomCacheManager().putFile(_TLDataKey, Uint8List.fromList(jsonString.toString().codeUnits), fileExtension: 'json');
+    } catch (e) {
+      print ('not able to store "TLData.json" in cache $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> getTLDataAsJson() async {
+    try {
+      // get file from cache
+      FileInfo cachedFile = await CustomCacheManager().getFileFromCache(_TLDataKey);
+
+      // open file
+      var stream = cachedFile.file.openRead();
+
+      // get content of file as string
+      final jsonStr = await cachedFile.file.readAsString();
+
+      // return json
+      return json.decode(jsonStr);
+
+    } catch (e) {
+      print('no json file stored in cache $e');
       return null;
     }
   }

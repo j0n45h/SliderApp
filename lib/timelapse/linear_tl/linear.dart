@@ -3,6 +3,7 @@ import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/json_handling/test_.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -270,11 +271,31 @@ class _LinearTLState extends State<LinearTL> {
             ),
             const SizedBox(height: 50),
             StartingTime(_startingTimeKey),
+            Container(
+              color: Colors.grey,
+              width: 100,
+              height: 50,
+              child: TextField(
+                controller: te,
+                autocorrect: false,
+                onChanged: (String str) => string = str,
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => TestJson.read(string),
+              color: Colors.grey,
+              height: 30,
+              minWidth: 60,
+            )
           ],
         ),
       ],
     );
   }
+
+  String string;
+
+  static TextEditingController te;
 
   void jumpCursorToEnd(TextEditingController controller) {
     controller.selection = TextSelection.fromPosition(TextPosition(

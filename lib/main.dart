@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
@@ -25,9 +26,9 @@ class MainPage extends StatelessWidget {
     setDefaultTimelapseValues();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ProvideBtState>(create: (context) => ProvideBtState()),
+        ChangeNotifierProvider<ProvideBtState>      (create: (context) => ProvideBtState()),
         ChangeNotifierProvider<ProvideLocationState>(create: (context) => ProvideLocationState()),
-        ChangeNotifierProvider<ProvideWeatherState>(create: (context) => ProvideWeatherState()),
+        ChangeNotifierProvider<ProvideWeatherState> (create: (context) => ProvideWeatherState()),
       ],
       child: MaterialApp(
         title: 'Slider',
