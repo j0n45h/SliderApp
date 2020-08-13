@@ -279,7 +279,23 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                 ),
                 const SizedBox(height: 50),
                 StartingTime(_startingTimeKey),
-                const SizedBox(height: 60),
+                // const SizedBox(height: 60),
+                Container(
+                  color: Colors.grey,
+                  width: 100,
+                  height: 50,
+                  child: TextField(
+                    controller: te,
+                    autocorrect: false,
+                    onChanged: (String str) => string = str,
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () => TestJson.read(string),
+                  color: Colors.green,
+                  height: 30,
+                  minWidth: 60,
+                ),
               ],
             ),
             Padding(
@@ -322,41 +338,6 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Slider(
-                onChanged: (double value) {
-                  setState(() {
-                    LowerSlider.onChanged(value);
-                    _startingTimeKey.currentState.calcTime();
-                  });
-                },
-                onChangeStart: (_) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                activeColor: MyColors.slider,
-                inactiveColor: Colors.grey,
-                value: LowerSlider.value,
-              ),
-            ),
-            const SizedBox(height: 50),
-            StartingTime(_startingTimeKey),
-            Container(
-              color: Colors.grey,
-              width: 100,
-              height: 50,
-              child: TextField(
-                controller: te,
-                autocorrect: false,
-                onChanged: (String str) => string = str,
-              ),
-            ),
-            MaterialButton(
-              onPressed: () => TestJson.read(string),
-              color: Colors.green,
-              height: 30,
-              minWidth: 60,
-            )
           ],
         ),
       ],
