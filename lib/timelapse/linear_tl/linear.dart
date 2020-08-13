@@ -4,17 +4,19 @@ import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/json_handling/test_.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
-class LinearTL extends StatefulWidget {
+class LinearTLScreen extends StatefulWidget {
   @override
-  _LinearTLState createState() => _LinearTLState();
+  _LinearTLScreenState createState() => _LinearTLScreenState();
 }
 
-class _LinearTLState extends State<LinearTL> {
+class _LinearTLScreenState extends State<LinearTLScreen> {
   static double tfHeight = 30;
   final GlobalKey<StartingTimeState> _startingTimeKey = GlobalKey();
+
 
   @override
   Widget build(BuildContext context) {
@@ -320,11 +322,49 @@ class _LinearTLState extends State<LinearTL> {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: Slider(
+                onChanged: (double value) {
+                  setState(() {
+                    LowerSlider.onChanged(value);
+                    _startingTimeKey.currentState.calcTime();
+                  });
+                },
+                onChangeStart: (_) {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                activeColor: MyColors.slider,
+                inactiveColor: Colors.grey,
+                value: LowerSlider.value,
+              ),
+            ),
+            const SizedBox(height: 50),
+            StartingTime(_startingTimeKey),
+            Container(
+              color: Colors.grey,
+              width: 100,
+              height: 50,
+              child: TextField(
+                controller: te,
+                autocorrect: false,
+                onChanged: (String str) => string = str,
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => TestJson.read(string),
+              color: Colors.green,
+              height: 30,
+              minWidth: 60,
+            )
           ],
         ),
       ],
     );
   }
+
+  String string;
+  static TextEditingController te;
 
   void jumpCursorToEnd(TextEditingController controller) {
     controller.selection = TextSelection.fromPosition(

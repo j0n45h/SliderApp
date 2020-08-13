@@ -2,13 +2,33 @@ import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 
-void setDefaultTimelapseValues(){
-  TLInterval.tfController.text = '10';
-  TLDuration.hoursTFController.text = '1';
-  TLDuration.minutesTFController.text = '30';
-  TLInterval.onTFEdited();
-  TLDuration.onTFEdited();
+class SetUpLinearTL {
+  static void setToDefaultValues() {
+    TLInterval.tfController.text = '12';
+    TLDuration.hoursTFController.text = '1';
+    TLDuration.minutesTFController.text = '30';
+    TLInterval.onTFEdited();
+    TLDuration.onTFEdited();
+  }
+
+  static void loadData(LinearTL linearTL) {
+    print(linearTL.interval.toString());
+    TLInterval.tfController.text = linearTL.interval.toString();
+    TLInterval.interval = linearTL.interval;
+    TLShots.tfController.text =  linearTL.shots.toString();
+    TLShots.shots = linearTL.shots;
+    TLShots.onTFEdited();
+    TLInterval.onTFEdited();
+  }
+
+  static LinearTL getData(){
+    return LinearTL(
+      interval: TLInterval.interval,
+      shots: TLShots.shots,
+    );
+  }
 }
 
 class TLInterval{ /// Interval
