@@ -73,7 +73,7 @@ class _TimelapseScreenState extends State<TimelapseScreen> with SingleTickerProv
         body: TabBarView(
           controller: _tabController,
           children: [
-            LinearTL(),
+            LinearTLScreen(),
             RampedTL(),
           ],
         ),

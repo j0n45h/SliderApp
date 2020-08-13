@@ -7,14 +7,15 @@ import 'package:sliderappflutter/utilities/json_handling/test_.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
-class LinearTL extends StatefulWidget {
+class LinearTLScreen extends StatefulWidget {
   @override
-  _LinearTLState createState() => _LinearTLState();
+  _LinearTLScreenState createState() => _LinearTLScreenState();
 }
 
-class _LinearTLState extends State<LinearTL> {
+class _LinearTLScreenState extends State<LinearTLScreen> {
   static double tfHeight = 30;
   final GlobalKey<StartingTimeState> _startingTimeKey = GlobalKey();
+
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +295,6 @@ class _LinearTLState extends State<LinearTL> {
   }
 
   String string;
-
   static TextEditingController te;
 
   void jumpCursorToEnd(TextEditingController controller) {
@@ -336,5 +336,4 @@ class _LinearTLState extends State<LinearTL> {
       TLShots.lock = FramedTF.open;
     TLDuration.lock = FramedTF.locked;
   }
-
 }

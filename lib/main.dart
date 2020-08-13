@@ -25,7 +25,7 @@ TLData tlData;
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    setDefaultTimelapseValues();
+    SetUpLinearTL.setToDefaultValues();
     tlData = TLData();
     return MultiProvider(
       providers: [
