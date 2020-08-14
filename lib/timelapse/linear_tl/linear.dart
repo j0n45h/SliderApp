@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
+import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/json_handling/test_.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
@@ -296,57 +297,13 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
             const SizedBox(height: 42)
           ],
         ),
-        Container(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black.withOpacity(0.05), Colors.black54, Colors.black87],
-              ),
-            ),
-            height: 40,
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                RawMaterialButton(
-                  padding: const EdgeInsets.only(left: 50, right: 50),
-                  child: Text(
-                    'SAVE',
-                    style: MyTextStyle.fetStdSize(
-                      letterSpacing: 6,
-                      newColor: Colors.black,
-                      fontWight: FontWeight.w400,
-                    ),
-                  ),
-                  fillColor: Colors.white,
-                  onPressed: () {
-                    print('pressed Save');
-                  },
-                  shape: StadiumBorder(),
-                ),
-                const SizedBox(width: 32),
-                RawMaterialButton(
-                  padding: const EdgeInsets.only(left: 50, right: 50),
-                  child: Text(
-                    'START',
-                    style: MyTextStyle.fetStdSize(
-                      letterSpacing: 6,
-                      newColor: Colors.black,
-                      fontWight: FontWeight.w400,
-                    ),
-                  ),
-                  fillColor: Color(0xff00FF5F),
-                  onPressed: () {
-                    print('pressed Start');
-                  },
-                  shape: StadiumBorder(),
-                ),
-              ],
-            ),
-          ),
+        SaveAndStartButtons(
+          onPressSave: () {
+            print('pressed Save');
+          },
+          onPressStart: () {
+            print('pressed Start');
+          },
         ),
       ],
     );
