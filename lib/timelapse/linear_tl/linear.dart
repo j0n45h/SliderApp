@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sliderappflutter/main.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
 import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-import 'package:sliderappflutter/utilities/json_handling/test_.dart';
+import 'package:sliderappflutter/utilities/save_preset_dialog.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -29,7 +30,6 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
 //              ),
 //            ),
         ListView(
-          // shrinkWrap: true,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 25, 20, 10),
@@ -277,30 +277,13 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
             ),
             const SizedBox(height: 50),
             StartingTime(_startingTimeKey),
-            // const SizedBox(height: 60),
-            Container(
-              color: Colors.grey,
-              width: 100,
-              height: 50,
-              child: TextField(
-                controller: te,
-                autocorrect: false,
-                onChanged: (String str) => string = str,
-              ),
-            ),
-            MaterialButton(
-              onPressed: () => TestJson.read(string),
-              color: Colors.green,
-              height: 30,
-              minWidth: 60,
-            ),
+            const SizedBox(height: 60),
+
             const SizedBox(height: 42)
           ],
         ),
         SaveAndStartButtons(
-          onPressSave: () {
-            print('pressed Save');
-          },
+          onPressSave: () => _saveSettings(),
           onPressStart: () {
             print('pressed Start');
           },
@@ -308,9 +291,6 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
       ],
     );
   }
-
-  String string;
-  static TextEditingController te;
 
   void jumpCursorToEnd(TextEditingController controller) {
     controller.selection = TextSelection.fromPosition(
@@ -346,5 +326,26 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
   void lockDuration() {
     if (TLShots.lock == FramedTF.locked) TLShots.lock = FramedTF.open;
     TLDuration.lock = FramedTF.locked;
+  }
+
+  Future<void> _saveSettings() async {
+    final thisLinearTL = SetUpLinearTL.getData();
+    var presetName = TextEditingController();
+
+    await showDialog(
+        context: context,
+        child: SaveTLDialog(
+          presetName: presetName,
+          onDone: () {
+            if(presetName.toString().isEmpty)
+              thisLinearTL.name = 'Unnamed';
+            else
+              thisLinearTL.name = presetName.toString();
+          },
+        ),
+    );
+    thisLinearTL.index = tlData.linearTL.length;
+    tlData.linearTL.add(thisLinearTL);
+    tlData.saveToCache();
   }
 }

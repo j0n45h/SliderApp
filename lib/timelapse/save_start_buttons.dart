@@ -1,13 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class SaveAndStartButtons extends StatelessWidget {
   final VoidCallback onPressSave;
   final VoidCallback onPressStart;
-  const SaveAndStartButtons({
-    this.onPressSave,
-    this.onPressStart
-  });
+
+  const SaveAndStartButtons({this.onPressSave, this.onPressStart});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,11 @@ class SaveAndStartButtons extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black.withOpacity(0.05), Colors.black54, Colors.black87],
+            colors: [
+              Colors.black.withOpacity(0.05),
+              Colors.black54,
+              Colors.black87
+            ],
           ),
         ),
         height: 40,
@@ -39,6 +43,7 @@ class SaveAndStartButtons extends StatelessWidget {
               fillColor: Colors.white,
               onPressed: onPressSave,
               shape: StadiumBorder(),
+              elevation: 12,
             ),
             const SizedBox(width: 32),
             RawMaterialButton(
@@ -54,6 +59,7 @@ class SaveAndStartButtons extends StatelessWidget {
               fillColor: Color(0xff00FF5F),
               onPressed: onPressStart,
               shape: StadiumBorder(),
+              elevation: 12,
             ),
           ],
         ),
