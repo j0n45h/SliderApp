@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
 import 'package:sliderappflutter/utilities/custom_text_editing_controller.dart';
@@ -9,6 +11,7 @@ import 'package:sliderappflutter/utilities/text_style.dart';
 
 class StartingTime extends StatefulWidget {
   StartingTime(Key key) : super(key: key);
+
   @override
   StartingTimeState createState() => StartingTimeState();
 }
@@ -94,7 +97,7 @@ class StartingTimeState extends State<StartingTime> {
                 minutesTEC: _startMinutesTEC,
                 width: 95,
                 tfWidth: 25,
-                onTap: _showTimePicker,
+                onTap: () => _showTimePicker(context),
               ),
               Container(
                 margin: const EdgeInsets.only(left: 8, right: 8),
@@ -116,10 +119,31 @@ class StartingTimeState extends State<StartingTime> {
     );
   }
 
-  Future<void> _showTimePicker() async { // TODO make ios and Android different
+  Future<void> _showTimePicker(BuildContext context) async {
+    // TODO make ios and Android different
     if (StartTime.time == null) StartTime.time = DateTime.now();
 
-    final picked = await showTimePicker( // TODO change theme color to match design
+    final picked = await showTimePicker(
+      // TODO change theme color to match design
+      builder: (context, widget) {
+        return Theme(
+          data: ThemeData(
+            primarySwatch: Colors.lime,
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: Colors.white60,
+              dialBackgroundColor: Colors.white70,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              hourMinuteShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              dayPeriodShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              dayPeriodBorderSide: BorderSide().copyWith(width: 0.4, color: Colors.white30)
+            )
+          ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+            child: widget,
+          ),
+        );
+      },
       context: context,
       initialTime: TimeOfDay.fromDateTime(StartTime.time),
       helpText: 'The Time you want the Timelapse to start at',
