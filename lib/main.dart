@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
@@ -27,6 +29,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     SetUpLinearTL.setToDefaultValues();
     tlData = TLData();
+    tlData.getFromCache();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ProvideBtState>      (create: (context) => ProvideBtState()),
@@ -37,6 +40,7 @@ class MainPage extends StatelessWidget {
         title: 'Slider',
         theme: ThemeData(
           primarySwatch: Colors.deepOrange,
+          platform: TargetPlatform.iOS,
         ),
         initialRoute: TimelapseScreen.routeName,
         routes: {
