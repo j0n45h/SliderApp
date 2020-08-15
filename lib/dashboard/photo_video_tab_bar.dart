@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/main.dart';
+import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
+import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -14,8 +16,6 @@ class _PhotoVideoTabBarState extends State<PhotoVideoTabBar>
   static int _tabIndex = 0;
   static var photoListTitle = List<PhotoListTitle>();
   Future<bool> futureList;
-
-
 
   @override
   void initState() {
@@ -33,17 +33,16 @@ class _PhotoVideoTabBarState extends State<PhotoVideoTabBar>
   }
 
   Future<bool> makeList() async {
-    if (!tlData.dataHasBeenLoaded)
-      await tlData.openFromAssets();
+    if (!tlData.dataHasBeenLoaded) await tlData.openFromAssets();
 
     /// Photo List
     photoListTitle.clear();
-    for(int i=0; i<tlData.linearTL.length; i++)
+    for (int i = 0; i < tlData.linearTL.length; i++)
       photoListTitle.add(PhotoListTitle(
         index: tlData.linearTL[i].index,
         linearTL: tlData.linearTL[i],
       ));
-    for(int i=0; i<tlData.rampedTL.length; i++){
+    for (int i = 0; i < tlData.rampedTL.length; i++) {
       photoListTitle.add(PhotoListTitle(
         index: tlData.rampedTL[i].index,
         rampedTL: tlData.rampedTL[i],
@@ -98,24 +97,32 @@ class _PhotoVideoTabBarState extends State<PhotoVideoTabBar>
                         if (preset.linearTL != null)
                           return ListTile(
                             title: Text(preset.linearTL.name,
-                                style: MyTextStyle.normal(fontSize: 18)),
+                                style: MyTextStyle.normal(fontSize: 18),
+                            ),
                             subtitle: Text(
                               'Linear TL',
                               style: MyTextStyle.normalStdSize(
                                   newColor: Colors.white),
                             ),
-                            onTap: () => print('taped: ${preset.linearTL.name}'),
+                            onTap: () =>
+                                loadLinearTlPreset(context, preset.linearTL),
                           );
                         else
                           return ListTile(
-                            title: Text(preset.rampedTL.name, style: MyTextStyle.normal(fontSize: 18),),
-                            subtitle: Text('Ramped TL', style: MyTextStyle.normalStdSize(),),
-                            onTap: () => print('paped: ${preset.linearTL.name}'),
+                            title: Text(
+                              preset.rampedTL.name,
+                              style: MyTextStyle.normal(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              'Ramped TL',
+                              style: MyTextStyle.normalStdSize(),
+                            ),
+                            onTap: () =>
+                                print('paped: ${preset.linearTL.name}'),
                           );
                       },
                     );
-                  }
-                  else
+                  } else
                     return Center(
                       child: Text(
                         'Save a Timelapse-Preset to see it in this List',
@@ -127,20 +134,20 @@ class _PhotoVideoTabBarState extends State<PhotoVideoTabBar>
               FutureBuilder(
                 future: futureList,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData){
+                  if (snapshot.hasData) {
                     return ListView.builder(
                       itemCount: tlData.video.length,
                       itemBuilder: (context, index) {
                         var preset = tlData.video[index];
                         return ListTile(
-                          title: Text(preset.name,
+                          title: Text(
+                            preset.name,
                             style: MyTextStyle.normal(fontSize: 18),
                           ),
                         );
                       },
                     );
-                  }
-                  else
+                  } else
                     return Center(
                       child: Text(
                         'Save a Video-Preset to see it in this List',
@@ -155,10 +162,16 @@ class _PhotoVideoTabBarState extends State<PhotoVideoTabBar>
       ],
     );
   }
+
+  void loadLinearTlPreset(BuildContext context, LinearTL linearTL) {
+    SetUpLinearTL.loadData(linearTL);
+    Navigator.of(context).pushNamed(TimelapseScreen.routeName);
+  }
 }
 
 class PhotoListTitle {
   PhotoListTitle({this.index, this.linearTL, this.rampedTL});
+
   int index;
   LinearTL linearTL;
   RampedTL rampedTL;
