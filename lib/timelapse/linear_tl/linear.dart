@@ -331,20 +331,25 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
   Future<void> _saveSettings() async {
     final thisLinearTL = SetUpLinearTL.getData();
     var presetName = TextEditingController();
+    bool skip = true;
 
     await showDialog(
         context: context,
         child: SaveTLDialog(
           presetName: presetName,
           onDone: () {
-            if(presetName.toString().isEmpty)
+            if(presetName.text.isEmpty)
               thisLinearTL.name = 'Unnamed';
             else
-              thisLinearTL.name = presetName.toString();
+              thisLinearTL.name = presetName.text.toString();
+            skip = false;
           },
         ),
     );
-    thisLinearTL.index = tlData.linearTL.length;
+
+    if (skip) return; // skips saving step when dialog dismissed
+
+    thisLinearTL.index = tlData.linearTL.length + tlData.rampedTL.length;
     tlData.linearTL.add(thisLinearTL);
     tlData.saveToCache();
   }

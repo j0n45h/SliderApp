@@ -9,6 +9,8 @@ class TLData {
   List<RampedTL> rampedTL;
   List<Video> video;
 
+  bool dataHasBeenLoaded = false;
+
   TLData() {
     linearTL = new List<LinearTL>();
     rampedTL = new List<RampedTL>();
@@ -56,16 +58,24 @@ class TLData {
     CustomCacheManager.storeTLDataAsJson(json);
   }
 
-  Future<void> getFromCache() async {
+  Future<bool> getFromCache() async {
     final json = await CustomCacheManager.getTLDataAsJson();
-    if (json == null) return;
+    print('got json: ${json.toString()}');
+    if (json == null) {
+      print('json == null');
+      return false;
+    }
     fromJson(json);
+    dataHasBeenLoaded = true;
+    return true;
   }
 
-  Future<void> openFromAssets() async {
+  Future<bool> openFromAssets() async {
     final jsonFromAssets = await rootBundle.loadString('assets/slider_example.json');
     final jsonOBJ = json.decode(jsonFromAssets);
     fromJson(jsonOBJ);
+    dataHasBeenLoaded = true;
+    return true;
   }
 
 }

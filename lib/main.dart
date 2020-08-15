@@ -24,12 +24,24 @@ void main() {
 
 TLData tlData;
 
-class MainPage extends StatelessWidget {
+
+
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+
+  @override
+  void initState() {
+    tlData = TLData();
+    SetUpLinearTL.setToDefaultValues();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    SetUpLinearTL.setToDefaultValues();
-    tlData = TLData();
-    tlData.getFromCache();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ProvideBtState>      (create: (context) => ProvideBtState()),
@@ -42,7 +54,7 @@ class MainPage extends StatelessWidget {
           primarySwatch: Colors.deepOrange,
           platform: TargetPlatform.iOS,
         ),
-        initialRoute: TimelapseScreen.routeName,
+        // initialRoute: TimelapseScreen.routeName,
         routes: {
           MyDrawer.routeName: (_) => MyDrawer(),
           DashboardScreen.routeName: (_) => DashboardScreen(),

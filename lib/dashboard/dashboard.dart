@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sliderappflutter/dashboard/bluetooth_box.dart';
 import 'package:sliderappflutter/dashboard/circular_battery_indicator.dart';
+import 'package:sliderappflutter/dashboard/photo_video_tab_bar.dart';
 import 'package:sliderappflutter/dashboard/sun_position_wave.dart';
 import 'package:sliderappflutter/dashboard/sunrisesunset_icons.dart';
 import 'package:sliderappflutter/dashboard/weather_widget.dart';
@@ -12,6 +13,7 @@ import 'package:sliderappflutter/utilities/colors.dart';
 
 class DashboardScreen extends StatelessWidget {
   static const routeName = '/';
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +92,8 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SunriseSunsetIcons(),
               const SunPositionWave(),
+              const SizedBox(height: 20),
+              PhotoVideoTabBar(),
             ],
           ),
         ],
