@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/main.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
+import 'package:sliderappflutter/timelapse/linear_tl/linear.dart';
 import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
@@ -165,6 +166,7 @@ class _PhotoVideoTabBarState extends State<PhotoVideoTabBar>
 
   void loadLinearTlPreset(BuildContext context, LinearTL linearTL) {
     SetUpLinearTL.loadData(linearTL);
+    TimelapseScreenState.tabIndex = 0;
     Navigator.of(context).pushNamed(TimelapseScreen.routeName);
   }
 }
