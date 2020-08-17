@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
-import 'package:sliderappflutter/utilities/custom_text_editing_controller.dart';
 import 'package:sliderappflutter/utilities/switch.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -17,18 +16,14 @@ class StartingTime extends StatefulWidget {
 }
 
 class StartingTimeState extends State<StartingTime> {
-  bool boolean = false;
-  var _startHoursTEC = CustomTextEditingController();
-  var _startMinutesTEC = CustomTextEditingController();
-  var _endHoursTSC = CustomTextEditingController();
-  var _endMMinutesTSC = CustomTextEditingController();
   Timer _timer;
+  DateTime _startTime, _endTime;
 
   @override
   void initState() {
     calcTime();
     _timer = Timer.periodic(
-      Duration(seconds: 10),
+      Duration(seconds: 2),
       (Timer t) => setState(
         () {
           if (!StartTime.picked) calcTime();
@@ -47,20 +42,13 @@ class StartingTimeState extends State<StartingTime> {
 
   void calcTime() {
     // if time is not picked use current time
-    DateTime sTime;
     if (StartTime.picked)
-      sTime = StartTime.time;
+      _startTime = StartTime.time;
     else
-      sTime = DateTime.now();
-
-    // Set fist TF
-    _startHoursTEC.text = sTime.hour.toString();
-    _startMinutesTEC.text = sTime.minute.toString();
+      _startTime = DateTime.now();
 
     // Calc ending time and set second TF
-    var endTime = sTime.add(TLDuration.duration);
-    _endHoursTSC.text = endTime.hour.toString();
-    _endMMinutesTSC.text = endTime.minute.toString();
+    _endTime = _startTime.add(TLDuration.duration);
   }
 
   @override
@@ -91,12 +79,8 @@ class StartingTimeState extends State<StartingTime> {
           padding: const EdgeInsets.only(right: 25),
           child: Row(
             children: <Widget>[
-              ClickableFramedTF(
-                // TODO change to Text widget and add AM/PM
-                hoursTEC: _startHoursTEC,
-                minutesTEC: _startMinutesTEC,
-                width: 95,
-                tfWidth: 25,
+              ClickableFramedTimeField(
+                time: _startTime,
                 onTap: () => _showTimePicker(context),
               ),
               Container(
@@ -106,11 +90,8 @@ class StartingTimeState extends State<StartingTime> {
                   style: MyTextStyle.fet(fontSize: 12),
                 ),
               ),
-              ClickableFramedTF(
-                hoursTEC: _endHoursTSC,
-                minutesTEC: _endMMinutesTSC,
-                width: 95,
-                tfWidth: 25,
+              ClickableFramedTimeField(
+                time: _endTime,
               ),
             ],
           ),
