@@ -80,8 +80,8 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                             alignment: Alignment.center,
                             width: 40,
                             height: 10,
-//                              padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
-                            //                             margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
+//                          padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
+//                          margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
                             child: Text(
                               (TLVideo.fps).toString() + 'fps',
                               style: MyTextStyle.normal(fontSize: 10),

@@ -13,8 +13,8 @@ class ClickableFramedTimeField extends StatelessWidget {
     Key key,
     this.time,
     this.onTap,
-    this.width   = 98,
-    this.height  = 30,
+    this.width  = 98,
+    this.height = 30,
   }) : super(key: key); // add Popup
 
   @override

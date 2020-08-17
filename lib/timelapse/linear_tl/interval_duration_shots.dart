@@ -205,6 +205,9 @@ class TLShots{ /// Shots
     updateSlider();
     TLVideo.update();
   }
+  static void updateFromVideo() {
+    _updateTF();
+  }
 
   static void _reCalc(){
     shots = (TLDuration.duration.inSeconds / TLInterval.interval).round();
@@ -241,7 +244,6 @@ class TLVideo{
   static void toggleFPS() {
     _fpsIndex++;
     _fpsIndex %= _fpsArray.length;
-    // if (_fpsIndex >= _fpsArray.length) _fpsIndex = 0;
     update();
   }
 
@@ -251,6 +253,7 @@ class TLVideo{
       tfController.text = '1';
       videoLength = 1;
     }
+    TLShots.shots = videoLength * fps;
     updateSlider();
     _notifyChange();
   }
@@ -269,7 +272,7 @@ class TLVideo{
   }
 
   static void _notifyChange() {
-    TLShots.update();
+    TLShots.updateFromVideo();
   }
   static void _reCalc() {
     videoLength = (TLShots.shots / fps).round();
