@@ -55,3 +55,35 @@ class ClickableFramedTF extends StatelessWidget {
     );
   }
 }
+
+
+class ClickableFramedTimeField extends StatelessWidget {
+  final GestureTapCallback onTap;
+  final String time;
+  final double width, tfWidth, height;
+
+  const ClickableFramedTimeField({
+    Key key,
+    this.time = '-- : --',
+    this.onTap,
+    this.tfWidth = 25,
+    this.width   = 100,
+    this.height  = 30,
+  }) : super(key: key); // add Popup
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: onTap,
+      child: FramedTextField(
+        width: width,
+        height: height,
+        textField: Text(
+          time,
+          style: MyTextStyle.normal(fontSize: 12),
+        ),
+      ),
+    );
+  }
+}

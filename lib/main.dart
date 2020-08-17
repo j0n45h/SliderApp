@@ -54,7 +54,7 @@ class _MainPageState extends State<MainPage> {
           primarySwatch: Colors.deepOrange,
           platform: TargetPlatform.iOS,
         ),
-        // initialRoute: TimelapseScreen.routeName,
+        initialRoute: TimelapseScreen.routeName,
         routes: {
           MyDrawer.routeName: (_) => MyDrawer(),
           DashboardScreen.routeName: (_) => DashboardScreen(),

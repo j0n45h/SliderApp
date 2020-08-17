@@ -232,7 +232,7 @@ class TLVideo{
   static var tfController = TextEditingController();
 
   static int _fpsIndex = 0;
-  static List<int> _fpsArray = [24, 25, 30, 50, 60, 100, 120];
+  static const List<int> _fpsArray = [24, 25, 30, 50, 60, 100, 120];
 
   static int get fps {
     return _fpsArray[_fpsIndex];
@@ -240,7 +240,8 @@ class TLVideo{
 
   static void toggleFPS() {
     _fpsIndex++;
-    if (_fpsIndex >= _fpsArray.length) _fpsIndex = 0;
+    _fpsIndex %= _fpsArray.length;
+    // if (_fpsIndex >= _fpsArray.length) _fpsIndex = 0;
     update();
   }
 
