@@ -7,6 +7,7 @@ import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dar
 import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
 import 'package:sliderappflutter/utilities/switch.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
+import 'package:sliderappflutter/utilities/timepicker.dart';
 
 class StartingTime extends StatefulWidget {
   StartingTime(Key key) : super(key: key);
@@ -42,8 +43,11 @@ class StartingTimeState extends State<StartingTime> {
 
   void calcTime() {
     // if time is not picked use current time
-    if (StartTime.picked)
+    if (StartTime.picked) {
+      if (StartTime.time.isBefore(DateTime.now()))
+        StartTime.time = DateTime.now();
       _startTime = StartTime.time;
+    }
     else
       _startTime = DateTime.now();
 
@@ -101,47 +105,33 @@ class StartingTimeState extends State<StartingTime> {
   }
 
   Future<void> _showTimePicker(BuildContext context) async {
-    // TODO make ios and Android different
-    if (StartTime.time == null) StartTime.time = DateTime.now();
-
-    final picked = await showTimePicker(
-      // TODO change theme color to match design
-      builder: (context, widget) {
-        return Theme(
-          data: ThemeData(
-            primarySwatch: Colors.lime,
-            timePickerTheme: TimePickerThemeData(
-              backgroundColor: Colors.white60,
-              dialBackgroundColor: Colors.white70,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              hourMinuteShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              dayPeriodShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              dayPeriodBorderSide: BorderSide().copyWith(width: 0.4, color: Colors.white30)
-            )
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
-            child: widget,
-          ),
-        );
-      },
+    final timePicker = TimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(StartTime.time),
-      helpText: 'The Time you want the Timelapse to start at',
+      hintPickedNextDay: true,
+      initialTime: TimeOfDay.fromDateTime(StartTime.time) ?? null,
     );
-    if (picked != null) {
-      setState(() {
-        StartTime.time = timeOfDayToDateTime(picked);
-        calcTime();
-        StartTime.picked = true;
-      });
-    }
+
+    final pickedTime = await timePicker.show();
+
+    if (pickedTime == null)
+      return;
+
+    setState(() {
+      StartTime.time = pickedTime;
+      StartTime.picked = true;
+      calcTime();
+    });
   }
 
   DateTime timeOfDayToDateTime(TimeOfDay t) {
     final now = DateTime.now();
     var dateTime = DateTime(now.year, now.month, now.day, t.hour, t.minute);
-    if (dateTime.isBefore(now)) dateTime.add(Duration(days: 1));
+    print(dateTime.toString());
+    if (dateTime.isBefore(now)) {
+      // dateTime.add(Duration(days: 1)); // is not working
+      dateTime = DateTime(now.year, now.month, now.day + 1, t.hour, t.minute);
+    }
+    print(dateTime.toString());
     return dateTime;
   }
 }

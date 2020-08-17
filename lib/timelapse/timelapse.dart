@@ -10,7 +10,6 @@ import 'package:sliderappflutter/drawer.dart';
 
 class TimelapseScreen extends StatefulWidget {
   static const routeName = '/timelapse-screen';
-  static int tabIndex = 1;
 
   @override
   TimelapseScreenState createState() => TimelapseScreenState();
@@ -23,7 +22,7 @@ class TimelapseScreenState extends State<TimelapseScreen>
     _tabIndex = i;
     _tabIndex %= 2;
   }
-  static int _tabIndex = 0;
+  static int _tabIndex = 1;
 
   @override
   void initState() {

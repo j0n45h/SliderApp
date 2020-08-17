@@ -37,11 +37,8 @@ class _RampedTLState extends State<RampedTL> {
                       Consumer<RampedTLState>(
                         builder: (context, rampedTLState, _) =>
                             ClickableFramedTimeField(
-                          time: rampedTLState.startingTime,
-                          onTap: () {
-                            print(MediaQuery.of(context).alwaysUse24HourFormat);
-                            print(DateFormat.jm().format(DateTime.now()));
-                          },
+                              time: rampedTLState.startingTime,
+                              onTap: null,
                         ),
                       ),
                     ],
