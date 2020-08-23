@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:sliderappflutter/timelapse/ramped_tl/ramped_tl_state.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/interval_range.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/start_end_duration.dart';
 import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
-import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
-import 'package:sliderappflutter/utilities/text_style.dart';
 
 class RampedTL extends StatefulWidget {
   @override
@@ -14,45 +12,34 @@ class RampedTL extends StatefulWidget {
 class _RampedTLState extends State<RampedTL> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => RampedTLState(),
-      child: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.fromLTRB(15, 25, 15, 10),
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'START',
-                        style: MyTextStyle.normal(
-                            fontSize: 12, letterSpacing: 1.3
-                        ),
-                      ),
-                      const SizedBox(width: 18),
-                      Consumer<RampedTLState>(
-                        builder: (context, rampedTLState, _) =>
-                            ClickableFramedTimeField(
-                              time: rampedTLState.startingTime,
-                              onTap: null,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+    return Stack(
+      children: [
+        ListView(
+          padding: const EdgeInsets.fromLTRB(15, 25, 15, 10),
+          children: [
+            StartEndDuration(),
+            const SizedBox(height: 30),
+            RampingPoints(),
+            const SizedBox(height: 30),
+            IntervalRange(),
+            const SizedBox(height: 30),
+            Container(
+              height: 140,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 0.5,
+                  color: Colors.grey,
+                ),
+                borderRadius: BorderRadius.circular(5),
               ),
-            ],
-          ),
-          SaveAndStartButtons(
-            onPressSave: null,
-            onPressStart: null,
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+        SaveAndStartButtons(
+          onPressSave: null,
+          onPressStart: null,
+        ),
+      ],
     );
   }
 }

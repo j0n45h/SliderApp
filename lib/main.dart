@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
+import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
@@ -44,15 +48,35 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ProvideBtState>      (create: (context) => ProvideBtState()),
-        ChangeNotifierProvider<ProvideLocationState>(create: (context) => ProvideLocationState()),
-        ChangeNotifierProvider<ProvideWeatherState> (create: (context) => ProvideWeatherState()),
+        /// Dashboard
+        ChangeNotifierProvider<ProvideBtState>(
+          create: (context) => ProvideBtState()),
+        ChangeNotifierProvider<ProvideLocationState>(
+          create: (context) => ProvideLocationState()),
+        ChangeNotifierProvider<ProvideWeatherState>(
+          create: (context) => ProvideWeatherState()),
+
+        /// Ramoing
+        ChangeNotifierProvider<TimeState>(
+          create: (context) => TimeState()),
+        ChangeNotifierProvider<IntervalRangeState>(
+          create: (context) => IntervalRangeState()),
+        ChangeNotifierProvider<RampingPointsState>(
+          create: (context) => RampingPointsState()),
       ],
       child: MaterialApp(
         title: 'Slider',
         theme: ThemeData(
           primarySwatch: Colors.deepOrange,
           platform: TargetPlatform.iOS,
+          sliderTheme: SliderThemeData(
+            activeTrackColor: MyColors.slider,
+            thumbColor: MyColors.slider,
+            inactiveTrackColor: Colors.grey,
+            activeTickMarkColor: MyColors.slider,
+            overlayColor: MyColors.slider.withOpacity(0.2),
+            valueIndicatorColor: MyColors.slider.withOpacity(0.8),
+          ),
         ),
         initialRoute: TimelapseScreen.routeName,
         routes: {

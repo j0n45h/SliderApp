@@ -107,7 +107,9 @@ class StartingTimeState extends State<StartingTime> {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: TimeOfDay.fromDateTime(StartTime.time) ?? null,
+      initialTime: StartTime.time != null
+          ? TimeOfDay.fromDateTime(StartTime.time)
+          : null,
     );
 
     final pickedTime = await timePicker.show();

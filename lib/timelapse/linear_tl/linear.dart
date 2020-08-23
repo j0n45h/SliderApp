@@ -144,8 +144,6 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                 onChangeStart: (_) {
                   FocusScope.of(context).requestFocus(new FocusNode());
                 },
-                activeColor: MyColors.slider,
-                inactiveColor: Colors.grey,
                 value: UpperSlider.value,
               ),
             ),
@@ -270,8 +268,6 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                 onChangeStart: (_) {
                   FocusScope.of(context).requestFocus(new FocusNode());
                 },
-                activeColor: MyColors.slider,
-                inactiveColor: Colors.grey,
                 value: LowerSlider.value,
               ),
             ),
