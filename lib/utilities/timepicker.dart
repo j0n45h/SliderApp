@@ -65,7 +65,7 @@ class TimePicker { // TODO make ios and Android different
     final now = DateTime.now();
     var dateTime = DateTime(now.year, now.month, now.day, t.hour, t.minute);
 
-    if (dateTime.isBefore(now)) {
+    if (dateTime.isBefore(now.subtract(Duration(minutes: 1)))) {
       // dateTime.add(Duration(days: 1)); // is not working
       dateTime = DateTime(now.year, now.month, now.day + 1, t.hour, t.minute);
       _showSnakeBar();

@@ -67,28 +67,6 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                   Stack(
                     alignment: Alignment.centerRight,
                     children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0, 0, 3, 44),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              TLVideo.toggleFPS();
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(5),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 40,
-                            height: 10,
-//                          padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
-//                          margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
-                            child: Text(
-                              (TLVideo.fps).toString() + 'fps',
-                              style: MyTextStyle.normal(fontSize: 10),
-                            ),
-                          ),
-                        ),
-                      ),
                       Row(
                         children: <Widget>[
                           Text(
@@ -125,6 +103,28 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                             ),
                           ),
                         ],
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 0, 3, 44),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              TLVideo.toggleFPS();
+                            });
+                          },
+                          borderRadius: BorderRadius.circular(5),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 40,
+                            height: 25,
+//                          padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
+//                          margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
+                            child: Text(
+                              (TLVideo.fps).toString() + 'fps',
+                              style: MyTextStyle.normal(fontSize: 10),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

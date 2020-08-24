@@ -44,7 +44,7 @@ class IntervalRange extends StatelessWidget {
         const SizedBox(width: 10),
         FramedTextField(
           width: 70,
-          height: 26,
+          height: 25,
           textField: Consumer<IntervalRangeState>(
             builder: (context, intervalRangeState, child) => Text(
               interval.round().toString() + ' s',

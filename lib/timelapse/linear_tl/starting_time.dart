@@ -43,7 +43,7 @@ class StartingTimeState extends State<StartingTime> {
   void calcTime() {
     // if time is not picked use current time
     if (StartTime.picked) {
-      if (StartTime.time.isBefore(DateTime.now()))
+      if (StartTime.time == null || StartTime.time.isBefore(DateTime.now()))
         StartTime.time = DateTime.now();
       _startTime = StartTime.time;
     }

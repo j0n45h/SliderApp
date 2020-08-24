@@ -18,6 +18,8 @@ class VideoShotsState extends ChangeNotifier {
 
   /// Video Length
   int get videoLength {
+    if (_shots == null)
+      return null;
     return (shots/fps).round();
   }
 
@@ -30,5 +32,10 @@ class VideoShotsState extends ChangeNotifier {
 
   int get shots {
     return _shots; /// iterate through ramping points or integral of curve
+  }
+
+  void updateValues() {
+    /// TODO: async calculation of shots
+    // notifyListeners();
   }
 }

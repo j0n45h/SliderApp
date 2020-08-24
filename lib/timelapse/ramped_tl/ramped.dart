@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/interval_range.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramp_curve_preview.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/start_end_duration.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/video_shots.dart';
 import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
 
 class RampedTL extends StatefulWidget {
@@ -20,19 +22,23 @@ class _RampedTLState extends State<RampedTL> {
             StartEndDuration(),
             const SizedBox(height: 30),
             RampingPoints(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 25),
             IntervalRange(),
             const SizedBox(height: 30),
+            RampCurvePreview(),
+            const SizedBox(height: 30),
             Container(
-              height: 140,
+              padding: const EdgeInsets.only(left: 10, right: 10),
               decoration: BoxDecoration(
                 border: Border.all(
-                  width: 0.5,
                   color: Colors.grey,
+                  width: 0.5,
                 ),
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(20),
               ),
+              child: VideoShots(),
             ),
+            const SizedBox(height: 40),
           ],
         ),
         SaveAndStartButtons(

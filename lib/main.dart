@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/video_shots_state.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
@@ -63,6 +64,8 @@ class _MainPageState extends State<MainPage> {
           create: (context) => IntervalRangeState()),
         ChangeNotifierProvider<RampingPointsState>(
           create: (context) => RampingPointsState()),
+        ChangeNotifierProvider<VideoShotsState>(
+          create: (context) => VideoShotsState(),),
       ],
       child: MaterialApp(
         title: 'Slider',
