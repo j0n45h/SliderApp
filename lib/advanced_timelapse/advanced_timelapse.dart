@@ -40,7 +40,10 @@ class _AdvancedTimelapseScreenState extends State<AdvancedTimelapseScreen> {
                   left: dx,
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    child: Transform.scale(child: Icon(Icons.adjust), scale: 1,),
+                    child: Container(
+                      transform: Matrix4.translationValues(-10, 0, 0),
+                      child: Icon(Icons.adjust),
+                    ),
                     /*
                     onVerticalDragUpdate: (DragUpdateDetails details) {
                       setState(() {
