@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
@@ -86,6 +87,7 @@ class _MainPageState extends State<MainPage> {
           MyDrawer.routeName: (_) => MyDrawer(),
           DashboardScreen.routeName: (_) => DashboardScreen(),
           TimelapseScreen.routeName: (_) => TimelapseScreen(),
+          RampedGraphScreen.routeName: (_) => RampedGraphScreen(),
           AdvancedTimelapseScreen.routeName: (_) => AdvancedTimelapseScreen(),
           VideoScreen.routeName: (_) => VideoScreen(),
           ConnectionScreen.routeName: (_) => ConnectionScreen(),
