@@ -22,59 +22,54 @@ class _AdvancedTimelapseScreenState extends State<AdvancedTimelapseScreen> {
           title: Text('Advanced Timelapse'),
         ),
         drawer: MyDrawer(),
-        body: Column(
-          children: <Widget>[
-            Stack(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 300,
-                  color: Colors.amber,
-                  child: CustomPaint(
-                    painter: CurvePainter(),
-                  ),
+        body: ListView(
+          children: [
+            Column(
+              children: <Widget>[
+                Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height - 90,
+                      color: Colors.amber,
+                      child: CustomPaint(
+                        painter: CurvePainter(Offset(dx, dy)),
+                      ),
 
-                ),
-                Positioned(
-                  top: dy,
-                  left: dx,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      transform: Matrix4.translationValues(-10, 0, 0),
-                      child: Icon(Icons.adjust),
                     ),
-                    /*
-                    onVerticalDragUpdate: (DragUpdateDetails details) {
-                      setState(() {
-//                    print(details.globalPosition.dy.toString());
-                        dy = details.globalPosition.dy;
-                      });
-                    },
-                    onHorizontalDragUpdate: (DragUpdateDetails details) {
-                      setState(() {
-                        dx = details.globalPosition.dx;
-                      });
-                    },*/
-                    onPanUpdate: (DragUpdateDetails details) {
-                      setState(() {
-                        dx = details.globalPosition.dx;
-                        dy = details.globalPosition.dy - 90;
-                      });
-                    },
-                  ),
+                    Positioned(
+                      top: dy,
+                      left: dx,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onPanUpdate: (DragUpdateDetails details) {
+                          setState(() {
+                            dx += details.delta.dx;
+                            dy += details.delta.dy;
+                          });
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 30,
+                          color: Colors.red,
+                          child: Icon(Icons.adjust),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                MaterialButton(
+                  child: Text('RESET'),
+                  color: Colors.blue,
+                  onPressed: (){
+                    setState(() {
+                      dx = 50;
+                      dy = 50;
+                    });
+                  },
                 ),
               ],
-            ),
-            MaterialButton(
-              child: Text('RESET'),
-              color: Colors.blue,
-              onPressed: (){
-                setState(() {
-                  dx = 50;
-                  dy = 50;
-                });
-              },
             ),
           ],
         ),
