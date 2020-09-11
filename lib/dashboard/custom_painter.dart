@@ -42,10 +42,10 @@ class SunPath {
   static Path drawPath({Size size, bool invert = false}) {
     var path = Path();
     path.moveTo(0, size.height);
-    path.quadraticBezierTo(size.width * 1/8, size.height, size.width * 2/8, size.height/2);
-    path.quadraticBezierTo(size.width * 3/8, 0, size.width* 4/8, 0);
-    path.quadraticBezierTo(size.width * 5/8, 0, size.width * 6/8, size.height/2);
-    path.quadraticBezierTo(size.width * 7/8, size.height, size.width * 8/8, size.height);
+
+    path.cubicTo(size.width/2 * 0.3642, size.height, size.width/2 * 0.6358, 0          , size.width/2, 0);
+    path.cubicTo(size.width/2 * 1.3642, 0          , size.width/2 * 1.6358, size.height, size.width, size.height);
+
     if (invert) {
       path.lineTo(size.width, 0);
       path.lineTo(0, 0);
