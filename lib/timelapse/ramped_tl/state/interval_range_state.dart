@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/niceScale.dart';
 
 class IntervalRangeState extends ChangeNotifier {
-
   RangeValues _intervalRange = RangeValues(3, 15);
 
   set intervalRange (RangeValues rangeValues) {
@@ -15,6 +15,7 @@ class IntervalRangeState extends ChangeNotifier {
   RangeValues get intervalRange => _intervalRange;
 
 
+  /// Slider Handling
   set intervalRangeSlider (RangeValues rangeValues) {
     _intervalRange = RangeValues(
       parseValueUp(rangeValues.start),
@@ -39,4 +40,10 @@ class IntervalRangeState extends ChangeNotifier {
       value = 100;
     return sqrt((value - 1) / 99);
   }
+
+  /// Nice  Scaling
+  NiceScale getNiceValues() {
+    return NiceScale(_intervalRange.start, _intervalRange.end, 5);
+  }
+
 }

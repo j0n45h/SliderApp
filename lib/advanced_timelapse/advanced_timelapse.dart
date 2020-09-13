@@ -48,6 +48,13 @@ class _AdvancedTimelapseScreenState extends State<AdvancedTimelapseScreen> {
                             dy += details.delta.dy;
                           });
                         },
+//                        onVerticalDragUpdate: (details) {
+//                          setState(() {
+//                            print(details);
+//                            dx += details.delta.dx;
+//                            dy += details.delta.dy;
+//                          });
+//                        },
                         child: Container(
                           alignment: Alignment.center,
                           height: 30,

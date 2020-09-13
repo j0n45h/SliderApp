@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/niceScale.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
@@ -12,8 +11,7 @@ class IntervalScale extends StatelessWidget {
       builder: (context, constraints) {
         final intervalRangeState =
         Provider.of<IntervalRangeState>(context, listen: false);
-        final scale = NiceScale(intervalRangeState.intervalRange.start,
-            intervalRangeState.intervalRange.end, 5);
+        final scale = intervalRangeState.getNiceValues();
 
         List<Widget> list = [];
         final height = constraints.maxHeight;
@@ -53,7 +51,7 @@ class IntervalScale extends StatelessWidget {
               color: Colors.grey[500],
             ),
             Container(
-              width: 24,
+              width: 38,
               child: Stack(
                 alignment: Alignment.topLeft,
                 children: list,

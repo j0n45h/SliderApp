@@ -34,6 +34,10 @@ dependencies:
   path_provider: ^1.6.8
   provider: ^4.1.2
   intl: ^0.16.1
+
+  flutter_cubit: ^0.1.0
+  replay_cubit: ^0.2.0
+
   # html:
 
 dev_dependencies:

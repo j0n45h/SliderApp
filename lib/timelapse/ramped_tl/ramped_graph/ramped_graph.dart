@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/path.dart';
 
 class RampedGraph extends StatefulWidget {
   @override
@@ -11,9 +15,66 @@ class _RampedGraphState extends State<RampedGraph> {
     return Expanded(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          print(constraints.toString());
-          return Container(
-            color: Colors.blue,
+          final size = Size(constraints.maxWidth, constraints.maxHeight - 50);
+          print('size: $size');
+          return CubitProvider(
+            create: (context) => RampCurveCubit([
+              CubitRampingPoint(
+                context: context,
+                size: size,
+                interval: 12,
+                startT: DateTime.now().add(Duration(minutes: 0)),
+                endT: DateTime.now().add(Duration(minutes: 30)),
+              ),
+              CubitRampingPoint(
+                context: context,
+                size: size,
+                interval: 5,
+                startT: DateTime.now().add(Duration(minutes: 60)),
+                endT: DateTime.now().add(Duration(minutes: 90)),
+              ),
+              CubitRampingPoint(
+                context: context,
+                size: size,
+                interval: 8,
+                startT: DateTime.now().add(Duration(minutes: 120)),
+                endT: DateTime.now().add(Duration(minutes: 140)),
+              ),
+            ]),
+            child: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+              builder: (context, state) {
+                return Stack(
+                  // fit: StackFit.expand,
+                  children: [
+                    ClipPath(
+                      clipper: PathClipper(
+                        context: context,
+                        pointList: state,
+                      ),
+                      child: Container(
+                        height: size.height,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFF2A96FF).withOpacity(0.85),
+                              Color(0xFF2A96FF).withOpacity(0.05),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    CustomPaint(
+                      painter: PathPainter(
+                        context: context,
+                        pointList: state,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           );
         },
       ),

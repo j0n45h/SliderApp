@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:sliderappflutter/drawer.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/interval_scale.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/tool_bar.dart';
@@ -38,7 +42,7 @@ class _RampedGraphScreenState extends State<RampedGraphScreen> {
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             IntervalScale(),
