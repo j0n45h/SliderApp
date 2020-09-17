@@ -22,7 +22,6 @@ class _RampedGraphState extends State<RampedGraph> {
           return CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
             builder: (context, state) {
               final rampCurveCubit = CubitProvider.of<RampCurveCubit>(context);
-              rampCurveCubit.initializeAllPoints(context, size);
               rampCurveCubit.globalSize = size;
               return Stack(
                 // fit: StackFit.expand,
@@ -46,12 +45,12 @@ class _RampedGraphState extends State<RampedGraph> {
                       ),
                     ),
                   ),
-                  CustomPaint(
-                    painter: PathPainter(
-                      context: context,
-                      pointList: state,
-                    ),
-                  ),
+//                  CustomPaint(
+//                    painter: PathPainter(
+//                      context: context,
+//                      pointList: state,
+//                    ),
+//                  ),
                 ],
               );
             },

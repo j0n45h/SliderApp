@@ -7,7 +7,6 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.da
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
-import 'package:sliderappflutter/utilities/ramping_point.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class RampCurvePreview extends StatelessWidget {
@@ -56,25 +55,19 @@ class RampCurvePreview extends StatelessWidget {
     rampCurveCubit.state.clear();
     rampCurveCubit.addList([
       CubitRampingPoint(
-        newRampingPoint: RampingPoint(
-          interval: 12,
-          startTime: DateTime.now().add(Duration(minutes: 0)),
-          endTime: DateTime.now().add(Duration(minutes: 30)),
-        ),
+        interval: Duration(seconds: 10),
+        start: Duration(minutes: 0),
+        end: Duration(minutes: 0),
       ),
+//      CubitRampingPoint(
+//        interval: Duration(seconds: 12),
+//        start: Duration(minutes: 60),
+//        end: Duration(minutes: 90),
+//      ),
       CubitRampingPoint(
-        newRampingPoint: RampingPoint(
-          interval: 12,
-          startTime: DateTime.now().add(Duration(minutes: 60)),
-          endTime: DateTime.now().add(Duration(minutes: 90)),
-        ),
-      ),
-      CubitRampingPoint(
-        newRampingPoint: RampingPoint(
-          interval: 12,
-          startTime: DateTime.now().add(Duration(minutes: 120)),
-          endTime: DateTime.now().add(Duration(minutes: 140)),
-        ),
+        interval: Duration(seconds: 5),
+        start: Duration(minutes: 140),
+        end: Duration(minutes: 140),
       ),
     ]);
 

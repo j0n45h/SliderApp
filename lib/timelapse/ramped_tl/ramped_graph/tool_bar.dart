@@ -10,7 +10,7 @@ class ToolBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final rampCurveCubit = CubitProvider.of<RampCurveCubit>(context);
     final Size size = rampCurveCubit.globalSize ?? null;
-    int shots = rampCurveCubit.getShots(context, size);
+    int shots = rampCurveCubit.getShots(context);
     print('shots: $shots');
     return Container(
       height: 50,

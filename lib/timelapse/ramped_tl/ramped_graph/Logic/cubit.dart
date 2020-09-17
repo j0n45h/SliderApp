@@ -24,22 +24,28 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     state.addAll(newPoints);
   }
 
-  void initializeAllPoints(BuildContext context, Size size) {
-    state.forEach((point) {
-      if (!point.initialized) point.initializePoint(context, size);
-    });
+  void onDragInterval(int index, double delta, BuildContext context) {
+    if (globalSize == null)
+      return;
+    var oldValue = state[index].getIntervalValue(context, globalSize);
+    var newValue = oldValue + delta;
+    state[index].setIntervalValue(newValue, context, globalSize);
   }
 
-  void onDragInterval(int index, double delta) {
-    state[index].intervalValue += delta;
+  void onDragStartTime(int index, double delta, BuildContext context) {
+    if (globalSize == null)
+      return;
+    var oldValue = state[index].getStartValue(context, globalSize);
+    var newValue = oldValue + delta;
+    state[index].setStartValue(newValue, context, globalSize);
   }
 
-  void onDragStartTime(int index, double delta) {
-    state[index].startValue += delta;
-  }
-
-  void onDragEndTime(int index, double delta) {
-    state[index].endValue += delta;
+  void onDragEndTime(int index, double delta, BuildContext context) {
+    if (globalSize == null)
+      return;
+    var oldValue = state[index].getEndValue(context, globalSize);
+    var newValue = oldValue + delta;
+    state[index].setEndValue(newValue, context, globalSize);
   }
 
   void onTouchedDown(int index) {
@@ -50,46 +56,42 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     state[index].touched = false;
   }
 
-  int getShots(BuildContext context, Size size) {
-    if (state.length < 1 || size == null)
+  int getShots(BuildContext context) {
+    if (state.length < 1 || globalSize == null)
       return 0;
 
     double shotsValue = 0;
-    final startT = state[0].getStartTime(context, size);
+    final startT = state[0].getStartTime(context, globalSize);
     for (int i = 0; i < state.length - 1; i++) {
       print('shotsvalue top: $shotsValue');
 
-      var intervalAtPoint = state[i].getInterval(context, size);
-      final pointA = Point(
-          state[i].getEndTime(context, size).difference(startT).inMilliseconds /
-              1000, intervalAtPoint);
+      final intervalAtPoint = state[i].interval.inSeconds;
+      final pointA = Point(state[i].end.inSeconds, intervalAtPoint);
 
-      final pointB = Point(
-          state[i + 1].getStartTime(context, size).difference(startT)
-                  .inMilliseconds / 1000,
-          state[i].getInterval(context, size));
+      final pointB = Point(state[i + 1].start.inSeconds, state[i + 1].interval.inSeconds);
 
-      shotsValue += (state[i].getStartTime(context, size).difference(startT)
-                  .inMilliseconds / 1000) / intervalAtPoint;
+      // linear part
+      shotsValue += (state[i].end.inSeconds - state[i].start.inSeconds) / intervalAtPoint;
 
       print('shotsvalue after lin: $shotsValue');
       print('pointA: $pointA; pointB: $pointB');
 
-      final dt = pointB.x - pointA.x; // difference of x
-      final dT = pointB.y - pointA.y; // difference of y
+      final dt = pointB.x - pointA.x; // difference of x (time)
+      final dT = pointB.y - pointA.y; // difference of y (interval)
       print('dt value: $dt');
       print('dT value: $dT');
 
-      final top = dt * dT / 2; // top triangle of graph
-      print('top value: $top');
-      final bottom = pointA.y * dt; // bottom square part
-      print('bottom: $bottom');
-      shotsValue += bottom + top;
+      // ramp part
+      final ramp =
+          (dt * log(pointA.y * dt - pointA.x * dT + dT * pointB.x))/dT -
+          (dt * log(pointA.y * dt - pointA.x * dT + dT * pointA.x))/dT; // integral of linearSpline
+
+      print('ramp value: $ramp');
+      shotsValue += ramp;
     }
 
-    final intervalAtPoint = state.last.getInterval(context, size);
-    shotsValue += (startT.difference(state.last.getStartTime(context, size))
-        .inMilliseconds / 1000) / intervalAtPoint;
+    // last linear part
+    shotsValue += (state.last.end.inSeconds - state.last.start.inSeconds) / state.last.interval.inSeconds;
 
     return shotsValue.round();
   }
