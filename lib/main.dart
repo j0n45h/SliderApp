@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
@@ -48,51 +50,54 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        /// Dashboard
-        ChangeNotifierProvider<ProvideBtState>(
-          create: (context) => ProvideBtState()),
-        ChangeNotifierProvider<ProvideLocationState>(
-          create: (context) => ProvideLocationState()),
-        ChangeNotifierProvider<ProvideWeatherState>(
-          create: (context) => ProvideWeatherState()),
+    return CubitProvider(
+      create: (context) => RampCurveCubit(),
+      child: MultiProvider(
+        providers: [
+          /// Dashboard
+          ChangeNotifierProvider<ProvideBtState>(
+            create: (context) => ProvideBtState()),
+          ChangeNotifierProvider<ProvideLocationState>(
+            create: (context) => ProvideLocationState()),
+          ChangeNotifierProvider<ProvideWeatherState>(
+            create: (context) => ProvideWeatherState()),
 
-        /// Ramoing
-        ChangeNotifierProvider<TimeState>(
-          create: (context) => TimeState()),
-        ChangeNotifierProvider<IntervalRangeState>(
-          create: (context) => IntervalRangeState()),
-        ChangeNotifierProvider<RampingPointsState>(
-          create: (context) => RampingPointsState()),
-        ChangeNotifierProvider<VideoShotsState>(
-          create: (context) => VideoShotsState(),),
-      ],
-      child: MaterialApp(
-        title: 'Slider',
-        theme: ThemeData(
-          primarySwatch: Colors.deepOrange,
-          platform: TargetPlatform.iOS,
-          sliderTheme: SliderThemeData(
-            activeTrackColor: MyColors.slider,
-            thumbColor: MyColors.slider,
-            inactiveTrackColor: Colors.grey,
-            activeTickMarkColor: MyColors.slider,
-            overlayColor: MyColors.slider.withOpacity(0.2),
-            valueIndicatorColor: MyColors.slider.withOpacity(0.8),
+          /// Ramoing
+          ChangeNotifierProvider<TimeState>(
+            create: (context) => TimeState()),
+          ChangeNotifierProvider<IntervalRangeState>(
+            create: (context) => IntervalRangeState()),
+          ChangeNotifierProvider<RampingPointsState>(
+            create: (context) => RampingPointsState()),
+          ChangeNotifierProvider<VideoShotsState>(
+            create: (context) => VideoShotsState(),),
+        ],
+        child: MaterialApp(
+          title: 'Slider',
+          theme: ThemeData(
+            primarySwatch: Colors.deepOrange,
+            platform: TargetPlatform.iOS,
+            sliderTheme: SliderThemeData(
+              activeTrackColor: MyColors.slider,
+              thumbColor: MyColors.slider,
+              inactiveTrackColor: Colors.grey,
+              activeTickMarkColor: MyColors.slider,
+              overlayColor: MyColors.slider.withOpacity(0.2),
+              valueIndicatorColor: MyColors.slider.withOpacity(0.8),
+            ),
           ),
+          initialRoute: TimelapseScreen.routeName,
+          routes: {
+            MyDrawer.routeName: (_) => MyDrawer(),
+            DashboardScreen.routeName: (_) => DashboardScreen(),
+            TimelapseScreen.routeName: (_) => TimelapseScreen(),
+            RampedGraphScreen.routeName: (_) => RampedGraphScreen(),
+            AdvancedTimelapseScreen.routeName: (_) => AdvancedTimelapseScreen(),
+            VideoScreen.routeName: (_) => VideoScreen(),
+            ConnectionScreen.routeName: (_) => ConnectionScreen(),
+            SettingsScreen.routeName: (_) => SettingsScreen(),
+          },
         ),
-        initialRoute: TimelapseScreen.routeName,
-        routes: {
-          MyDrawer.routeName: (_) => MyDrawer(),
-          DashboardScreen.routeName: (_) => DashboardScreen(),
-          TimelapseScreen.routeName: (_) => TimelapseScreen(),
-          RampedGraphScreen.routeName: (_) => RampedGraphScreen(),
-          AdvancedTimelapseScreen.routeName: (_) => AdvancedTimelapseScreen(),
-          VideoScreen.routeName: (_) => VideoScreen(),
-          ConnectionScreen.routeName: (_) => ConnectionScreen(),
-          SettingsScreen.routeName: (_) => SettingsScreen(),
-        },
       ),
     );
   }

@@ -4,24 +4,36 @@ import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/map.dart';
+import 'package:sliderappflutter/utilities/ramping_point.dart';
 
 class CubitRampingPoint {
+  bool initialized = false;
   bool processed = false;
   bool touched = false;
   double intervalValue;
   double startValue;
   double endValue;
 
+  RampingPoint _notInitializedPoint;
+
   CubitRampingPoint(
-      {double interval,
-      DateTime startT,
-      DateTime endT,
+      {@required RampingPoint newRampingPoint,
       BuildContext context,
       Size size}) {
+
+    _notInitializedPoint = newRampingPoint;
+
+    if (!(size == null && context == null)) {
+      initializePoint(context, size);
+    }
+  }
+
+  void initializePoint(BuildContext context, Size size) {
+
     final intervalProvider =
-        Provider.of<IntervalRangeState>(context, listen: false);
+    Provider.of<IntervalRangeState>(context, listen: false);
     this.intervalValue = map(
-      interval,
+      _notInitializedPoint.interval,
       intervalProvider.getNiceValues().niceMin,
       intervalProvider.getNiceValues().niceMax,
       size.height,
@@ -30,7 +42,7 @@ class CubitRampingPoint {
 
     final timeProvider = Provider.of<TimeState>(context, listen: false);
     this.startValue = map(
-      startT.millisecondsSinceEpoch.toDouble(),
+      _notInitializedPoint.startTime.millisecondsSinceEpoch.toDouble(),
       timeProvider.startingTime.millisecondsSinceEpoch.toDouble(),
       timeProvider.endingTime.millisecondsSinceEpoch.toDouble(),
       0,
@@ -38,12 +50,14 @@ class CubitRampingPoint {
     );
 
     this.endValue = map(
-      endT.millisecondsSinceEpoch.toDouble(),
+      _notInitializedPoint.endTime.millisecondsSinceEpoch.toDouble(),
       timeProvider.startingTime.millisecondsSinceEpoch.toDouble(),
       timeProvider.endingTime.millisecondsSinceEpoch.toDouble(),
       0,
       size.width,
     );
+
+    initialized = true;
   }
 
   double getInterval(BuildContext context, Size size) {
