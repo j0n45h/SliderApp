@@ -22,8 +22,8 @@ class CubitRampingPoint {
     final provider = Provider.of<IntervalRangeState>(context, listen: false);
     return map(
       interval.inMilliseconds/1000,
-      provider.getNiceValues().niceMin,
-      provider.getNiceValues().niceMax,
+      provider.niceScale.niceMin,
+      provider.niceScale.niceMax,
       size.height,
       0,
     );
@@ -35,8 +35,8 @@ class CubitRampingPoint {
         intervalValue,
         size.height,
         0,
-        provider.getNiceValues().niceMin,
-        provider.getNiceValues().niceMax,
+        provider.niceScale.niceMin,
+        provider.niceScale.niceMax,
     ).round());
   }
 

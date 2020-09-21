@@ -11,7 +11,7 @@ class IntervalScale extends StatelessWidget {
       builder: (context, constraints) {
         final intervalRangeState =
         Provider.of<IntervalRangeState>(context, listen: false);
-        final scale = intervalRangeState.getNiceValues();
+        final scale = intervalRangeState.niceScale;
 
         List<Widget> list = [];
         final height = constraints.maxHeight;
