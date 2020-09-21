@@ -21,7 +21,7 @@ class CubitRampingPoint {
   double getIntervalValue(BuildContext context, Size size) {
     final provider = Provider.of<IntervalRangeState>(context, listen: false);
     return map(
-      interval.inMilliseconds/1000,
+      interval.inMicroseconds/1000000,
       provider.niceScale.niceMin,
       provider.niceScale.niceMax,
       size.height,
@@ -30,14 +30,23 @@ class CubitRampingPoint {
   }
 
   void setIntervalValue(double intervalValue, BuildContext context, Size size) {
+    // keep values in screen size
+    if (intervalValue < 0)
+      intervalValue = 0;
+    else if (intervalValue > size.height)
+      intervalValue = size.height;
+
     final provider = Provider.of<IntervalRangeState>(context, listen: false);
-    interval = Duration(seconds: map(
+    interval = Duration(microseconds: (map(
         intervalValue,
         size.height,
         0,
         provider.niceScale.niceMin,
         provider.niceScale.niceMax,
-    ).round());
+    ) * 1000000).round());
+
+    if (interval.inMilliseconds < 300)
+      interval = Duration(milliseconds: 300);
   }
 
 
@@ -94,5 +103,10 @@ class CubitRampingPoint {
   DateTime getEndTime(BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
     return provider.startingTime.add(end);
+  }
+
+  @override
+  String toString () {
+    return 'interval: $interval';
   }
 }

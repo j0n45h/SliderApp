@@ -57,17 +57,17 @@ class RampCurvePreview extends StatelessWidget {
       CubitRampingPoint(
         interval: Duration(seconds: 10),
         start: Duration(minutes: 0),
-        end: Duration(minutes: 0),
+        end: Duration(minutes: 30),
       ),
-//      CubitRampingPoint(
-//        interval: Duration(seconds: 12),
-//        start: Duration(minutes: 60),
-//        end: Duration(minutes: 90),
-//      ),
+      CubitRampingPoint(
+        interval: Duration(seconds: 12),
+        start: Duration(minutes: 60),
+        end: Duration(minutes: 90),
+      ),
       CubitRampingPoint(
         interval: Duration(seconds: 5),
         start: Duration(minutes: 140),
-        end: Duration(minutes: 140),
+        end: Duration(minutes: 160),
       ),
     ]);
 

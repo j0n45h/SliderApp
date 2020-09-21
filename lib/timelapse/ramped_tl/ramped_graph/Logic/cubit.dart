@@ -4,7 +4,6 @@ import 'package:cubit/cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:replay_cubit/replay_cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
-import 'package:sliderappflutter/utilities/map.dart';
 
 class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   Size globalSize;
@@ -12,16 +11,20 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
   @override
   void onTransition(Transition<List<CubitRampingPoint>> transition) {
-    print("Transition: $transition");
+    // print("Transition: ${transition.currentState}");
     super.onTransition(transition);
   }
 
   void add(CubitRampingPoint newPoint) {
-    state.add(newPoint);
+    var newState = [...state];
+    newState.add(newPoint);
+    emit(newState);
   }
 
   void addList(List<CubitRampingPoint> newPoints) {
-    state.addAll(newPoints);
+    var newState = [...state];
+    newState.addAll(newPoints);
+    emit(newState);
   }
 
   void onDragInterval(int index, double delta, BuildContext context) {
@@ -29,7 +32,10 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
       return;
     var oldValue = state[index].getIntervalValue(context, globalSize);
     var newValue = oldValue + delta;
-    state[index].setIntervalValue(newValue, context, globalSize);
+
+    var newState = [...state];
+    newState[index].setIntervalValue(newValue, context, globalSize);
+    emit(newState);
   }
 
   void onDragStartTime(int index, double delta, BuildContext context) {
@@ -56,42 +62,40 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     state[index].touched = false;
   }
 
-  int getShots(BuildContext context) {
+
+  int getShots() {
     if (state.length < 1 || globalSize == null)
       return 0;
 
     double shotsValue = 0;
-    final startT = state[0].getStartTime(context, globalSize);
     for (int i = 0; i < state.length - 1; i++) {
-      print('shotsvalue top: $shotsValue');
 
-      final intervalAtPoint = state[i].interval.inSeconds;
-      final pointA = Point(state[i].end.inSeconds, intervalAtPoint);
+      final intervalAtPoint = state[i].interval.inMilliseconds / 1000;
+      final pointA = Point<double>(state[i].end.inSeconds.toDouble(), intervalAtPoint);
 
-      final pointB = Point(state[i + 1].start.inSeconds, state[i + 1].interval.inSeconds);
+      final pointB = Point<double>(state[i + 1].start.inSeconds.toDouble(), state[i + 1].interval.inMilliseconds / 1000);
 
       // linear part
       shotsValue += (state[i].end.inSeconds - state[i].start.inSeconds) / intervalAtPoint;
 
-      print('shotsvalue after lin: $shotsValue');
-      print('pointA: $pointA; pointB: $pointB');
-
       final dt = pointB.x - pointA.x; // difference of x (time)
       final dT = pointB.y - pointA.y; // difference of y (interval)
-      print('dt value: $dt');
-      print('dT value: $dT');
 
       // ramp part
       final ramp =
           (dt * log(pointA.y * dt - pointA.x * dT + dT * pointB.x))/dT -
           (dt * log(pointA.y * dt - pointA.x * dT + dT * pointA.x))/dT; // integral of linearSpline
-
-      print('ramp value: $ramp');
+      print('index: $i ramp: $ramp'); // Gets NaN when all on top
       shotsValue += ramp;
     }
 
     // last linear part
-    shotsValue += (state.last.end.inSeconds - state.last.start.inSeconds) / state.last.interval.inSeconds;
+    shotsValue += (state.last.end.inSeconds - state.last.start.inSeconds) / (state.last.interval.inMilliseconds / 1000);
+
+    if (shotsValue.isInfinite)
+      shotsValue = double.maxFinite;
+    else if (shotsValue.isNaN)
+      shotsValue = 0;
 
     return shotsValue.round();
   }

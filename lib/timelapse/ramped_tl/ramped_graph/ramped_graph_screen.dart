@@ -7,6 +7,7 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ra
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/interval_scale.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/tool_bar.dart';
+import 'package:sliderappflutter/utilities/text_style.dart';
 
 class RampedGraphScreen extends StatefulWidget {
   static const routeName = '/timelapse-screen/ramped-graph-screen';
@@ -47,11 +48,25 @@ class _RampedGraphScreenState extends State<RampedGraphScreen> {
           children: [
             IntervalScale(),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Stack(
                 children: [
-                  ToolBar(),
-                  RampedGraph(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ToolBar(),
+                      RampedGraph(),
+                    ],
+                  ),
+                  CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                    builder: (context, state) {
+                      return Center(
+                        child: Text(
+                          state.first.interval.inSeconds.toString(),
+                          style: MyTextStyle.normal(fontSize: 20),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
