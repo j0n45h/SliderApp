@@ -6,8 +6,9 @@ import 'package:sliderappflutter/utilities/text_style.dart';
 class SaveAndStartButtons extends StatelessWidget {
   final VoidCallback onPressSave;
   final VoidCallback onPressStart;
+  final Widget saveButton;
 
-  const SaveAndStartButtons({this.onPressSave, this.onPressStart});
+  const SaveAndStartButtons({this.onPressSave, this.onPressStart, this.saveButton});
 
   @override
   Widget build(BuildContext context) {
@@ -30,36 +31,46 @@ class SaveAndStartButtons extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            RawMaterialButton(
-              padding: const EdgeInsets.only(left: 50, right: 50),
-              child: Text(
-                'SAVE',
-                style: MyTextStyle.fetStdSize(
-                  letterSpacing: 6,
-                  newColor: Colors.black,
-                  fontWight: FontWeight.w400,
+            Container(
+              width: 160,
+              child: RawMaterialButton(
+                child: Text(
+                  'SAVE',
+                  style: MyTextStyle.fetStdSize(
+                    letterSpacing: 6,
+                    newColor: Colors.black,
+                    fontWight: FontWeight.w400,
+                  ),
                 ),
+                fillColor: Colors.white,
+                onPressed: onPressSave,
+                shape: StadiumBorder(),
+                elevation: 12,
               ),
-              fillColor: Colors.white,
-              onPressed: onPressSave,
-              shape: StadiumBorder(),
-              elevation: 12,
             ),
             const SizedBox(width: 32),
-            RawMaterialButton(
-              padding: const EdgeInsets.only(left: 50, right: 50),
-              child: Text(
-                'START',
-                style: MyTextStyle.fetStdSize(
-                  letterSpacing: 6,
-                  newColor: Colors.black,
-                  fontWight: FontWeight.w400,
-                ),
+            Container(
+              width: 160,
+              child: Builder(builder: (context) {
+                if (saveButton == null)
+                  return RawMaterialButton(
+                    child: Text(
+                      'START',
+                      style: MyTextStyle.fetStdSize(
+                        letterSpacing: 6,
+                        newColor: Colors.black,
+                        fontWight: FontWeight.w400,
+                      ),
+                    ),
+                    fillColor: Color(0xff00FF5F),
+                    onPressed: onPressStart,
+                    shape: StadiumBorder(),
+                    elevation: 12,
+                  );
+                else
+                  return saveButton;
+                },
               ),
-              fillColor: Color(0xff00FF5F),
-              onPressed: onPressStart,
-              shape: StadiumBorder(),
-              elevation: 12,
             ),
           ],
         ),

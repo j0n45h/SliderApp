@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/interval_range.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramp_curve_preview.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/set_button.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/start_end_duration.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/video_shots.dart';
 import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
@@ -41,9 +45,14 @@ class _RampedTLState extends State<RampedTL> {
             const SizedBox(height: 40),
           ],
         ),
-        SaveAndStartButtons(
-          onPressSave: null,
-          onPressStart: null,
+        CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+          builder: (context, state) {
+            return SaveAndStartButtons(
+              onPressSave: null,
+              onPressStart: null,
+              saveButton: context.cubit<RampCurveCubit>().wasOpened ? null : SetButton(),
+            );
+          },
         ),
       ],
     );
