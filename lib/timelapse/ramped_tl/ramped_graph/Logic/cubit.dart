@@ -14,11 +14,13 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   bool isCreated = false;
   bool wasOpened = false;
   RampCurveCubit() : super(List.empty(growable: true));
+  List<int> _revert = [0];
+  List<List<CubitRampingPoint>> _backup = [];
 
   @override
   void onTransition(Transition<List<CubitRampingPoint>> transition) {
-    // print("currentState Transition: ${transition.currentState}");
-    // print("nextState Transition:    ${transition.nextState}");
+    print("currentState Transition: ${transition.currentState}");
+    print("nextState Transition:    ${transition.nextState}");
     super.onTransition(transition);
   }
 
@@ -107,18 +109,15 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     return shotsValue.round();
   }
 
-  void recreatePoints(BuildContext context, {bool forceInclude = false}) {
+  void recreatePoints(BuildContext context) {
     final timeState = Provider.of<TimeState>(context, listen: false);
     if (timeState.endingTime == null)
       return;
 
-    bool excludeInterval = false;
     List<CubitRampingPoint> list = [];
 
 
     final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false);
-    if (rampPointsCount.rampingPoints == state.length && isCreated && !forceInclude)
-      excludeInterval = true;
 
     // interval
     final intervalRangState = Provider.of<IntervalRangeState>(context, listen: false);
@@ -131,7 +130,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
     for (int i=0; i < rampPointsCount.rampingPoints; i++) {
       int interval;
-      if (excludeInterval) { // use prev interval
+      if (i < state.length) { // use prev interval
         interval = state[i].interval.inMilliseconds;
       }
       else { // create new interval
@@ -152,6 +151,76 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     state.clear();
     addList(list);
     isCreated = true;
+  }
+
+  void incrementList(BuildContext context) {
+    List<CubitRampingPoint> list = [...state];
+    final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false);
+    final timeState = Provider.of<TimeState>(context, listen: false);
+
+    // Time
+    final midTimePoints = 2 * rampPointsCount.rampingPoints - 1;
+    final timeStep = (timeState.duration.inSeconds / midTimePoints).round();
+    int startTime = 0;
+
+    for (int i=0; i<list.length; i++) { // rearrange time of points
+      list[i].start = Duration(seconds: startTime);
+      list[i].end = Duration(seconds: startTime + timeStep);
+
+      startTime += 2 * timeStep;
+    }
+
+    // Add point
+    final intervalRangState = Provider.of<IntervalRangeState>(context, listen: false);
+    final intervalDelta = intervalRangState.intervalRange.end - intervalRangState.intervalRange.start;
+    final interval = ((intervalRangState.intervalRange.start
+        + intervalDelta * 0.3 * list.length % 2
+        + intervalDelta * 0.7 * ((list.length + 1) % 2)) * 1000).round();
+
+    list.add(CubitRampingPoint(
+      interval: Duration(milliseconds: interval),
+      start: Duration(seconds: startTime),
+      end: Duration(seconds: startTime + timeStep),
+    ));
+
+    state.clear();
+    addList(list);
+    isCreated = true;
+  }
+
+  void decrementList(BuildContext context) {
+    List<CubitRampingPoint> list = [...state];
+
+    list.removeLast();
+
+    state.clear();
+    addList(list);
+    isCreated = true;
+  }
+
+  @override
+  void emit(List<CubitRampingPoint> state) {
+    //print('emitted');
+    _revert.last++;
+    super.emit(state);
+  }
+
+  void newEvent() {
+    _revert.add(0);
+  }
+
+  void myUndo() {
+    for (int i=0; i<_revert.last*2; i++)
+      undo();
+    _revert.removeLast();
+  }
+
+  void makeSnapshot() {
+    _backup.add([...state]);
+  }
+  void rollBack() {
+    state.clear();
+    addList(_backup.last);
   }
 
 }

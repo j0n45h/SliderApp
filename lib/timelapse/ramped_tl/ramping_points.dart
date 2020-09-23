@@ -9,7 +9,6 @@ class RampingPoints extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool showSnakeBar = false;
-    int revert = 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,7 +20,7 @@ class RampingPoints extends StatelessWidget {
         Consumer<RampingPointsState>(
           builder: (context, rampingPointsState, child) => Slider(
             onChangeStart: (value) {
-              revert = 0;
+              context.cubit<RampCurveCubit>().newEvent();
             },
             onChanged: (value) {
               rampingPointsState.rampingPoints = value.floor();
@@ -30,14 +29,14 @@ class RampingPoints extends StatelessWidget {
               if (context.cubit<RampCurveCubit>().canUndo && context.cubit<RampCurveCubit>().wasOpened)
                 showSnakeBar = true;
 
-              context.cubit<RampCurveCubit>().recreatePoints(context, forceInclude: true);
-              revert++;
+              context.cubit<RampCurveCubit>().recreatePoints(context);
             },
             onChangeEnd: (value) {
               if (!showSnakeBar)
                 return;
+
               showSnakeBar = false;
-              _showSnakeBar(context, revert);
+              _showSnakeBar(context);
             },
             value: rampingPointsState.rampingPoints.toDouble(),
             label: rampingPointsState.rampingPoints.toString(),
@@ -50,7 +49,7 @@ class RampingPoints extends StatelessWidget {
     );
   }
 
-  void _showSnakeBar(BuildContext context, int revert) {
+  void _showSnakeBar(BuildContext context) {
     Scaffold.of(context).removeCurrentSnackBar();
     Scaffold.of(context).showSnackBar(
       SnackBar(
@@ -65,8 +64,7 @@ class RampingPoints extends StatelessWidget {
           label: "UNDO",
           textColor: Colors.white,
           onPressed: () {
-            for (int i=0; i<revert*2; i++)
-            context.cubit<RampCurveCubit>().undo(); // undo cubit
+            context.cubit<RampCurveCubit>().myUndo();
 
             final rampingPointsState = Provider.of<RampingPointsState>(context, listen: false);
 
