@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
+import 'package:sliderappflutter/utilities/colors.dart';
 
 
 class PathClipper extends CustomClipper<Path> {
@@ -12,6 +13,44 @@ class PathClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
+    var path = RampPath.getPath(size, context, pointList, true);
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    // return true;
+    return oldClipper != this;
+  }
+
+}
+
+class PathPainter extends CustomPainter {
+  final BuildContext context;
+  final List<CubitRampingPoint> pointList;
+
+  PathPainter(this.context, this.pointList);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint();
+    paint.color = MyColors.slider;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 2.0;
+
+    canvas.drawPath(RampPath.getPath(size, context, pointList, false), paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => oldDelegate != this;
+
+}
+
+
+
+class RampPath {
+  static Path getPath(Size size, BuildContext context, List<CubitRampingPoint> pointList, bool close) {
     var path = Path();
 
     final intervalP0 = pointList[0].getIntervalValue(context, size);
@@ -31,13 +70,14 @@ class PathClipper extends CustomClipper<Path> {
     path.lineTo(size.width, pointList.last.getIntervalValue(context, size));
 
     /// close Path
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-
+    if (close) {
+      path.lineTo(size.width, size.height);
+      path.lineTo(0, size.height);
+    }
     return path;
   }
 
-  Path _pathBetween(Path path, Point pointA, Point pointB){
+  static Path _pathBetween(Path path, Point pointA, Point pointB){
     path.cubicTo(
       pointA.x + (pointB.x - pointA.x) * 0.5,
       pointA.y,
@@ -48,11 +88,4 @@ class PathClipper extends CustomClipper<Path> {
     );
     return path;
   }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    // return true;
-    return oldClipper != this;
-  }
-
 }

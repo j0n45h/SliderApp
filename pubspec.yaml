@@ -36,7 +36,7 @@ dependencies:
   intl: ^0.16.1
 
   flutter_cubit: ^0.1.0
-  replay_cubit: ^0.2.0
+  replay_cubit: ^0.2.0-dev.1
 
   # html:
 

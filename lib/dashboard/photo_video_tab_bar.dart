@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/main.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
-import 'package:sliderappflutter/timelapse/linear_tl/linear.dart';
 import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';

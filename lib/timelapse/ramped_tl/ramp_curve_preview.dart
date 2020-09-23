@@ -5,6 +5,7 @@ import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/path.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
@@ -15,15 +16,38 @@ class RampCurvePreview extends StatelessWidget {
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        Container(
-          height: 120,
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 0.5,
-              color: Colors.grey,
-            ),
-            borderRadius: BorderRadius.circular(5),
-          ),
+        CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+          builder: (context, state) {
+            if (state.length < 1)
+              return Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 0.5,
+                    color: Colors.grey,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              );
+
+            return Container(
+              height: 120,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 0.5,
+                  color: Colors.grey,
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Container(
+                height: 120,
+                width: double.maxFinite,
+                child: CustomPaint(
+                  painter: PathPainter(context, state),
+                ),
+              ),
+            );
+          },
         ),
         InkWell(
           onTap: () => navigateToRampedGraph(context),
@@ -31,7 +55,7 @@ class RampCurvePreview extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Transform.rotate(
-              angle: pi/4,
+              angle: pi / 4,
               child: Icon(
                 Icons.unfold_more,
                 color: Colors.white,
@@ -51,25 +75,10 @@ class RampCurvePreview extends StatelessWidget {
       return;
     }
 
-    final rampCurveCubit = CubitProvider.of<RampCurveCubit>(context);
-    rampCurveCubit.state.clear();
-    rampCurveCubit.addList([
-      CubitRampingPoint(
-        interval: Duration(seconds: 10),
-        start: Duration(minutes: 0),
-        end: Duration(minutes: 30),
-      ),
-      CubitRampingPoint(
-        interval: Duration(seconds: 12),
-        start: Duration(minutes: 60),
-        end: Duration(minutes: 90),
-      ),
-      CubitRampingPoint(
-        interval: Duration(seconds: 5),
-        start: Duration(minutes: 140),
-        end: Duration(minutes: 160),
-      ),
-    ]);
+    if (!context.cubit<RampCurveCubit>().isCreated)
+      context.cubit<RampCurveCubit>().recreatePoints(context);
+
+    context.cubit<RampCurveCubit>().wasOpened = true;
 
     Navigator.of(context).pushNamed(RampedGraphScreen.routeName);
   }

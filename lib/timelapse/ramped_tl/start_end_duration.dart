@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/clickable_framed_text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
@@ -51,6 +53,7 @@ class StartEndDuration extends StatelessWidget {
     if (pickedTime == null) return;
 
     timeState.startingTime = pickedTime;
+    context.cubit<RampCurveCubit>().recreatePoints(context);
   }
 
   Widget end(BuildContext context) {
@@ -88,6 +91,7 @@ class StartEndDuration extends StatelessWidget {
     if (pickedTime == null) return;
 
     timeState.endingTime = pickedTime;
+    context.cubit<RampCurveCubit>().recreatePoints(context);
   }
 
   Widget duration(BuildContext context) {

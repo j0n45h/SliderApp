@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/video_shots_state.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -24,11 +27,15 @@ class VideoShots extends StatelessWidget {
                 FramedTextField(
                   width: 80,
                   height: 30,
-                  textField: Consumer<VideoShotsState>(
-                    builder: (context, videoShotsState, child) => Text(
-                      videoShotsState.videoLength?.toString() ?? '-- ' + 's',
+                  textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                    builder: (context, state) {
+                      final videoShotsState = Provider.of<VideoShotsState>(context, listen: false);
+                      final videoTime = context.cubit<RampCurveCubit>().getShots() / videoShotsState.fps;
+                      return Text(
+                      videoTime?.round()?.toString() ?? '-- ' + 's',
                       style: MyTextStyle.normal(fontSize: 12),
-                    ),
+                    );
+                    },
                   ),
                 ),
               ],
@@ -65,11 +72,13 @@ class VideoShots extends StatelessWidget {
             FramedTextField(
               width: 80,
               height: 30,
-              textField: Consumer<VideoShotsState>(
-                builder: (context, videoShotsState, child) => Text(
-                  videoShotsState.shots?.toString() ?? '--',
+              textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                builder: (context, state) {
+                  return Text(
+                    context.cubit<RampCurveCubit>().getShots()?.toString() ?? '--',
                   style: MyTextStyle.normal(fontSize: 12),
-                ),
+                );
+                },
               ),
             ),
           ],

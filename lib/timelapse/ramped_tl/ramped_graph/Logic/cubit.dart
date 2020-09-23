@@ -2,16 +2,23 @@ import 'dart:math';
 
 import 'package:cubit/cubit.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:replay_cubit/replay_cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 
 class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   Size globalSize;
+  bool isCreated = false;
+  bool wasOpened = false;
   RampCurveCubit() : super(List.empty(growable: true));
 
   @override
   void onTransition(Transition<List<CubitRampingPoint>> transition) {
-    // print("Transition: ${transition.currentState}");
+    // print("currentState Transition: ${transition.currentState}");
+    // print("nextState Transition:    ${transition.nextState}");
     super.onTransition(transition);
   }
 
@@ -85,7 +92,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
       final ramp =
           (dt * log(pointA.y * dt - pointA.x * dT + dT * pointB.x))/dT -
           (dt * log(pointA.y * dt - pointA.x * dT + dT * pointA.x))/dT; // integral of linearSpline
-      print('index: $i ramp: $ramp'); // Gets NaN when all on top
+      // print('index: $i ramp: $ramp'); // Gets NaN when all on top
       shotsValue += ramp;
     }
 
@@ -99,4 +106,52 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
     return shotsValue.round();
   }
+
+  void recreatePoints(BuildContext context, {bool forceInclude = false}) {
+    final timeState = Provider.of<TimeState>(context, listen: false);
+    if (timeState.endingTime == null)
+      return;
+
+    bool excludeInterval = false;
+    List<CubitRampingPoint> list = [];
+
+
+    final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false);
+    if (rampPointsCount.rampingPoints == state.length && isCreated && !forceInclude)
+      excludeInterval = true;
+
+    // interval
+    final intervalRangState = Provider.of<IntervalRangeState>(context, listen: false);
+    final intervalDelta = intervalRangState.intervalRange.end - intervalRangState.intervalRange.start;
+
+    // Time
+    final midTimePoints = 2 * rampPointsCount.rampingPoints - 1;
+    final timeStep = (timeState.duration.inSeconds / midTimePoints).round();
+    int startTime = 0;
+
+    for (int i=0; i < rampPointsCount.rampingPoints; i++) {
+      int interval;
+      if (excludeInterval) { // use prev interval
+        interval = state[i].interval.inMilliseconds;
+      }
+      else { // create new interval
+        interval = ((intervalRangState.intervalRange.start
+            + intervalDelta * 0.3 * i % 2
+            + intervalDelta * 0.7 * ((i + 1) % 2)) * 1000).round();
+      }
+
+      list.add(CubitRampingPoint(
+        interval: Duration(milliseconds: interval),
+        start: Duration(seconds: startTime),
+        end: Duration(seconds: startTime + timeStep),
+      ));
+
+      startTime += 2 * timeStep;
+    }
+
+    state.clear();
+    addList(list);
+    isCreated = true;
+  }
+
 }
