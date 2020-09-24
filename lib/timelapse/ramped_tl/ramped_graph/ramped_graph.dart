@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/path.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/gesture_detector.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class RampedGraph extends StatefulWidget {
@@ -14,6 +16,7 @@ class RampedGraph extends StatefulWidget {
 class _RampedGraphState extends State<RampedGraph> {
   @override
   Widget build(BuildContext context) {
+    final rampPointsCountState = Provider.of<RampingPointsState>(context, listen: false);
     return Expanded(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -23,7 +26,8 @@ class _RampedGraphState extends State<RampedGraph> {
               context.cubit<RampCurveCubit>().globalSize = size;
 
               List<Widget> list = List.empty(growable: true);
-              for (int i = 0; i < state.length; i++) {
+
+              for (int i = 0; i < rampPointsCountState.rampingPoints; i++) {
                 var top = state[i].getIntervalValue(context, size);
                 if (top > size.height) continue;
                 var left = state[i].getStartValue(context, size);
@@ -63,6 +67,7 @@ class _RampedGraphState extends State<RampedGraph> {
                       clipper: PathClipper(
                         context: context,
                         pointList: state,
+                        length: rampPointsCountState.rampingPoints,
                       ),
                       child: Container(
                         height: size.height,

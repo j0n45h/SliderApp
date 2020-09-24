@@ -29,7 +29,7 @@ class RampingPoints extends StatelessWidget {
               if (context.cubit<RampCurveCubit>().canUndo && context.cubit<RampCurveCubit>().wasOpened)
                 showSnakeBar = true;
 
-              context.cubit<RampCurveCubit>().recreatePoints(context);
+              context.cubit<RampCurveCubit>().updatePoints(context);
             },
             onChangeEnd: (value) {
               if (!showSnakeBar)
@@ -64,7 +64,8 @@ class RampingPoints extends StatelessWidget {
           label: "UNDO",
           textColor: Colors.white,
           onPressed: () {
-            context.cubit<RampCurveCubit>().myUndo();
+            // context.cubit<RampCurveCubit>().myUndo();
+            context.cubit<RampCurveCubit>().undo();
 
             final rampingPointsState = Provider.of<RampingPointsState>(context, listen: false);
 
@@ -72,7 +73,7 @@ class RampingPoints extends StatelessWidget {
             rampingPointsState.rampingPoints = pointsCount >= 1 && pointsCount <= 5 ? pointsCount : 3; // undo Slider
 
             if (context.cubit<RampCurveCubit>().state.length == 0)
-              context.cubit<RampCurveCubit>().recreatePoints(context); // recalc Points
+              context.cubit<RampCurveCubit>().updatePoints(context); // recalc Points
           },
         ),
       ),

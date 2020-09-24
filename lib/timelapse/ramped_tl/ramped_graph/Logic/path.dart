@@ -8,12 +8,13 @@ import 'package:sliderappflutter/utilities/colors.dart';
 class PathClipper extends CustomClipper<Path> {
   final BuildContext context;
   final List<CubitRampingPoint> pointList;
+  final int length;
 
-  PathClipper({@required this.context, @required this.pointList});
+  PathClipper({@required this.context, @required this.pointList, @required this.length});
 
   @override
   Path getClip(Size size) {
-    var path = RampPath.getPath(size, context, pointList, true);
+    var path = RampPath.getPath(size, context, pointList, length, true);
 
     return path;
   }
@@ -29,8 +30,9 @@ class PathClipper extends CustomClipper<Path> {
 class PathPainter extends CustomPainter {
   final BuildContext context;
   final List<CubitRampingPoint> pointList;
+  final int length;
 
-  PathPainter(this.context, this.pointList);
+  PathPainter(this.context, this.pointList, this.length);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -39,7 +41,7 @@ class PathPainter extends CustomPainter {
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2.0;
 
-    canvas.drawPath(RampPath.getPath(size, context, pointList, false), paint);
+    canvas.drawPath(RampPath.getPath(size, context, pointList, length, false), paint);
   }
 
   @override
@@ -50,14 +52,14 @@ class PathPainter extends CustomPainter {
 
 
 class RampPath {
-  static Path getPath(Size size, BuildContext context, List<CubitRampingPoint> pointList, bool close) {
+  static Path getPath(Size size, BuildContext context, List<CubitRampingPoint> pointList, int length, bool close) {
     var path = Path();
 
     final intervalP0 = pointList[0].getIntervalValue(context, size);
     path.moveTo(0, intervalP0);
     path.lineTo(pointList[0].getEndValue(context, size), intervalP0);
 
-    for (int i=1; i < pointList.length; i++){
+    for (int i=1; i < length; i++){
       final currentInterval = pointList[i].getIntervalValue(context, size);
       final pointA = Point(pointList[i-1].getEndValue  (context, size), pointList[i-1].getIntervalValue(context, size));
       final pointB = Point(pointList[i  ].getStartValue(context, size), currentInterval);
@@ -67,7 +69,7 @@ class RampPath {
       path.lineTo(pointList[i].getEndValue(context, size), currentInterval);
     }
 
-    path.lineTo(size.width, pointList.last.getIntervalValue(context, size));
+    path.lineTo(size.width, pointList[length-1].getIntervalValue(context, size));
 
     /// close Path
     if (close) {

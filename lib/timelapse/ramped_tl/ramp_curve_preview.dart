@@ -2,14 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/navigte_to_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/path.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 
 class RampCurvePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final rampPointsCountState = Provider.of<RampingPointsState>(context, listen: false);
     return Container(
       height: 120,
       child: Stack(
@@ -35,7 +38,7 @@ class RampCurvePreview extends StatelessWidget {
                         return Container();
 
                       return CustomPaint(
-                        painter: PathPainter(context, state),
+                        painter: PathPainter(context, state, rampPointsCountState.rampingPoints),
                       );
 
                     },

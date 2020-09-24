@@ -18,7 +18,9 @@ class NavigateToGraphScreen {
     }
 
     if (!context.cubit<RampCurveCubit>().isCreated || !context.cubit<RampCurveCubit>().wasOpened)
-      context.cubit<RampCurveCubit>().recreatePoints(context);
+      context.cubit<RampCurveCubit>().updatePoints(context);
+
+    context.cubit<RampCurveCubit>().trimPoints(context);
 
     context.cubit<RampCurveCubit>().wasOpened = true;
 

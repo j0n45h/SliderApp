@@ -53,7 +53,7 @@ class StartEndDuration extends StatelessWidget {
     if (pickedTime == null) return;
 
     timeState.startingTime = pickedTime;
-    context.cubit<RampCurveCubit>().recreatePoints(context);
+    context.cubit<RampCurveCubit>().updatePoints(context);
   }
 
   Widget end(BuildContext context) {
@@ -91,7 +91,7 @@ class StartEndDuration extends StatelessWidget {
     if (pickedTime == null) return;
 
     timeState.endingTime = pickedTime;
-    context.cubit<RampCurveCubit>().recreatePoints(context);
+    context.cubit<RampCurveCubit>().updatePoints(context);
   }
 
   Widget duration(BuildContext context) {
