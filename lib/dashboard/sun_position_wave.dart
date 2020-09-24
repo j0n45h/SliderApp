@@ -69,12 +69,14 @@ class _SunPositionWaveState extends State<SunPositionWave>
     }
     if (_hasSunPosition) return _height;
 
-    DateTime halfTime = locationStateProvider.sunSetTime.subtract(
-        locationStateProvider.sunRiseTime
-            .difference(locationStateProvider.sunSetTime));
 
-    DateTime beginTime = halfTime.subtract(Duration(hours: 12));
-    DateTime endTime = halfTime.add(Duration(hours: 12));
+    Duration dayLight =  locationStateProvider.sunSetTime.difference(locationStateProvider.sunRiseTime);
+
+    DateTime solarNoon = locationStateProvider.sunSetTime.subtract(
+        Duration(milliseconds: (dayLight.inMilliseconds/2).round()));
+
+    DateTime beginTime = solarNoon.subtract(Duration(hours: 12));
+    DateTime endTime = solarNoon.add(Duration(hours: 12));
 
     double position = map(
         DateTime.now().millisecondsSinceEpoch.toDouble(),
@@ -84,16 +86,21 @@ class _SunPositionWaveState extends State<SunPositionWave>
         1.0);
     position %= 1;
 
+    print(locationStateProvider.sunSetTime);
+
+
 
     double sunSetHeight = map(
         locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
         beginTime.millisecondsSinceEpoch.toDouble(),
         endTime.millisecondsSinceEpoch.toDouble(),
         0.0,
-        1.0);
+        1.0,
+    );
     sunSetHeight %= 1;
 
-    final height = SunPath.calculate(sunSetHeight, size).dy;
+    final height = size.height - SunPath.calculate(sunSetHeight, size).dy;
+
 
     setupColorGradientAnimation(height);
 
