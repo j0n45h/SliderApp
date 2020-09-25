@@ -1,10 +1,9 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sliderappflutter/dashboard/bluetooth_box.dart';
 import 'package:sliderappflutter/dashboard/circular_battery_indicator.dart';
-import 'package:sliderappflutter/dashboard/photo_video_tab_bar.dart';
 import 'package:sliderappflutter/dashboard/sun_position_wave.dart';
 import 'package:sliderappflutter/dashboard/sunrisesunset_icons.dart';
 import 'package:sliderappflutter/dashboard/weather_widget.dart';
@@ -19,7 +18,8 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print('Dashboard rebuild//////////////////////////////////////////////////////////');
     return Scaffold(
-      backgroundColor: Color(0xff242f33),
+      // backgroundColor: Color(0xff242f33),
+      backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 1.0,
         /*leading: Transform.scale( // TODO Fix drawerIcon onPress:
@@ -36,7 +36,7 @@ class DashboardScreen extends StatelessWidget {
         centerTitle: true,
         actions: <Widget>[
           Transform.rotate(
-            angle: (-pi / 2),
+            angle: (-math.pi / 2),
             child: const Icon(
               // TODO Change to scalable battery
               Icons.battery_std,
@@ -52,52 +52,87 @@ class DashboardScreen extends StatelessWidget {
         backgroundColor: MyColors.AppBar,
       ),
       drawer: MyDrawer(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: MyColors.bgRadialGradient(1),
+      body: CustomScrollView(
+        slivers: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SliverAppBarDelegate(
+              minHeight: 0.0,
+              maxHeight: 350.0,
+              child: Column(
+                children: <Widget>[
+                  const Divider(
+                    color: Colors.white,
+                    thickness: 0.15,
+                    height: 1,
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const CircularBatteryIndicator(75),
+                        Container(
+                          // Weather and BT Box
+                          alignment: Alignment.topLeft,
+                          margin: const EdgeInsets.fromLTRB(0, 16, 15, 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              BluetoothBox(),
+                              Container(
+                                margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                child: WeatherWidget(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SunriseSunsetIcons(),
+                  const SunPositionWave(),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
-          ListView(
-            children: <Widget>[
-              const Divider(
-                color: Colors.white,
-                thickness: 0.15,
-                height: 1,
-              ),
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const CircularBatteryIndicator(75),
-                    Container(
-                      // Weather and BT Box
-                      alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(0, 16, 15, 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          BluetoothBox(),
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                            child: WeatherWidget(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SunriseSunsetIcons(),
-              const SunPositionWave(),
-              const SizedBox(height: 20),
-              PhotoVideoTabBar(),
-            ],
+          // SliverToBoxAdapter(child: PhotoVideoTabBar(),),
+          SliverList(
+            delegate: ,
           ),
-        ],
       ),
     );
+  }
+}
+
+
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate({
+    @required this.minHeight,
+    @required this.maxHeight,
+    @required this.child,
+  });
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+  @override
+  double get minExtent => minHeight;
+  @override
+  double get maxExtent => math.max(maxHeight, minHeight);
+  @override
+  Widget build(
+      BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent)
+  {
+    return new SizedBox.expand(child: child);
+  }
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }
