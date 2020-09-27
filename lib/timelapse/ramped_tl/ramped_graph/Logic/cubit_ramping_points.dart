@@ -1,4 +1,3 @@
-import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';

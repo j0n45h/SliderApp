@@ -62,6 +62,7 @@ class ToolBar extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.check, color: MyColors.green),
+                onPressed: null,
               ),
               SizedBox(width: 15)
             ],

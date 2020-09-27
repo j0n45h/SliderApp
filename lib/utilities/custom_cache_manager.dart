@@ -48,7 +48,7 @@ class CustomCacheManager extends BaseCacheManager {
 
       /// getting Address
       FileInfo cachedAddress = await CustomCacheManager().getFileFromCache(_addressKey);
-      cachedAddress.file.openRead();
+      cachedAddress.file.openRead(); // TODO not sure if needed
       final address = cachedAddress.file.readAsStringSync();
 
       return BtDevice(name: name, address: address);
@@ -71,11 +71,12 @@ class CustomCacheManager extends BaseCacheManager {
 
   static Future<Map<String, dynamic>> getTLDataAsJson() async {
     try {
+      // TODO: check if file excites
       // get file from cache
       FileInfo cachedFile = await CustomCacheManager().getFileFromCache(_TLDataKey);
 
       // open file
-      var stream = cachedFile.file.openRead();
+      cachedFile.file.openRead(); // TODO not sure if needed
 
       // get content of file as string
       final jsonStr = await cachedFile.file.readAsString();

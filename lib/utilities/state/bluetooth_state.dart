@@ -109,7 +109,7 @@ class ProvideBtState with ChangeNotifier {
           const Duration(seconds: 15));
       _connectedBtDevice = btDeviceToConnectTo;
     }
-    on TimeoutException catch (e) {
+    on TimeoutException catch (_) {
       print('connection time out');
       _loadingIconState = 0;
       notifyListeners();

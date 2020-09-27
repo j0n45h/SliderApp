@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/box_decoraation_frame.dart';
-import 'package:sliderappflutter/utilities/text_field.dart';
 
 class FramedTextField extends StatelessWidget {
   final double width;

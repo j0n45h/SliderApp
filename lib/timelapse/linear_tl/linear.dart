@@ -5,7 +5,6 @@ import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
 import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
-import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/save_preset_dialog.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';

@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class MyTextField extends StatelessWidget {
@@ -52,32 +51,13 @@ class MyTextField extends StatelessWidget {
     );
   }
 
-  InputBorder _border() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10.0),
-      borderSide: const BorderSide(color: Colors.grey, width: 0.5),
-    );
-  }
-
   InputDecoration _decoration() {
     return InputDecoration(
-      contentPadding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+      contentPadding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
       suffixStyle: MyTextStyle.normal(fontSize: fontSize),
       suffixText: unit,
       border: InputBorder.none,
     );
   }
 
-  InputDecoration _decorationV2() {
-    return InputDecoration(
-      contentPadding: EdgeInsets.all(10),
-      labelText: labelText,
-      labelStyle: MyTextStyle.normalStdSize(),
-      suffixText: unit,
-      suffixStyle: MyTextStyle.normal(fontSize: 16),
-      focusedBorder: _border(),
-      enabledBorder: _border(),
-      disabledBorder: _border(),
-    );
-  }
 }
