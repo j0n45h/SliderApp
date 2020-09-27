@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,8 @@ class ProvideWeatherState with ChangeNotifier {
     final locationState = context.read<ProvideLocationState>();
     if (!locationState.available()) return;
     print('getting weather');
+    if (!await DataConnectionChecker().hasConnection)
+      return;
     try {
       _weather = await compute(getTreadWeather, [locationState.getLatitude, locationState.getLongitude]).timeout(Duration(seconds: 15));
      // _weather = await _weatherStation.currentWeather(locationState.getLatitude, locationState.getLongitude).timeout(Duration(seconds: 10));
