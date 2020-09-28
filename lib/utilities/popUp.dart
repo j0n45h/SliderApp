@@ -16,7 +16,7 @@ class SearchingDialog extends StatefulWidget {
   Future<void> showMyDialog(BuildContext context) async {
     return showGeneralDialog(
       context: context,
-      pageBuilder: (context, anim1, anim2) {},
+      pageBuilder: (_, __, ___) => null,
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.4),
       barrierLabel: '',
