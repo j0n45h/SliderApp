@@ -42,12 +42,10 @@ class CustomCacheManager extends BaseCacheManager {
   static Future<BtDevice> getLastBtDevice() async {
     try {
       // getting file of Name
-      FileInfo cachedName = await CustomCacheManager().getFileFromCache(_nameKey);
+      FileInfo cachedName = await CustomCacheManager()?.getFileFromCache(_nameKey);
 
-      if (!await cachedName.file.exists())
+      if (cachedName == null || !await cachedName?.file?.exists())
         return null;
-
-      cachedName.file.openRead();
 
       final name = await cachedName.file.readAsString();
 
@@ -55,10 +53,8 @@ class CustomCacheManager extends BaseCacheManager {
       // getting file of Address
       FileInfo cachedAddress = await CustomCacheManager().getFileFromCache(_addressKey);
 
-      if (!await cachedAddress.file.exists())
+      if (cachedAddress == null || !await cachedAddress?.file?.exists())
         return null;
-
-      cachedAddress.file.openRead(); // TODO not sure if needed
 
       final address = await cachedAddress.file.readAsString();
 
@@ -87,13 +83,10 @@ class CustomCacheManager extends BaseCacheManager {
     try {
 
       // get file from cache
-      FileInfo cachedFile = await CustomCacheManager().getFileFromCache(_TLDataKey);
+      FileInfo cachedFile = await CustomCacheManager()?.getFileFromCache(_TLDataKey);
 
-      if (!await cachedFile.file.exists())
+      if (cachedFile == null || !await cachedFile?.file?.exists())
         return null;
-
-      // open file
-      cachedFile.file.openRead(); // TODO not sure if needed
 
       // get content of file as string
       final jsonStr = await cachedFile.file.readAsString();
