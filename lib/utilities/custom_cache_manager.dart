@@ -41,20 +41,30 @@ class CustomCacheManager extends BaseCacheManager {
 
   static Future<BtDevice> getLastBtDevice() async {
     try {
-      /// getting Name
-      FileInfo cachedName = await CustomCacheManager().getFileFromCache(_nameKey);
-      cachedName.file.openRead();
-      final name = cachedName.file.readAsStringSync();
+      // getting file of Name
+      FileInfo cachedName = await CustomCacheManager()?.getFileFromCache(_nameKey);
 
-      /// getting Address
+      if (cachedName == null || !await cachedName?.file?.exists())
+        return null;
+
+      final name = await cachedName.file.readAsString();
+
+
+      // getting file of Address
       FileInfo cachedAddress = await CustomCacheManager().getFileFromCache(_addressKey);
-      cachedAddress.file.openRead(); // TODO not sure if needed
-      final address = cachedAddress.file.readAsStringSync();
+
+      if (cachedAddress == null || !await cachedAddress?.file?.exists())
+        return null;
+
+      final address = await cachedAddress.file.readAsString();
+
+      if (name == null || address == null)
+        return null;
 
       return BtDevice(name: name, address: address);
 
     } catch (e) {
-      print('no address of last connected device: $e');
+      print('Error on getting address of last connected device: $e');
       return null;
     }
   }
@@ -71,21 +81,24 @@ class CustomCacheManager extends BaseCacheManager {
 
   static Future<Map<String, dynamic>> getTLDataAsJson() async {
     try {
-      // TODO: check if file excites
-      // get file from cache
-      FileInfo cachedFile = await CustomCacheManager().getFileFromCache(_TLDataKey);
 
-      // open file
-      cachedFile.file.openRead(); // TODO not sure if needed
+      // get file from cache
+      FileInfo cachedFile = await CustomCacheManager()?.getFileFromCache(_TLDataKey);
+
+      if (cachedFile == null || !await cachedFile?.file?.exists())
+        return null;
 
       // get content of file as string
       final jsonStr = await cachedFile.file.readAsString();
+
+      if (jsonStr == null)
+        return null;
 
       // return json
       return json.decode(jsonStr);
 
     } catch (e) {
-      print('no json file stored in cache $e');
+      print('Error on getting Presets from json $e');
       return null;
     }
   }
