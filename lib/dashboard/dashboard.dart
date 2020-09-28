@@ -118,7 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
             FutureBuilder(
               future: futureList,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && photoListTitle.length > 0) {
                   return ListView.builder(
                     itemCount: photoListTitle.length,
                     itemBuilder: (context, index) {
@@ -155,7 +155,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                   return Center(
                     child: Text(
                       'Save a Timelapse-Preset to see it in this List',
-                      style: MyTextStyle.normal(fontSize: 24),
+                      style: MyTextStyle.normal(fontSize: 18),
                     ),
                   );
               },
@@ -165,7 +165,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
             FutureBuilder(
               future: futureList,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && tlData.video.length > 0) {
                   return ListView.builder(
                     itemCount: tlData.video.length,
                     itemBuilder: (context, index) {
@@ -182,7 +182,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                   return Center(
                     child: Text(
                       'Save a Video-Preset to see it in this List',
-                      style: MyTextStyle.normal(fontSize: 24),
+                      style: MyTextStyle.normal(fontSize: 18),
                     ),
                   );
               },
@@ -216,7 +216,8 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
     }
 
   Future<bool> makeList() async {
-    if (!tlData.dataHasBeenLoaded) await tlData.openFromAssets();
+    // if (!tlData.dataHasBeenLoaded) await tlData.openFromAssets();
+    if (!tlData.dataHasBeenLoaded) await tlData.getFromCache();
 
     /// Photo List
     photoListTitle.clear();
