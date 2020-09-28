@@ -71,9 +71,12 @@ class CustomCacheManager extends BaseCacheManager {
 
   static Future<Map<String, dynamic>> getTLDataAsJson() async {
     try {
-      // TODO: check if file excites
+
       // get file from cache
       FileInfo cachedFile = await CustomCacheManager().getFileFromCache(_TLDataKey);
+
+      if (!await cachedFile.file.exists())
+        return null;
 
       // open file
       cachedFile.file.openRead(); // TODO not sure if needed
@@ -81,11 +84,14 @@ class CustomCacheManager extends BaseCacheManager {
       // get content of file as string
       final jsonStr = await cachedFile.file.readAsString();
 
+      if (jsonStr == null)
+        return null;
+
       // return json
       return json.decode(jsonStr);
 
     } catch (e) {
-      print('no json file stored in cache $e');
+      print('Error on getting Presets from json $e');
       return null;
     }
   }
