@@ -41,20 +41,34 @@ class CustomCacheManager extends BaseCacheManager {
 
   static Future<BtDevice> getLastBtDevice() async {
     try {
-      /// getting Name
+      // getting file of Name
       FileInfo cachedName = await CustomCacheManager().getFileFromCache(_nameKey);
-      cachedName.file.openRead();
-      final name = cachedName.file.readAsStringSync();
 
-      /// getting Address
+      if (!await cachedName.file.exists())
+        return null;
+
+      cachedName.file.openRead();
+
+      final name = await cachedName.file.readAsString();
+
+
+      // getting file of Address
       FileInfo cachedAddress = await CustomCacheManager().getFileFromCache(_addressKey);
+
+      if (!await cachedAddress.file.exists())
+        return null;
+
       cachedAddress.file.openRead(); // TODO not sure if needed
-      final address = cachedAddress.file.readAsStringSync();
+
+      final address = await cachedAddress.file.readAsString();
+
+      if (name == null || address == null)
+        return null;
 
       return BtDevice(name: name, address: address);
 
     } catch (e) {
-      print('no address of last connected device: $e');
+      print('Error on getting address of last connected device: $e');
       return null;
     }
   }
