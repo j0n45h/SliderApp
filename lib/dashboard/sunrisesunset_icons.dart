@@ -57,7 +57,16 @@ class SunriseSunsetIcons extends StatelessWidget {
     double space = map(halfDuration.inMilliseconds.toDouble(), 0,
         Duration(hours: 24).inMilliseconds.toDouble(), size.width / 2 - 30, 0);
 
-    if (space < 15) return 15;
+
+    if (space > size.width * 0.24)
+      return size.width * 0.24;
+
+    if (space > size.width - 50)
+      return size.width - 50;
+
+    if (space < 15)
+      return 15;
+
     return space;
   }
 
