@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_blue/flutter_blue.dart' as ble;
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
@@ -72,6 +73,9 @@ class ProvideBtState with ChangeNotifier {
   }
 
   Future<void> connect({BtDevice btDeviceToConnectTo}) async {
+    if (!await ble.FlutterBlue.instance.isAvailable)
+      return;
+
     _loadingIconState = 1;
     notifyListeners();
 
@@ -133,6 +137,9 @@ class ProvideBtState with ChangeNotifier {
   }
 
   Future<bool> enable() async { // TODO Fix crash on deny
+    if (!await ble.FlutterBlue.instance.isAvailable)
+      return false;
+
     if (await FlutterBluetoothSerial.instance.isEnabled) return true;
     print('enable!');
     try {
@@ -173,7 +180,10 @@ class ProvideBtState with ChangeNotifier {
     _reCallBlocked = false;
   }
 
-  void setup(){
+  void setup() async {
+    if (!await ble.FlutterBlue.instance.isAvailable)
+      return;
+
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
       _loadingIconState = 0;
