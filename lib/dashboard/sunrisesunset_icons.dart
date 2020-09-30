@@ -93,7 +93,7 @@ class SunRiseIcon extends StatelessWidget {
           ),
         ),
         Text(
-          _locationState.sunRiseTimeStr,
+          _locationState.sunRiseTimeStr(context),
           style: const TextStyle(
               fontFamily: 'Roboto',
               fontWeight: FontWeight.w200,
@@ -125,7 +125,7 @@ class SunSetIcon extends StatelessWidget {
           ),
         ),
         Text(
-          _locationState.sunSetTimeStr,
+          _locationState.sunSetTimeStr(context),
           style: const TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.w200,

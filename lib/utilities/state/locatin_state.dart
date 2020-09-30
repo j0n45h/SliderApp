@@ -42,9 +42,8 @@ class ProvideLocationState with ChangeNotifier {
     return _sunRiseTime;
   }
 
-  String get sunRiseTimeStr {
-    if (_sunRiseTime == null) return '--:--';
-    return DateFormat('HH:mm').format(_sunRiseTime);
+  String sunRiseTimeStr(BuildContext context) {
+    return _timeToString(context, _sunRiseTime);
   }
 
   /// Sun Set
@@ -53,9 +52,17 @@ class ProvideLocationState with ChangeNotifier {
     return _sunSetTime;
   }
 
-  String get sunSetTimeStr {
-    if (_sunSetTime == null) return '--:--';
-    return DateFormat('HH:mm').format(_sunSetTime);
+  String sunSetTimeStr(BuildContext context) {
+    return _timeToString(context, _sunSetTime);
+  }
+
+  String _timeToString(BuildContext context, DateTime time) {
+    if (time == null)
+      return '--:--';
+    if (MediaQuery.of(context).alwaysUse24HourFormat)
+      return DateFormat.Hm().format(time);
+    else
+      return DateFormat.jm().format(time);
   }
 
   static void getSunriseSunsetResult() {
