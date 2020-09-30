@@ -76,7 +76,7 @@ class StartEndDuration extends StatelessWidget {
 
   Future<void> _showEndTimePicker
       (TimeState timeState, BuildContext context) async {
-    print(timeState.endingTime == null);
+
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
