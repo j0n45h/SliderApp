@@ -50,10 +50,7 @@ class _SearchingDialogState extends State<SearchingDialog>
     final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
     final height = MediaQuery.of(context).size.height * 0.65;
     final width = MediaQuery.of(context).size.width * 0.9;
-    final isPortrait =
-        MediaQuery
-            .of(context)
-            .orientation == Orientation.portrait;
+    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -67,13 +64,14 @@ class _SearchingDialogState extends State<SearchingDialog>
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+            filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
             child: Container(
               decoration: BoxDecoration(
                 // color: MyColors.popup.withOpacity(0.2),
                 // color: MyColors.bg.withOpacity(0.5),
                 // color: Colors.black12.withOpacity(0.3),
-                color: Colors.white.withOpacity(0.05),
+                // color: Colors.white.withOpacity(0.05),
+                color: Color(0xffE3E3E3).withOpacity(0.16),
               ),
               child: Stack(
                 children: <Widget>[
@@ -90,12 +88,12 @@ class _SearchingDialogState extends State<SearchingDialog>
                               child: btIcon(btStateProvider),
                             ),
                             discoveredDevicesText(),
-                            Divider(
-                              color: Colors.deepOrange.withOpacity(0.6),
-                              height: 30,
-                              indent: 20,
-                              endIndent: 20,
-                            ),
+                            // Divider(
+                            //   color: Colors.white.withOpacity(0.6),
+                            //   height: 30,
+                            //   indent: 20,
+                            //   endIndent: 20,
+                            // ),
                           ],
                         );
                       } else {
@@ -115,7 +113,7 @@ class _SearchingDialogState extends State<SearchingDialog>
                               ],
                             ),
                             Divider(
-                              color: Colors.deepOrange.withOpacity(0.6),
+                              color: Colors.white.withOpacity(0.6),
                               height: 10,
                               indent: 60,
                               endIndent: 60,
@@ -129,7 +127,7 @@ class _SearchingDialogState extends State<SearchingDialog>
                     children: <Widget>[
                       Container(height: isPortrait ? 125 : 70),
                       Divider(
-                        color: Colors.black38.withOpacity(0.5),
+                        color: Colors.white.withOpacity(0.1),
                         height: 0,
                         thickness: 1,
                       ),
@@ -137,11 +135,12 @@ class _SearchingDialogState extends State<SearchingDialog>
                         height: isPortrait
                             ? height - 125 - 60
                             : height - 70 - 60,
-                        color: Colors.black.withOpacity(0.3),
+                        // color: Colors.black.withOpacity(0.23),
+                        color: Color(0xffE3E3E3).withOpacity(0.05),
                         child: listView(),
                       ),
                       Divider(
-                        color: Colors.black38.withOpacity(0.5),
+                        color: Colors.white.withOpacity(0.1),
                         height: 0,
                         thickness: 1,
                       ),

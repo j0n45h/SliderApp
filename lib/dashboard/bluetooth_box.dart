@@ -20,32 +20,36 @@ class BluetoothBox extends StatelessWidget {
   Widget build(BuildContext context) {
     onBuild(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(21, 0, 15, 0),
+      padding: const EdgeInsets.fromLTRB(21, 0, 5, 0),
       child: Consumer<ProvideBtState>(
         builder: (context, btStateBuilder, _) => InkWell(
+          borderRadius: BorderRadius.circular(15),
           onLongPress: () => _inkWellLongPress(context, btStateBuilder),
           onTap: () => _inkWellTap(context, btStateBuilder),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container( // Bluetooth icon
-                padding: EdgeInsets.all(14),
-                // padding: const EdgeInsets.all(14),
-                child: BtStateIcon(btStateBuilder),
-                // child: btIcon(context, btStateBuilder, btStateBuilder),
-              ),
-              Text( // Bluetooth text
-                btStatus(btStateBuilder),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: MyColors.font,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w200,
-                  letterSpacing: 2,
-                  fontSize: 14,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 0, right: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container( // Bluetooth icon
+                  padding: const EdgeInsets.all(14),
+                  // padding: const EdgeInsets.all(14),
+                  child: BtStateIcon(btStateBuilder),
+                  // child: btIcon(context, btStateBuilder, btStateBuilder),
                 ),
-              ),
-            ],
+                Text( // Bluetooth text
+                  btStatus(btStateBuilder),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: MyColors.font,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w200,
+                    letterSpacing: 2,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

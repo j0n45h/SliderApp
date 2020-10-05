@@ -28,11 +28,11 @@ class DashboardTopView extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 margin: const EdgeInsets.fromLTRB(0, 16, 15, 5),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     BluetoothBox(),
                     Container(
-                      margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                      margin: const EdgeInsets.fromLTRB(0, 0, 25, 0),
                       child: WeatherWidget(),
                     ),
                   ],
