@@ -77,9 +77,25 @@ class _RampedGraphState extends State<RampedGraph> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Color(0xFF2A96FF).withOpacity(0.85),
-                              Color(0xFF2A96FF).withOpacity(0.05),
+                              Color(0xFF2A96FF).withOpacity(0.15),
                             ],
                           ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF2A96FF).withOpacity(0.15),
+                            Color(0xFF2A96FF).withOpacity(0.00),
+                          ],
                         ),
                       ),
                     ),

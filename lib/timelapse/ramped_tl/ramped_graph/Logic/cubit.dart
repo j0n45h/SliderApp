@@ -34,8 +34,8 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
   @override
   void onTransition(Transition<List<CubitRampingPoint>> transition) {
-    print("currentState Transition: ${transition.currentState}");
-    print("nextState Transition:    ${transition.nextState}");
+    // print("currentState Transition: ${transition.currentState}");
+    // print("nextState Transition:    ${transition.nextState}");
     super.onTransition(transition);
   }
 
