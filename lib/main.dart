@@ -43,6 +43,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     tlData = TLData();
     SetUpLinearTL.setToDefaultValues();
+
     super.initState();
   }
 
@@ -60,7 +61,7 @@ class _MainPageState extends State<MainPage> {
           ChangeNotifierProvider<ProvideWeatherState>(
             create: (context) => ProvideWeatherState()),
 
-          /// Ramoing
+          /// Ramping
           ChangeNotifierProvider<TimeState>(
             create: (context) => TimeState()),
           ChangeNotifierProvider<IntervalRangeState>(

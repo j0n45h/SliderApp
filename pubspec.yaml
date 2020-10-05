@@ -21,9 +21,9 @@ dependencies:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  percent_indicator: ^2.1.1
-  weather: ^1.1.1
+  cupertino_icons: ^1.0.0
+  percent_indicator: ^2.1.7+4
+  weather: ^1.2.3
 
   geolocator: ^5.3.1 # add ios permissions
   location: ^3.0.0 # add ios permissions
@@ -31,8 +31,8 @@ dependencies:
   sunrise_sunset_calc: ^1.0.1
   flutter_bluetooth_serial: ^0.2.2
   flutter_blue: ^0.7.2
-  flutter_cache_manager: ^1.2.2
-  path_provider: ^1.6.8
+  flutter_cache_manager: ^1.4.2
+  path_provider: ^1.6.18
   provider: ^4.1.2
   intl: ^0.16.1
   data_connection_checker: ^0.3.4

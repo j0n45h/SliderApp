@@ -5,11 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
-import 'package:weather/weather_library.dart';
+import 'package:weather/weather.dart';
 
 class ProvideWeatherState with ChangeNotifier {
   static const String _openWeatherMapKey = 'baa5ee1094f9f173005067c6b168c3c8';
-  static WeatherStation _weatherStation = new WeatherStation(_openWeatherMapKey);
+  static var _weatherFactory = WeatherFactory(_openWeatherMapKey);
   static Weather _weather;
 
   Weather get getWeather {
@@ -42,6 +42,6 @@ class ProvideWeatherState with ChangeNotifier {
   }
 
   static Future<Weather> _getTreadWeather(List<double> location) async {
-    return await _weatherStation.currentWeather(location[0], location[1]);
+    return await _weatherFactory.currentWeatherByLocation(location[0], location[1]);
   }
 }

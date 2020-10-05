@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
-import 'package:weather/weather_library.dart';
+import 'package:weather/weather.dart';
 
 class WeatherWidget extends StatelessWidget {
   @override
