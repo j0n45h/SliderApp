@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -28,7 +30,7 @@ class ToolBar extends StatelessWidget {
                 height: 25,
                 textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                   builder: (context, state) {
-                    var shots = context.cubit<RampCurveCubit>().getShots();
+                    var shots = context.cubit<RampCurveCubit>().getShots(); // bug stays 0 when graph has not been touched
                     return Text(
                         shots.toString(),
                         style: MyTextStyle.normal(fontSize: 12),
@@ -47,22 +49,28 @@ class ToolBar extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.remove_circle_outline, color: Colors.red),
                 onPressed: () {
-                  context.cubit<RampCurveCubit>().undo();
+                  final rampingPointsState = Provider.of<RampingPointsState>(context, listen: false);
+                  rampingPointsState.rampingPoints--;
+                  if (rampingPointsState.rampingPoints < 1)
+                    rampingPointsState.rampingPoints = 1;
+
+                  context.cubit<RampCurveCubit>().updatePoints(context);
                 },
               ),
               IconButton(
                 icon: Icon(Icons.add_circle_outline, color: Colors.white),
                 onPressed: () {
-                  context.cubit<RampCurveCubit>().add(CubitRampingPoint(
-                    interval: Duration(seconds: 17),
-                    start: Duration(minutes: 180),
-                    end: Duration(minutes: 200),
-                  ));
+                  final rampingPointsState = Provider.of<RampingPointsState>(context, listen: false);
+                  rampingPointsState.rampingPoints++;
+                  if (rampingPointsState.rampingPoints > 5)
+                    rampingPointsState.rampingPoints = 5;
+
+                  context.cubit<RampCurveCubit>().updatePoints(context);
                 },
               ),
               IconButton(
                 icon: Icon(Icons.check, color: MyColors.green),
-                onPressed: null,
+                onPressed: () => Navigator.of(context).pop(),
               ),
               SizedBox(width: 15)
             ],
