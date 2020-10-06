@@ -216,8 +216,8 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
     }
 
   Future<bool> makeList() async {
-    // if (!tlData.dataHasBeenLoaded) await tlData.openFromAssets();
-    if (!tlData.dataHasBeenLoaded) await tlData.getFromCache();
+    if (!tlData.dataHasBeenLoaded) await tlData.openFromAssets();
+    // if (!tlData.dataHasBeenLoaded) await tlData.getFromCache();
 
     /// Photo List
     photoListTitle.clear();
