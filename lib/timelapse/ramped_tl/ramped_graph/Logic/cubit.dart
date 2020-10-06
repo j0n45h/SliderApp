@@ -54,8 +54,8 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   void onDragInterval(int index, double delta, BuildContext context) {
     if (globalSize == null)
       return;
-    var oldValue = state[index].getIntervalValue(context, globalSize);
-    var newValue = oldValue + delta;
+    final oldValue = state[index].getIntervalValue(context, globalSize);
+    final newValue = oldValue + delta;
 
     var newState = [...state];
     newState[index].setIntervalValue(newValue, context, globalSize);
@@ -65,17 +65,23 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   void onDragStartTime(int index, double delta, BuildContext context) {
     if (globalSize == null)
       return;
-    var oldValue = state[index].getStartValue(context, globalSize);
-    var newValue = oldValue + delta;
-    state[index].setStartValue(newValue, context, globalSize);
+    final oldValue = state[index].getStartValue(context, globalSize);
+    final newValue = oldValue + delta;
+
+    var newState = [...state];
+    newState[index].setStartValue(newValue, context, globalSize);
+    emit(newState);
   }
 
   void onDragEndTime(int index, double delta, BuildContext context) {
     if (globalSize == null)
       return;
-    var oldValue = state[index].getEndValue(context, globalSize);
-    var newValue = oldValue + delta;
-    state[index].setEndValue(newValue, context, globalSize);
+    final oldValue = state[index].getEndValue(context, globalSize);
+    final newValue = oldValue + delta;
+
+    var newState = [...state];
+    newState[index].setEndValue(newValue, context, globalSize);
+    emit(newState);
   }
 
   void onTouchedDown(int index) {

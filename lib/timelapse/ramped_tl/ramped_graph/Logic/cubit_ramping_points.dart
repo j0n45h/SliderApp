@@ -62,12 +62,12 @@ class CubitRampingPoint {
 
   void setStartValue(double startValue, BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
-    start = Duration(seconds: map(
+    start = Duration(milliseconds: map(
       startValue,
       0,
       size.width,
-      provider.startingTime.millisecondsSinceEpoch / 1000,
-      (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch) / 1000
+      0,
+      (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch).toDouble()
     ).round());
   }
 
@@ -85,12 +85,12 @@ class CubitRampingPoint {
 
   void setEndValue(double endValue, BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
-    end = Duration(seconds: map(
+    end = Duration(milliseconds: map(
       endValue,
       0,
       size.width,
-      provider.startingTime.millisecondsSinceEpoch / 1000,
-      (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch) / 1000
+      0,
+      (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch).toDouble()
     ).round());
   }
 
