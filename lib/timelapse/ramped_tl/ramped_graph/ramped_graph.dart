@@ -6,6 +6,8 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ra
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/path.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/gesture_detector.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
+import 'package:sliderappflutter/utilities/box_decoraation_frame.dart';
+import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class RampedGraph extends StatefulWidget {
@@ -17,7 +19,8 @@ class _RampedGraphState extends State<RampedGraph> {
   @override
   Widget build(BuildContext context) {
     final rampPointsCountState = Provider.of<RampingPointsState>(context, listen: false);
-    return Expanded(
+    return Padding(
+      padding: const EdgeInsets.only(top: 50),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final size = Size(constraints.maxWidth, constraints.maxHeight - 50);
@@ -25,15 +28,17 @@ class _RampedGraphState extends State<RampedGraph> {
             builder: (context, state) {
               context.cubit<RampCurveCubit>().globalSize = size;
 
-              List<Widget> list = List.empty(growable: true);
+              List<Widget> intervalGCList = List.empty(growable: true);
+              List<Widget> timeList = List.empty(growable: true);
 
               for (int i = 0; i < rampPointsCountState.rampingPoints; i++) {
+                // Interval
                 var top = state[i].getIntervalValue(context, size);
                 if (top > size.height) continue;
                 var left = state[i].getStartValue(context, size);
                 // if (left > size.width) continue;
 
-                list.add(Positioned(
+                intervalGCList.add(Positioned(
                   top: top - 15,
                   left: left,
                   child: Column(
@@ -58,8 +63,17 @@ class _RampedGraphState extends State<RampedGraph> {
                     ],
                   ),
                 ));
-                list.add(MyGestureDetector(i, size));
+                intervalGCList.add(IntervalGestureDetector(i, size));
+
+                // Time
+                if (i != 0)
+                  timeList.add(timeGestureDetector(state, i, size, true));
+
+                if (i != rampPointsCountState.rampingPoints - 1)
+                  timeList.add(timeGestureDetector(state, i, size, false));
               }
+
+
               return Stack(
                 children: [
                   CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
@@ -103,13 +117,66 @@ class _RampedGraphState extends State<RampedGraph> {
                   Stack(
                     // fit: StackFit.expand,
                     alignment: Alignment.topLeft,
-                    children: list,
+                    children: intervalGCList,
+                  ),
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: timeList,
                   ),
                 ],
               );
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget timeBox(BuildContext context, DateTime time) {
+    return Container(
+      width: 85,
+      alignment: Alignment.center,
+      height: 25,
+      padding: const EdgeInsets.only(left: 12, right: 12),
+      decoration: BoxDecorationFrame().thinFrame,
+      child: Text(
+        timeToString(context, time),
+        style: MyTextStyle.normal(fontSize: 12),
+      ),
+    );
+  }
+
+  Widget timeGestureDetector(List<CubitRampingPoint> state, int index, Size size, bool start) {
+    double distToLeft;
+    DateTime time;
+    if (start) {
+      distToLeft = state[index].getStartValue(context, size) - 75;
+      time = state[index].getStartTime(context, size);
+    }
+    else {
+      distToLeft = state[index].getEndValue(context, size) - 75;
+      time = state[index].getEndTime(context, size);
+    }
+
+    return Positioned(
+      left: distToLeft,
+      width: 150,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            child: timeBox(
+              context,
+              time,
+            ),
+          ),
+          TimeGestureDetector(
+            size: size,
+            index: index,
+            start: start,
+          ),
+        ],
       ),
     );
   }

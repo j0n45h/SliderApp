@@ -9,8 +9,7 @@ class IntervalScale extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final intervalRangeState =
-        Provider.of<IntervalRangeState>(context, listen: false);
+        final intervalRangeState = Provider.of<IntervalRangeState>(context, listen: false);
         final scale = intervalRangeState.niceScale;
 
         List<Widget> list = [];
@@ -20,7 +19,7 @@ class IntervalScale extends StatelessWidget {
           final pos = map(i, scale.niceMin, scale.niceMax, height - 50, 50);
           final scaleNumber = i.floor().toString();
           list.add(Positioned(
-            top: pos - 26/2,
+            top: pos - 26 / 2,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -43,11 +42,12 @@ class IntervalScale extends StatelessWidget {
           ));
         }
         return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: const EdgeInsets.only(left: 5),
+              margin: const EdgeInsets.only(left: 5, top: 30),
               width: 2,
-              height: MediaQuery.of(context).size.height,
+              height: height - 68,
               color: Colors.grey[500],
             ),
             Container(

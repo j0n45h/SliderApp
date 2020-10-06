@@ -37,24 +37,12 @@ class _RampedGraphScreenState extends State<RampedGraphScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Row(
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: Stack(
+          alignment: Alignment.topLeft,
           children: [
+            ToolBar(),
+            RampedGraph(),
             IntervalScale(),
-            Expanded(
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ToolBar(),
-                      RampedGraph(),
-                    ],
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),

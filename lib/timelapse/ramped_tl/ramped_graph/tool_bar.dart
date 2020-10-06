@@ -12,6 +12,7 @@ class ToolBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(left: 30),
       height: 50,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
