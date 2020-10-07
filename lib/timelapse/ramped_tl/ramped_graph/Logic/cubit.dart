@@ -66,7 +66,14 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     if (globalSize == null)
       return;
     final oldValue = state[index].getStartValue(context, globalSize);
-    final newValue = oldValue + delta;
+    var newValue = oldValue + delta;
+
+    final previousPointValue = state[index-1].getEndValue(context, globalSize);
+    final nextPointValue = state[index].getEndValue(context, globalSize);
+    if (newValue - 70 < previousPointValue) // prevent this point to be before previous Point
+      newValue = previousPointValue + 70;
+    else if (newValue + 70 > nextPointValue) // prevent this point to be after next Point
+      newValue =  nextPointValue - 70;
 
     var newState = [...state];
     newState[index].setStartValue(newValue, context, globalSize);
@@ -77,7 +84,14 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     if (globalSize == null)
       return;
     final oldValue = state[index].getEndValue(context, globalSize);
-    final newValue = oldValue + delta;
+    var newValue = oldValue + delta;
+
+    final previousPointValue = state[index].getStartValue(context, globalSize);
+    final nextPointValue = state[index+1].getStartValue(context, globalSize);
+    if (newValue - 70 < previousPointValue) // prevent this point to be before previous Point
+      newValue = previousPointValue + 70;
+    else if (newValue + 70 > nextPointValue) // prevent this point to be after next Point
+      newValue =  nextPointValue - 70;
 
     var newState = [...state];
     newState[index].setEndValue(newValue, context, globalSize);
