@@ -93,12 +93,14 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   }
 
 
-  int getShots() {
+  int getShots(BuildContext context) {
     if (state.length < 1 || globalSize == null)
       return 0;
 
+    final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false).rampingPoints;
+
     double shotsValue = 0;
-    for (int i = 0; i < state.length - 1; i++) {
+    for (int i = 0; i < rampPointsCount - 1; i++) {
 
       final intervalAtPoint = state[i].interval.inMilliseconds / 1000;
       final pointA = Point<double>(state[i].end.inSeconds.toDouble(), intervalAtPoint);

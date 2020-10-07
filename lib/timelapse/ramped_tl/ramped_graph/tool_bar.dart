@@ -31,7 +31,7 @@ class ToolBar extends StatelessWidget {
                 height: 25,
                 textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                   builder: (context, state) {
-                    final shots = context.cubit<RampCurveCubit>().getShots();
+                    final shots = context.cubit<RampCurveCubit>().getShots(context);
                     return Text(
                         shots.toString(),
                         style: MyTextStyle.normal(fontSize: 12),
