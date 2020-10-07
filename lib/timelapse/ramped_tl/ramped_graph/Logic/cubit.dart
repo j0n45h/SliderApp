@@ -112,20 +112,19 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
       final dT = pointB.y - pointA.y; // difference of y (interval)
 
       // ramp part
-      final ramp =
-          (dt * log(pointA.y * dt - pointA.x * dT + dT * pointB.x))/dT -
-          (dt * log(pointA.y * dt - pointA.x * dT + dT * pointA.x))/dT; // integral of linearSpline
-      // print('index: $i ramp: $ramp'); // Gets NaN when all on top
-      shotsValue += ramp;
+      if (dT == 0){ // avoid div by 0 when dT is 0
+        shotsValue += (pointB.x - pointA.x) / intervalAtPoint;
+      }
+      else {
+        final ramp =
+            (dt * log(pointA.y * dt - pointA.x * dT + dT * pointB.x)) / dT -
+                (dt * log(pointA.y * dt - pointA.x * dT + dT * pointA.x)) / dT; // integral of linearSpline
+        shotsValue += ramp;
+      }
     }
 
     // last linear part
     shotsValue += (state.last.end.inSeconds - state.last.start.inSeconds) / (state.last.interval.inMilliseconds / 1000);
-
-    if (shotsValue.isInfinite)
-      shotsValue = double.maxFinite;
-    else if (shotsValue.isNaN)
-      shotsValue = 0;
 
     return shotsValue.round();
   }
