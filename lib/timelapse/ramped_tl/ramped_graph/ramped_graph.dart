@@ -134,14 +134,14 @@ class _RampedGraphState extends State<RampedGraph> {
 
   Widget timeBox(BuildContext context, DateTime time) {
     return Container(
-      width: 85,
+      width: 70,
       alignment: Alignment.center,
-      height: 25,
-      padding: const EdgeInsets.only(left: 12, right: 12),
+      height: 23,
+      padding: const EdgeInsets.only(left: 8, right: 8),
       decoration: BoxDecorationFrame().thinFrame,
       child: Text(
         timeToString(context, time),
-        style: MyTextStyle.normal(fontSize: 12),
+        style: MyTextStyle.normal(fontSize: 10),
       ),
     );
   }
