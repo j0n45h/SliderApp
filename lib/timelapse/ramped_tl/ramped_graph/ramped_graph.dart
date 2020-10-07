@@ -35,17 +35,18 @@ class _RampedGraphState extends State<RampedGraph> {
                 // Interval
                 var top = state[i].getIntervalValue(context, size);
                 if (top > size.height) continue;
-                var left = state[i].getStartValue(context, size);
+                var posFromLeft = state[i].getStartValue(context, size);
+                final width = (state[i].getEndValue(context, size) - state[i].getStartValue(context, size));
                 // if (left > size.width) continue;
 
                 intervalGCList.add(Positioned(
                   top: top - 15,
-                  left: left,
+                  left: posFromLeft,
                   child: Column(
                     children: [
                       Container(
                         height: 30,
-                        width: (state[i].getEndValue(context, size) - state[i].getStartValue(context, size)),
+                        width: width,
                         child: Icon(
                           Icons.unfold_more,
                           color: Colors.white.withOpacity(0.7),
@@ -65,11 +66,36 @@ class _RampedGraphState extends State<RampedGraph> {
                 ));
                 intervalGCList.add(IntervalGestureDetector(i, size));
 
+                if (i != 0) {
+                  intervalGCList.add(Positioned(
+                    left: posFromLeft,
+                    top: top,
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      width: 1,
+                      height: size.height - top + 15,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ));
+                }
+                if (i != rampPointsCountState.rampingPoints) {
+                  intervalGCList.add(Positioned(
+                    left: posFromLeft + width,
+                    top: top,
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      width: 1,
+                      height: size.height - top + 15,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ));
+                }
+
                 // Time
-                if (i != 0)
+                if (i != 0) // skip first
                   timeList.add(timeGestureDetector(state, i, size, true));
 
-                if (i != rampPointsCountState.rampingPoints - 1)
+                if (i != rampPointsCountState.rampingPoints - 1) // skip second
                   timeList.add(timeGestureDetector(state, i, size, false));
               }
 
@@ -147,20 +173,21 @@ class _RampedGraphState extends State<RampedGraph> {
   }
 
   Widget timeGestureDetector(List<CubitRampingPoint> state, int index, Size size, bool start) {
-    double distToLeft;
+    double posFromLeft;
     DateTime time;
     if (start) {
-      distToLeft = state[index].getStartValue(context, size) - 75;
+      posFromLeft = state[index].getStartValue(context, size) - 75;
       time = state[index].getStartTime(context, size);
     }
     else {
-      distToLeft = state[index].getEndValue(context, size) - 75;
+      posFromLeft = state[index].getEndValue(context, size) - 75;
       time = state[index].getEndTime(context, size);
     }
 
     return Positioned(
-      left: distToLeft,
+      left: posFromLeft,
       width: 150,
+      bottom: 5,
       child: Stack(
         alignment: Alignment.center,
         children: [
