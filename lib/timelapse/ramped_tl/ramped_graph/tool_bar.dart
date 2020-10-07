@@ -31,7 +31,7 @@ class ToolBar extends StatelessWidget {
                 height: 25,
                 textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                   builder: (context, state) {
-                    var shots = context.cubit<RampCurveCubit>().getShots(); // bug stays 0 when graph has not been touched
+                    final shots = context.cubit<RampCurveCubit>().getShots();
                     return Text(
                         shots.toString(),
                         style: MyTextStyle.normal(fontSize: 12),
