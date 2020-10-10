@@ -141,7 +141,7 @@ class ProvideLocationState with ChangeNotifier {
   Future<void> updateMyGeoLocation(BuildContext context) async {
     int check;
     try {
-      check = await getLocation().timeout(Duration(seconds: 20));
+      check = await getLocation().timeout(Duration(minutes: 5));
     } on TimeoutException catch (e) {
       print('Location time out: $e');
       return;
