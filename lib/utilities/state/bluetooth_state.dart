@@ -4,12 +4,30 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_blue/flutter_blue.dart' as ble;
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
+
 class ProvideBtState with ChangeNotifier {
-  static BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
+  bool _connected = false;
+
+  set connected(bool c) {
+    _connected = c;
+    notifyListeners();
+  }
+
+  bool get isConnected {
+    return _connected;
+  }
+}
+
+/*
+
+class ProvideBtState with ChangeNotifier {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  static BluetoothState _bluetoothState = BluetoothState.unknown;
+  BluetoothDevice device;
   static BluetoothConnection _connection;
   static int _loadingIconState = 0;
 
@@ -73,7 +91,7 @@ class ProvideBtState with ChangeNotifier {
   }
 
   Future<void> connect({BtDevice btDeviceToConnectTo}) async {
-    if (!await ble.FlutterBlue.instance.isAvailable)
+    if (!await FlutterBlue.instance.isAvailable)
       return;
 
     _loadingIconState = 1;
@@ -83,7 +101,7 @@ class ProvideBtState with ChangeNotifier {
       await disconnect();
     }
 
-    if (!await FlutterBluetoothSerial.instance.isEnabled) {
+    if (!await FlutterBlue.instance.isOn) {
       bool enabled = await enable();
       if (!enabled) {
         _loadingIconState = 0;
@@ -137,10 +155,10 @@ class ProvideBtState with ChangeNotifier {
   }
 
   Future<bool> enable() async { // TODO Fix crash on deny
-    if (!await ble.FlutterBlue.instance.isAvailable)
+    if (!await FlutterBlue.instance.isAvailable)
       return false;
 
-    if (await FlutterBluetoothSerial.instance.isEnabled) return true;
+    if (await FlutterBlue.instance.isOn) return true;
     print('enable!');
     try {
       await FlutterBluetoothSerial.instance.requestEnable();
@@ -148,7 +166,7 @@ class ProvideBtState with ChangeNotifier {
       print('could not turn on Bluetooth');
       return false;
     }
-    if (!await FlutterBluetoothSerial.instance.isEnabled) {
+    if (!await FlutterBlue.instance.isOn) {
       print('failed to enable Bluetooth');
       return false;
     }
@@ -160,7 +178,7 @@ class ProvideBtState with ChangeNotifier {
 
   Future<void> disable() async {
     if (_connection != null && _connection.isConnected) await disconnect();
-    await FlutterBluetoothSerial.instance.requestDisable();
+    await flutterBlue.instance.requestDisable();
 
     notifyListeners(); //TODO: check if necessary because .onStateChanged().listen does the same
   }
@@ -181,17 +199,17 @@ class ProvideBtState with ChangeNotifier {
   }
 
   void setup() async {
-    if (!await ble.FlutterBlue.instance.isAvailable)
+    if (!await FlutterBlue.instance.isAvailable)
       return;
 
     // Get current state
-    FlutterBluetoothSerial.instance.state.then((state) {
+    FlutterBlue.instance.state.then((state) {
       _loadingIconState = 0;
       setBluetoothState = state;
       notifyListeners();
     });
     // Listen for further state changes
-    FlutterBluetoothSerial.instance
+    FlutterBlue.instance
         .onStateChanged()
         .listen((BluetoothState state) {
           _loadingIconState = 0;
@@ -203,7 +221,7 @@ class ProvideBtState with ChangeNotifier {
     });
 
     // set Standard pin to 1234
-    FlutterBluetoothSerial.instance
+    FlutterBlue.instance
         .setPairingRequestHandler((BluetoothPairingRequest request) {
       print("Trying to auto-pair with Pin 1234");
       if (request.pairingVariant == PairingVariant.Pin) {
@@ -233,7 +251,7 @@ class ProvideBtState with ChangeNotifier {
   }
 }
 
-
+*/
 class BtDevice {
   String name;
   String address;
