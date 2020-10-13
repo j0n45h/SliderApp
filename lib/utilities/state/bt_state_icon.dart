@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 
 class BtStateIcon extends StatelessWidget {
   const BtStateIcon();
 
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: FlutterBlue.instance.connectedDevices,
-      initialData: [],
-      builder: (context, snapshot) {
-        if (snapshot.data.length > 0)
+    return Consumer<ProvideBtState>(
+      builder: (context, provideBtState, child) {
+        if (provideBtState.isConnected)
           return const Icon(
             Icons.bluetooth_connected,
             color: MyColors.blue,
@@ -19,7 +19,7 @@ class BtStateIcon extends StatelessWidget {
         else
           return StreamBuilder<BluetoothState>(
             stream: FlutterBlue.instance.state,
-            initialData: BluetoothState.unknown,
+            initialData: BluetoothState.on,
             builder: (context, snapshot) {
               final state = snapshot.data;
               switch (state) {

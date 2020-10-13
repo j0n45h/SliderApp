@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 // import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
@@ -11,6 +12,8 @@ import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 class ProvideBtState with ChangeNotifier {
   bool _connected = false;
+  BluetoothDevice device;
+  BluetoothDeviceState deviceState;
 
   set connected(bool c) {
     _connected = c;
@@ -18,7 +21,40 @@ class ProvideBtState with ChangeNotifier {
   }
 
   bool get isConnected {
-    return _connected;
+    if (deviceState == null || device == null)
+      return false;
+    return deviceState == BluetoothDeviceState.connected;
+  }
+
+  Future<void> connect(BluetoothDevice device) async {
+    // if (this.device != null && device == this.device) return;
+    try {
+      await device.connect();
+    } catch(e) {
+      if (e.code.toString() == 'already_connected')
+        print('already_connected');
+      else
+        print('Exception on connecting: $e');
+    }
+    this.device = device;
+    CustomCacheManager.storeDevice(BtDevice(name: device.name, address: device.id.toString()));
+
+    this.device.state.listen((BluetoothDeviceState state) {
+      if (state != deviceState) {
+        deviceState = state;
+        notifyListeners();
+      }
+    });
+  }
+
+  Future<void> disconnect(BluetoothDevice device) async {
+    try {
+      await device?.disconnect();
+    } catch(e) {
+      print('Exception on disconnecting: $e');
+    }
+    // if (this.device == null || device != this.device) return;
+    device = null;
   }
 }
 
