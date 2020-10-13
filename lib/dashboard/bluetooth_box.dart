@@ -79,13 +79,11 @@ class BluetoothBox extends StatelessWidget {
       );
       scan.listen((result) {
         result.device.connect();
-        btState.connected = true;
       });
     } else if (btState.isConnected) {
       connectedDevices.forEach((device) {
         device.disconnect();
       });
-      btState.connected = false;
     } else {
       // turn off BT
     }

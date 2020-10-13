@@ -265,7 +265,6 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                   device: d,
                   onTap: () {
                     provideBtState.disconnect(d);
-                    provideBtState.connected = false;
                   },
                   trailing: StreamBuilder<BluetoothDeviceState>(
                     stream: d.state,
@@ -300,7 +299,6 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                     device: r.device,
                     onTap: () {
                       provideBtState.connect(r.device);
-                      provideBtState.connected = true;
                     },
                   );
                 },

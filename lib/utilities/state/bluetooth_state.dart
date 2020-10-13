@@ -11,19 +11,21 @@ import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 
 class ProvideBtState with ChangeNotifier {
-  bool _connected = false;
   BluetoothDevice device;
   BluetoothDeviceState deviceState;
-
-  set connected(bool c) {
-    _connected = c;
-    notifyListeners();
-  }
+  StreamSubscription<BluetoothDeviceState> deviceStateSubscription;
+  StreamSubscription<List<int>> listener;
+  BluetoothCharacteristic characteristic;
 
   bool get isConnected {
     if (deviceState == null || device == null)
       return false;
     return deviceState == BluetoothDeviceState.connected;
+  }
+
+  void close() {
+    listener?.cancel();
+    deviceStateSubscription?.cancel();
   }
 
   Future<void> connect(BluetoothDevice device) async {
@@ -39,12 +41,14 @@ class ProvideBtState with ChangeNotifier {
     this.device = device;
     CustomCacheManager.storeDevice(BtDevice(name: device.name, address: device.id.toString()));
 
-    this.device.state.listen((BluetoothDeviceState state) {
+    deviceStateSubscription = this.device.state.listen((BluetoothDeviceState state) {
       if (state != deviceState) {
         deviceState = state;
         notifyListeners();
       }
     });
+    await getBluetoothCharacteristic();
+    statListening();
   }
 
   Future<void> disconnect(BluetoothDevice device) async {
@@ -56,6 +60,42 @@ class ProvideBtState with ChangeNotifier {
     // if (this.device == null || device != this.device) return;
     device = null;
   }
+
+  Future<void> statListening() async {
+    characteristic?.value?.listen((value) {
+      print('${utf8.decode(value)}');
+    });
+    await characteristic?.setNotifyValue(true);
+  }
+
+  Future<void> sendToBtDevice(String value) async {
+    if (!isConnected)
+      return;
+
+    var bluetoothCharacteristic = await getBluetoothCharacteristic();
+
+    await bluetoothCharacteristic.write(utf8.encode(value + '\n'));
+  }
+
+  Future<BluetoothCharacteristic> getBluetoothCharacteristic() async {
+    if (!isConnected) return null;
+    List<BluetoothService> services = await device.discoverServices();
+    BluetoothCharacteristic bluetoothCharacteristic;
+
+    services.forEach((service) {
+      if (service.uuid.toString() != '0000ffe0-0000-1000-8000-00805f9b34fb')
+        return;
+      List<BluetoothCharacteristic> blueChars = service.characteristics;
+      blueChars.forEach((BluetoothCharacteristic blueChar) async {
+        if (blueChar.uuid.toString() == '0000ffe1-0000-1000-8000-00805f9b34fb')
+          bluetoothCharacteristic = blueChar;
+      });
+
+    });
+    characteristic = bluetoothCharacteristic;
+    return bluetoothCharacteristic;
+  }
+
 }
 
 /*
