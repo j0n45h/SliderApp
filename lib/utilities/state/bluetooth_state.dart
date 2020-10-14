@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 
@@ -16,6 +13,13 @@ class ProvideBtState with ChangeNotifier {
   StreamSubscription<BluetoothDeviceState> deviceStateSubscription;
   StreamSubscription<List<int>> listener;
   BluetoothCharacteristic characteristic;
+
+  int _retryCounter = 0;
+  int _btStateListeningCounter = 0;
+
+  ProvideBtState() {
+    connectToLastDevice();
+  }
 
   bool get isConnected {
     if (deviceState == null || device == null)
@@ -96,238 +100,58 @@ class ProvideBtState with ChangeNotifier {
     return bluetoothCharacteristic;
   }
 
-}
 
-/*
+  Future<void> connectToLastDevice() async {
+    final flutterBlue = FlutterBlue.instance;
 
-class ProvideBtState with ChangeNotifier {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
-  static BluetoothState _bluetoothState = BluetoothState.unknown;
-  BluetoothDevice device;
-  static BluetoothConnection _connection;
-  static int _loadingIconState = 0;
+    if (!await flutterBlue.isOn) { // if BT is off, wait till it gets turned on
+      do {
+        await Future.delayed(Duration(seconds: 8));
+        _btStateListeningCounter++;
+      } while(!await flutterBlue.isOn && _btStateListeningCounter < 100);
 
-  static BtDevice _connectedBtDevice;
+      _btStateListeningCounter = 0;
 
-
-  ProvideBtState(){
-    setup();
-  }
-
-  BluetoothState get getBluetoothState {
-    return _bluetoothState;
-  }
-
-  BluetoothConnection get getConnection {
-    return _connection;
-  }
-
-  /// -1 on disconnect | 1 on connect | else 0
-  int get getLoadingIconState {
-    return _loadingIconState;
-  }
-
-  BtDevice get connectedBtDevice {
-    return _connectedBtDevice;
-  }
-
-  set setBluetoothState(BluetoothState bState) {
-    _bluetoothState = bState;
-    notifyListeners();
-  }
-
-  set setConnection(BluetoothConnection c) {
-    _connection = c;
-    notifyListeners();
-  }
-
-  bool get isConnected {
-    if (_connection == null) return false;
-    return _connection.isConnected;
-  }
-
-  bool isConnectedTo(BtDevice btDevice) {
-    if (!isConnected) return false;
-    return btDevice.address == _connectedBtDevice.address;
-  }
-
-  void resetLoadingIconState() {
-    _loadingIconState = 0;
-  }
-
-  Future<void> disconnect() async {
-    _loadingIconState = -1;
-    notifyListeners();
-    if(_connection != null) {
-      await _connection.finish();
-      _connection = null;
+      if (!await flutterBlue.isOn)
+        return;
     }
-    _loadingIconState = 0;
-    notifyListeners();
-  }
 
-  Future<void> connect({BtDevice btDeviceToConnectTo}) async {
-    if (!await FlutterBlue.instance.isAvailable)
+    if (isConnected)
       return;
 
-    _loadingIconState = 1;
-    notifyListeners();
+    // get last device from Cache
+    final lastDevice = await CustomCacheManager.getLastBtDevice();
+    if (lastDevice == null)
+      return; // TODO: check if a device with this uuid is available
 
-    if (_connection != null) {
-      await disconnect();
-    }
-
-    if (!await FlutterBlue.instance.isOn) {
-      bool enabled = await enable();
-      if (!enabled) {
-        _loadingIconState = 0;
-        notifyListeners();
+    flutterBlue.startScan(timeout: Duration(seconds: 10), scanMode: ScanMode.lowPower).then((value) {
+      if (isConnected) {
+        _retryCounter = 0;
         return;
       }
-    }
 
-    print('connecting...');
+      if (_retryCounter > 8) return; // retry limit exceeded
 
-    /// figure out which address to connect to
-    if (btDeviceToConnectTo == null) {
-      btDeviceToConnectTo = await CustomCacheManager.getLastBtDevice();
+      _retryCounter++;
+      Timer(Duration(seconds: 10), connectToLastDevice); // wait another 10sec than retry
 
-      if (btDeviceToConnectTo == null) {
-        _loadingIconState = 0;
-        notifyListeners();
-        return; // TODO: add popup dialog to search for new Device
-      }
-    } else {
-      CustomCacheManager.storeDevice(btDeviceToConnectTo);
-    }
-
-    try { /// Bluetooth Connection
-      print('waiting for device');
-      _connection = await BluetoothConnection.toAddress(btDeviceToConnectTo.address).timeout(
-          const Duration(seconds: 15));
-      _connectedBtDevice = btDeviceToConnectTo;
-    }
-    on TimeoutException catch (_) {
-      print('connection time out');
-      _loadingIconState = 0;
-      notifyListeners();
-      return null;
-    }
-    on Error catch (e) {
-      print(e);
-      _loadingIconState = 0;
-      notifyListeners();
-      return null;
-    }
-
-    listenToConnectedDevice();
-
-    print('Connected to the device $btDeviceToConnectTo.address');
-
-
-    _loadingIconState = 0;
-    print('connected ${_connection.isConnected} ..........................................................');
-    notifyListeners();
-  }
-
-  Future<bool> enable() async { // TODO Fix crash on deny
-    if (!await FlutterBlue.instance.isAvailable)
-      return false;
-
-    if (await FlutterBlue.instance.isOn) return true;
-    print('enable!');
-    try {
-      await FlutterBluetoothSerial.instance.requestEnable();
-    } catch (e) {
-      print('could not turn on Bluetooth');
-      return false;
-    }
-    if (!await FlutterBlue.instance.isOn) {
-      print('failed to enable Bluetooth');
-      return false;
-    }
-    print('enabled');
-    print(_bluetoothState.isEnabled);
-    notifyListeners();
-    return true;
-  }
-
-  Future<void> disable() async {
-    if (_connection != null && _connection.isConnected) await disconnect();
-    await flutterBlue.instance.requestDisable();
-
-    notifyListeners(); //TODO: check if necessary because .onStateChanged().listen does the same
-  }
-
-  static bool _reCallBlocked = false;
-  void autoConnectToLastDevice() async {
-    if (_connection != null) return;
-    if(_reCallBlocked) return;
-    blockReCall();
-    connect();
-  }
-
-  /// prevent calling [autoConnectToLastDevice] on each rebuild
-  void blockReCall() async {
-    _reCallBlocked = true;
-    await Future.delayed(Duration(seconds: 15));
-    _reCallBlocked = false;
-  }
-
-  void setup() async {
-    if (!await FlutterBlue.instance.isAvailable)
-      return;
-
-    // Get current state
-    FlutterBlue.instance.state.then((state) {
-      _loadingIconState = 0;
-      setBluetoothState = state;
-      notifyListeners();
-    });
-    // Listen for further state changes
-    FlutterBlue.instance
-        .onStateChanged()
-        .listen((BluetoothState state) {
-          _loadingIconState = 0;
-          setBluetoothState = state;
-          if (!_bluetoothState.isEnabled){
-            disconnect();
-          }
-          notifyListeners();
     });
 
-    // set Standard pin to 1234
-    FlutterBlue.instance
-        .setPairingRequestHandler((BluetoothPairingRequest request) {
-      print("Trying to auto-pair with Pin 1234");
-      if (request.pairingVariant == PairingVariant.Pin) {
-        return Future.value("1234");
-      }
-      return null;
-    });
-  }
-
-  void changeState() {
-    notifyListeners();
-  }
-
-  void listenToConnectedDevice() {
-    _connection.input.listen((Uint8List data) {
-      print('Data incoming: ${ascii.decode(data)}');
-      _connection.output.add(data); // Sending data
-
-      if (ascii.decode(data).contains('!')) {
-        disconnect();
-        print('Disconnecting by local host');
-      }
-    }).onDone(() {
-      disconnect();
-      print('Disconnected by remote request');
+    StreamSubscription<List<ScanResult>> subscription;
+    subscription = flutterBlue.scanResults.listen((result) { // scan for devices
+      result.forEach((r) {
+        if (r.device.id.toString() == lastDevice.address) { // check if last device is available
+          connect(r.device); // connect to it
+          subscription?.cancel();
+          return;
+        }
+      });
     });
   }
 }
 
-*/
+
+
 class BtDevice {
   String name;
   String address;
