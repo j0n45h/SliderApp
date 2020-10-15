@@ -106,9 +106,9 @@ class ProvideBtState with ChangeNotifier {
 
     if (!await flutterBlue.isOn) { // if BT is off, wait till it gets turned on
       do {
-        await Future.delayed(Duration(seconds: 8));
+        await Future.delayed(Duration(seconds: 4));
         _btStateListeningCounter++;
-      } while(!await flutterBlue.isOn && _btStateListeningCounter < 100);
+      } while(!await flutterBlue.isOn && _btStateListeningCounter < 500);
 
       _btStateListeningCounter = 0;
 
@@ -124,16 +124,16 @@ class ProvideBtState with ChangeNotifier {
     if (lastDevice == null)
       return; // TODO: check if a device with this uuid is available
 
-    flutterBlue.startScan(timeout: Duration(seconds: 10), scanMode: ScanMode.lowPower).then((value) {
+    flutterBlue.startScan(timeout: Duration(seconds: 8), scanMode: ScanMode.lowPower).then((value) {
       if (isConnected) {
         _retryCounter = 0;
         return;
       }
 
-      if (_retryCounter > 8) return; // retry limit exceeded
+      if (_retryCounter > 15) return; // retry limit exceeded
 
       _retryCounter++;
-      Timer(Duration(seconds: 10), connectToLastDevice); // wait another 10sec than retry
+      Timer(Duration(seconds: 3), connectToLastDevice); // wait another 10sec than retry
 
     });
 
