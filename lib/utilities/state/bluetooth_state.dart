@@ -25,6 +25,7 @@ class ProvideBtState with ChangeNotifier {
     if (deviceState == null || device == null)
       return false;
     return deviceState == BluetoothDeviceState.connected;
+    // TODO: if (device==null && deviceState == BluetoothDeviceState.connected) get device from lastDevice or uuid
   }
 
   void close() {
@@ -124,28 +125,11 @@ class ProvideBtState with ChangeNotifier {
     if (lastDevice == null)
       return; // TODO: check if a device with this uuid is available
 
-    flutterBlue.startScan(timeout: Duration(seconds: 8), scanMode: ScanMode.lowPower).then((value) {
-      if (isConnected) {
-        _retryCounter = 0;
-        return;
-      }
+    Stream<ScanResult> scan = FlutterBlue.instance.scan(scanMode: ScanMode.lowPower,
+        withDevices: [Guid.fromMac(lastDevice.address)]);
 
-      if (_retryCounter > 15) return; // retry limit exceeded
-
-      _retryCounter++;
-      Timer(Duration(seconds: 3), connectToLastDevice); // wait another 10sec than retry
-
-    });
-
-    StreamSubscription<List<ScanResult>> subscription;
-    subscription = flutterBlue.scanResults.listen((result) { // scan for devices
-      result.forEach((r) {
-        if (r.device.id.toString() == lastDevice.address) { // check if last device is available
-          connect(r.device); // connect to it
-          subscription?.cancel();
-          return;
-        }
-      });
+    scan.listen((result) {
+      connect(result.device);
     });
   }
 }
