@@ -265,6 +265,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                   device: d,
                   onTap: () {
                     provideBtState.disconnect(d);
+                    FlutterBlue.instance.startScan(timeout: Duration(milliseconds: 500));
                   },
                   trailing: StreamBuilder<BluetoothDeviceState>(
                     stream: d.state,
@@ -299,6 +300,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                     device: r.device,
                     onTap: () {
                       provideBtState.connect(r.device);
+                      FlutterBlue.instance.stopScan();
                     },
                   );
                 },
