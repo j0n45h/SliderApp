@@ -130,7 +130,8 @@ class ProvideBtState with ChangeNotifier {
 
     scan.listen((result) {
       connect(result.device);
-    });
+      FlutterBlue.instance.stopScan();
+    }).cancel();
   }
 }
 
