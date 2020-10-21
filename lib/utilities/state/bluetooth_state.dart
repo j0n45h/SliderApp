@@ -57,6 +57,7 @@ class ProvideBtState with ChangeNotifier {
   }
 
   Future<void> disconnect(BluetoothDevice device) async {
+    if (device == null) device = this.device;
     try {
       await device?.disconnect();
     } catch(e) {
@@ -125,13 +126,32 @@ class ProvideBtState with ChangeNotifier {
     if (lastDevice == null)
       return; // TODO: check if a device with this uuid is available
 
-    Stream<ScanResult> scan = FlutterBlue.instance.scan(scanMode: ScanMode.lowPower,
-        withDevices: [Guid.fromMac(lastDevice.address)]);
+    flutterBlue.startScan(
+        timeout: Duration(seconds: 8),
+        scanMode: ScanMode.lowPower,
+        withDevices: [Guid.fromMac(lastDevice.address)]).then((value) {
+      if (isConnected) {
+        _retryCounter = 0;
+        return;
+      }
 
-    scan.listen((result) {
-      connect(result.device);
-      FlutterBlue.instance.stopScan();
-    }).cancel();
+      if (_retryCounter > 15) return; // retry limit exceeded
+
+      _retryCounter++;
+      Timer(Duration(seconds: 3), connectToLastDevice); // wait another 10sec than retry
+
+    });
+
+    StreamSubscription<List<ScanResult>> subscription;
+    subscription = flutterBlue.scanResults.listen((result) { // scan for devices
+      result.forEach((r) {
+        if (r.device.id.toString() == lastDevice.address) { // check if last device is available
+          connect(r.device); // connect to it
+          subscription?.cancel();
+          return;
+        }
+      });
+    });
   }
 }
 
