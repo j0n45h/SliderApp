@@ -9,7 +9,7 @@ import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 class ProvideBtState with ChangeNotifier {
   BluetoothDevice device;
-  BluetoothDeviceState deviceState;
+  BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
   StreamSubscription<BluetoothDeviceState> deviceStateSubscription;
   StreamSubscription<List<int>> listener;
   BluetoothCharacteristic characteristic;
@@ -35,6 +35,8 @@ class ProvideBtState with ChangeNotifier {
 
   Future<void> connect(BluetoothDevice device) async {
     // if (this.device != null && device == this.device) return;
+    deviceState = BluetoothDeviceState.connecting;
+    notifyListeners();
     try {
       await device.connect();
     } catch(e) {
@@ -47,6 +49,7 @@ class ProvideBtState with ChangeNotifier {
     CustomCacheManager.storeDevice(BtDevice(name: device.name, address: device.id.toString()));
 
     deviceStateSubscription = this.device.state.listen((BluetoothDeviceState state) {
+      print('state changed');
       if (state != deviceState) {
         deviceState = state;
         notifyListeners();
@@ -121,12 +124,20 @@ class ProvideBtState with ChangeNotifier {
     if (isConnected)
       return;
 
+    deviceState = BluetoothDeviceState.connecting;
+    notifyListeners();
+
     // get last device from Cache
     final lastDevice = await CustomCacheManager.getLastBtDevice();
-    if (lastDevice == null)
+    if (lastDevice == null) {
+      deviceState = BluetoothDeviceState.disconnected;
+      notifyListeners();
       return; // TODO: check if a device with this uuid is available
+    }
 
-    flutterBlue.startScan(
+    await FlutterBlue.instance.stopScan();
+
+      flutterBlue.startScan(
         timeout: Duration(seconds: 8),
         scanMode: ScanMode.lowPower,
         withDevices: [Guid.fromMac(lastDevice.address)]).then((value) {
@@ -144,13 +155,8 @@ class ProvideBtState with ChangeNotifier {
 
     StreamSubscription<List<ScanResult>> subscription;
     subscription = flutterBlue.scanResults.listen((result) { // scan for devices
-      result.forEach((r) {
-        if (r.device.id.toString() == lastDevice.address) { // check if last device is available
-          connect(r.device); // connect to it
-          subscription?.cancel();
-          return;
-        }
-      });
+      connect(result.first.device);
+      subscription.cancel();
     });
   }
 }

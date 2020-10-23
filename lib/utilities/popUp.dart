@@ -164,7 +164,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                               highlightColor: Colors.white.withOpacity(0.01),
                               borderRadius: BorderRadius.circular(15.0),
                               splashColor: Colors.white.withOpacity(0.2),
-                              onTap: () => FlutterBlue.instance.startScan(timeout: Duration(seconds: 10)),
+                              onTap: () => startScanning(),
                               child: Container(
                                 height: 60,
                                 alignment: Alignment.center,
@@ -224,8 +224,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
   void initState() {
     super.initState();
     setupAnimation();
-
-    FlutterBlue.instance.startScan(timeout: Duration(seconds: 10));
+    startScanning();
   }
 
   @override
@@ -234,6 +233,11 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
     _animationController?.dispose();
     FlutterBlue.instance.stopScan();
     super.dispose();
+  }
+
+  Future<void> startScanning({int timeout = 10}) async {
+    await FlutterBlue.instance.stopScan();
+    FlutterBlue.instance.startScan(timeout: Duration(seconds: timeout));
   }
 
   Widget deviceListView() {
@@ -265,7 +269,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                   device: d,
                   onTap: () {
                     provideBtState.disconnect(d);
-                    FlutterBlue.instance.startScan(timeout: Duration(milliseconds: 500));
+                    startScanning(timeout: 1);
                   },
                   trailing: StreamBuilder<BluetoothDeviceState>(
                     stream: d.state,

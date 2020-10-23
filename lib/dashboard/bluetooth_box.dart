@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bts;
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
-import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 import 'package:sliderappflutter/utilities/popUp.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 
 class BluetoothBox extends StatelessWidget {
   String btStatus(ProvideBtState btState) {
-    if (btState.isConnected) {
+    if (btState != null && btState.isConnected) {
       return 'CONNECTED';
     } else {
       return 'NOT\nCONNECTED';
@@ -24,9 +24,8 @@ class BluetoothBox extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
         onLongPress: () => _inkWellLongPress(context),
-        onTap: () async {
-          final connectedDevices = await FlutterBlue.instance.connectedDevices;
-          if (connectedDevices.length > 0) return _inkWellTap(context);
+        onTap: () {
+          _inkWellTap(context);
         },
         child: Padding(
           padding: const EdgeInsets.only(left: 0, right: 10),
@@ -67,25 +66,22 @@ class BluetoothBox extends StatelessWidget {
   }
 
   Future<void> _inkWellTap(BuildContext context) async {
+    if (!await FlutterBlue.instance.isAvailable)
+      return;
+
     final btState = Provider.of<ProvideBtState>(context, listen: false);
-    final connectedDevices = await FlutterBlue.instance.connectedDevices;
+
     if (!await FlutterBlue.instance.isOn) {
-      BtDevice lastDevice = await CustomCacheManager.getLastBtDevice();
-      if (lastDevice == null) return;
-      Stream<ScanResult> scan = FlutterBlue.instance.scan(
-        allowDuplicates: false,
-        scanMode: ScanMode.balanced,
-        withDevices: [Guid.fromMac(lastDevice.address)],
-      );
-      scan.listen((result) {
-        result.device.connect();
-      });
+      try {
+        await bts.FlutterBluetoothSerial.instance.requestEnable();
+        btState.connectToLastDevice();
+      } catch (e) {
+        print('could not turn on Bluetooth');
+      }
     } else if (btState.isConnected) {
-      connectedDevices.forEach((device) {
-        device.disconnect();
-      });
-    } else {
-      // turn off BT
+      btState.disconnect(null);
+    } else { // on but not connected
+      btState.connectToLastDevice();
     }
   }
 }
