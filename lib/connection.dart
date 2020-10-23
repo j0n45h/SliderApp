@@ -66,6 +66,8 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Container();
+    /*
     print('Discovery Page: ${isDiscovering.toString()}');
     print('Devices found: ${results.length}');
     return WillPopScope(
@@ -176,6 +178,6 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
         MyDrawer.navigateHome(context);
         return;
       },
-    );
+    );*/
   }
 }

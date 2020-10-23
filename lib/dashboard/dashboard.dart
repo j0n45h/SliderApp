@@ -1,7 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/dashboard/dashboard_top_view.dart';
 import 'package:sliderappflutter/drawer.dart';
 import 'package:sliderappflutter/main.dart';
@@ -10,6 +13,7 @@ import 'package:sliderappflutter/timelapse/timelapse.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/custom_sliver.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
+import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -193,6 +197,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
     );
   }
 
+
   @override
   void initState() {
     _tabController = TabController(
@@ -205,6 +210,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
       _tabIndex %= 2;
     });
     futureList = makeList();
+
     super.initState();
   }
 

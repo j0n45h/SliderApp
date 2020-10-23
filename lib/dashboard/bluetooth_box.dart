@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bts;
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/popUp.dart';
@@ -7,9 +9,8 @@ import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 
 class BluetoothBox extends StatelessWidget {
-
-  String btStatus(ProvideBtState btStateProvider) {
-    if (btStateProvider.getConnection != null && btStateProvider.getConnection.isConnected){
+  String btStatus(ProvideBtState btState) {
+    if (btState != null && btState.isConnected) {
       return 'CONNECTED';
     } else {
       return 'NOT\nCONNECTED';
@@ -18,66 +19,69 @@ class BluetoothBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    onBuild(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(21, 0, 5, 0),
-      child: Consumer<ProvideBtState>(
-        builder: (context, btStateBuilder, _) => InkWell(
-          borderRadius: BorderRadius.circular(15),
-          onLongPress: () => _inkWellLongPress(context, btStateBuilder),
-          onTap: () => _inkWellTap(context, btStateBuilder),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 0, right: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container( // Bluetooth icon
-                  padding: const EdgeInsets.all(14),
-                  // padding: const EdgeInsets.all(14),
-                  child: BtStateIcon(btStateBuilder),
-                  // child: btIcon(context, btStateBuilder, btStateBuilder),
-                ),
-                Text( // Bluetooth text
-                  btStatus(btStateBuilder),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: MyColors.font,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w200,
-                    letterSpacing: 2,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onLongPress: () => _inkWellLongPress(context),
+        onTap: () {
+          _inkWellTap(context);
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(left: 0, right: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                // Bluetooth icon
+                padding: const EdgeInsets.all(14),
+                child: const BtStateIcon(),
+              ),
+              Consumer<ProvideBtState>(
+                builder: (context, btState, child) {
+                  return Text(
+                    // Bluetooth text
+                    btStatus(btState),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: MyColors.font,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w200,
+                      letterSpacing: 2,
+                      fontSize: 14,
+                    ),
+                  );
+                }
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  static bool _didBuild = false;
-  void onBuild(dynamic context) {
-    if (_didBuild) return;
-    Timer.run(() {
-      final btStateProvider = Provider.of<ProvideBtState>(context, listen: false);
-      btStateProvider.autoConnectToLastDevice(); // auto connect BT
-    });
-    _didBuild = true;
-  }
-
-  _inkWellLongPress(final BuildContext context, final ProvideBtState btStateProvider) {
-    if (!btStateProvider.getBluetoothState.isEnabled) return;
+  Future<void> _inkWellLongPress(BuildContext context) async {
+    if (!await FlutterBlue.instance.isOn) return;
     SearchingDialog().showMyDialog(context);
   }
 
-  _inkWellTap(final BuildContext context, final ProvideBtState btStateProvider) {
-    if (!btStateProvider.getBluetoothState.isEnabled) {
-      btStateProvider.connect();
-    } else if (!btStateProvider.isConnected) {
-      btStateProvider.disable();
-    } else {
-      btStateProvider.disconnect();
+  Future<void> _inkWellTap(BuildContext context) async {
+    if (!await FlutterBlue.instance.isAvailable)
+      return;
+
+    final btState = Provider.of<ProvideBtState>(context, listen: false);
+
+    if (!await FlutterBlue.instance.isOn) {
+      try {
+        await bts.FlutterBluetoothSerial.instance.requestEnable();
+        btState.connectToLastDevice();
+      } catch (e) {
+        print('could not turn on Bluetooth');
+      }
+    } else if (btState.isConnected) {
+      btState.disconnect(null);
+    } else { // on but not connected
+      btState.connectToLastDevice();
     }
   }
 }

@@ -3,9 +3,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bls;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
+import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
+import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 
 import '../drawer.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
@@ -19,32 +23,30 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   TextEditingController _controller;
+
   // bool isConnected = false;
 
   void initState() {
     super.initState();
 
     // Get current state
-    FlutterBluetoothSerial.instance.state.then((state) {
+    bls.FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
       });
     });
 
     // Listen for further state changes
-    FlutterBluetoothSerial.instance
-        .onStateChanged()
-        .listen((BluetoothState state) {
+    bls.FlutterBluetoothSerial.instance.onStateChanged().listen((bls.BluetoothState state) {
       setState(() {
         _bluetoothState = state;
       });
     });
 
     // set Standard pin to 1234
-    FlutterBluetoothSerial.instance
-        .setPairingRequestHandler((BluetoothPairingRequest request) {
+    bls.FlutterBluetoothSerial.instance.setPairingRequestHandler((bls.BluetoothPairingRequest request) {
       print("Trying to auto-pair with Pin 1234");
-      if (request.pairingVariant == PairingVariant.Pin) {
+      if (request.pairingVariant == bls.PairingVariant.Pin) {
         return Future.value("1234");
       }
       return null;
@@ -53,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void dispose() {
     _controller.dispose();
-    FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
+    bls.FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
     super.dispose();
   }
 
@@ -61,6 +63,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provideBtState = Provider.of<ProvideBtState>(context, listen: false);
     return WillPopScope(
       child: Scaffold(
         // backgroundColor: Color(0xff242F33),
@@ -75,49 +78,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           centerTitle: true,
           actions: <Widget>[
-            btTaskBarIcon(),
+            BtStateIcon(),
+            SizedBox(width: 15),
           ],
           backgroundColor: MyColors.AppBar,
         ),
         drawer: MyDrawer(),
         body: Center(
-          child: Container(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              controller: this._controller,
-              autocorrect: false,
-              decoration: InputDecoration(
-                labelText: 'Send this data to Slider',
-                border: OutlineInputBorder(),
+          child: Column(
+            children: [
+              FutureBuilder<BluetoothCharacteristic>(
+                future: provideBtState.getBluetoothCharacteristic(),
+                builder: (context, future) {
+                  if (!future.hasData) return Container();
+
+                  return StreamBuilder<List<int>>(
+                    stream: future.data?.value,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return Container();
+
+                      return Text(utf8.decode(snapshot.data));
+                    },
+                  );
+                },
               ),
-              onSubmitted: (String value) async {
-                await showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: MyColors.popup,
-                      title: const Text('Send this String:'),
-                      content: Text(value),
-                      actions: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        FlatButton(
-                          onPressed: () {
-                            connection.output.add(Uint8List.fromList(value.codeUnits));
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
+              Container(
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  controller: this._controller,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                    labelText: 'Send this data to Slider',
+                    border: OutlineInputBorder(),
+                  ),
+                  onSubmitted: (String value) async {
+                    await showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: MyColors.popup,
+                          title: const Text('Send this String:'),
+                          content: Text(value),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            FlatButton(
+                              onPressed: () {
+                                provideBtState.sendToBtDevice(value);
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -128,8 +151,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
-  BluetoothConnection connection;
+  bls.BluetoothState _bluetoothState = bls.BluetoothState.UNKNOWN;
+  bls.BluetoothConnection connection;
 
   Future<String> getLastBtDeviceAddress() async {
     FileInfo cacheFile = await CustomCacheManager().getFileFromCache('btDevideAddress');
@@ -143,16 +166,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         String address = await getLastBtDeviceAddress();
 
         // set Standard pin to 1234
-        FlutterBluetoothSerial.instance
-            .setPairingRequestHandler((BluetoothPairingRequest request) {
+        bls.FlutterBluetoothSerial.instance.setPairingRequestHandler((bls.BluetoothPairingRequest request) {
           print("Trying to auto-pair with Pin 1234");
-          if (request.pairingVariant == PairingVariant.Pin) {
+          if (request.pairingVariant == bls.PairingVariant.Pin) {
             return Future.value("1234");
           }
           return null;
         });
 
-        connection = await BluetoothConnection.toAddress(address);
+        connection = await bls.BluetoothConnection.toAddress(address);
 
         print('Connected to the device');
 
@@ -169,32 +191,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
           print('Disconnected by remote request');
         });
       } catch (exception) {
-          print('Cannot connect, exception occured: $exception');
+        print('Cannot connect, exception occured: $exception');
       }
     }
   }
 
-
   Widget btTaskBarIcon() {
-    if (connection != null && connection.isConnected){
+    if (connection != null && connection.isConnected) {
       return Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-          child: IconButton(
-            icon: Icon(
-              Icons.bluetooth_connected,
-              color: MyColors.blue,
-            ),
-            onPressed: () { /// Disconnect
-              future() async {
-                await connection.finish();
-              }
-
-              future().then((_) {
-                setState(() {});
-              });
-            },
+        padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+        child: IconButton(
+          icon: Icon(
+            Icons.bluetooth_connected,
+            color: MyColors.blue,
           ),
-        );
+          onPressed: () {
+            /// Disconnect
+            future() async {
+              await connection.finish();
+            }
+
+            future().then((_) {
+              setState(() {});
+            });
+          },
+        ),
+      );
     } else if (_bluetoothState.isEnabled) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 42, 0),
@@ -203,21 +225,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.bluetooth,
             color: MyColors.blue,
           ),
-          onTap: () { /// BT off
+          onTap: () {
+            /// BT off
             future() async {
-              await FlutterBluetoothSerial.instance.requestDisable();
+              await bls.FlutterBluetoothSerial.instance.requestDisable();
             }
 
             future().then((_) {
               setState(() {});
             });
           },
-          onLongPress: (){ /// connect
+          onLongPress: () {
+            /// connect
             future() async {
               await connectToDevice();
             }
 
-            future().then((_){
+            future().then((_) {
               setState(() {});
             });
           },
@@ -231,9 +255,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.bluetooth_disabled,
             color: Colors.grey[200],
           ),
-          onPressed: () { /// BT on
+          onPressed: () {
+            /// BT on
             future() async {
-              await FlutterBluetoothSerial.instance.requestEnable();
+              await bls.FlutterBluetoothSerial.instance.requestEnable();
             }
 
             future().then((_) {
