@@ -19,21 +19,20 @@ class ProvideLocationState with ChangeNotifier {
   static DateTime _sunRiseTime;
   static DateTime _sunSetTime;
 
-
   /// Location Latitude
   double get getLatitude {
-    if (_locationData == null) return null;
+    if (_locationData?.latitude == null) return null;
     return _locationData.latitude;
   }
 
   /// Location Longitude
   double get getLongitude {
-    if (_locationData == null) return null;
+    if (_locationData?.longitude == null) return null;
     return _locationData.longitude;
   }
 
   bool available() {
-    return (_locationData != null);
+    return !(_locationData == null || _locationData.latitude == null || _locationData.longitude == null);
   }
 
   /// Sun Rise
@@ -57,8 +56,7 @@ class ProvideLocationState with ChangeNotifier {
   }
 
   String _timeToString(BuildContext context, DateTime time) {
-    if (time == null)
-      return '--:--';
+    if (time == null) return '--:--';
     if (MediaQuery.of(context).alwaysUse24HourFormat)
       return DateFormat.Hm().format(time);
     else
@@ -66,11 +64,13 @@ class ProvideLocationState with ChangeNotifier {
   }
 
   static void getSunriseSunsetResult() {
-    if (_locationData == null) return null;
-    SunriseSunsetResult sunriseSunsetResult = getSunriseSunset(
-        _locationData.latitude, _locationData.longitude, 0, DateTime.now().toUtc());
+    if (_locationData == null || _locationData.latitude == null || _locationData.longitude == null)
+      return;
+
+    SunriseSunsetResult sunriseSunsetResult =
+        getSunriseSunset(_locationData.latitude, _locationData.longitude, 0, DateTime.now().toUtc());
     _sunRiseTime = sunriseSunsetResult.sunrise.toLocal();
-    _sunSetTime  = sunriseSunsetResult.sunset.toLocal();
+    _sunSetTime = sunriseSunsetResult.sunset.toLocal();
   }
 
   void showSnackBar(BuildContext context) {
@@ -90,9 +90,10 @@ class ProvideLocationState with ChangeNotifier {
 
   /// prevent calling [getLocation] on each rebuild
   static bool _reCallBlocked = false;
+
   static void blockReCall() async {
     _reCallBlocked = true;
-    await Future.delayed(Duration(seconds: 30));
+    await Future.delayed(Duration(seconds: 10));
     _reCallBlocked = false;
   }
 
@@ -120,9 +121,10 @@ class ProvideLocationState with ChangeNotifier {
 
     location.changeSettings(accuracy: LocationAccuracy.balanced);
     try {
-      _locationData = await location.getLocation().timeout(Duration(minutes: 2));
-    } on TimeoutException catch (e){
+      _locationData = await location.getLocation().timeout(Duration(minutes: 30));
+    } on TimeoutException catch (e) {
       print('time out! $e');
+      return 0;
     } catch (e) {
       print('could not get location $e');
     }
@@ -133,10 +135,6 @@ class ProvideLocationState with ChangeNotifier {
 
     return 0;
   }
-
-
-
-
 
   Future<void> updateMyGeoLocation(BuildContext context) async {
     int check;
@@ -158,23 +156,15 @@ class ProvideLocationState with ChangeNotifier {
     notifyListeners();
 
     // get weather update
-    final weatherStateProvider =
-        Provider.of<ProvideWeatherState>(context, listen: false); // Weather
+    final weatherStateProvider = Provider.of<ProvideWeatherState>(context, listen: false); // Weather
 
     weatherStateProvider.updateWeather(context);
   }
 
-
-
-
-
-
-
   Widget _locationAlertDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Location Permission is not given!'),
-      content: const Text(
-          'We need to access your Location to get Weather information and Sun position.'),
+      content: const Text('We need to access your Location to get Weather information and Sun position.'),
       backgroundColor: const Color(0xff316f7f),
       shape: const RoundedRectangleBorder(
         borderRadius: const BorderRadius.all(
