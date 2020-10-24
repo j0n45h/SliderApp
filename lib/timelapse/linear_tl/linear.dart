@@ -28,254 +28,256 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
 //                gradient: MyColors.bgRadialGradient(1),
 //              ),
 //            ),
-        ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 25, 20, 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        'INTERVAL',
-                        style: MyTextStyle.normal(
-                            fontSize: 12.0, letterSpacing: 1.3),
-                      ),
-                      const SizedBox(width: 18),
-                      FramedTextField(
-                        width: 90,
-                        height: tfHeight,
-                        textField: MyTextField(
-                          fontSize: 12,
-                          textController: TLInterval.tfController,
-                          unit: 's',
-                          onEditingComplete: () {
-                            setState(() {
-                              TLInterval.onTFEdited();
-                              _startingTimeKey.currentState.calcTime();
-                            });
-                          },
-                          onTap: () =>
-                              jumpCursorToEnd(TLInterval.tfController),
+        SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 25, 20, 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          'INTERVAL',
+                          style: MyTextStyle.normal(
+                              fontSize: 12.0, letterSpacing: 1.3),
                         ),
-                      ),
-                    ],
-                  ),
-                  Stack(
-                    alignment: Alignment.centerRight,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            'VIDEO',
-                            style: MyTextStyle.normal(
-                              fontSize: 12.0,
-                              letterSpacing: 1.3,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          FramedTextField(
-                            lock: TLShots.lock,
-                            onLockLongPress: () {
+                        const SizedBox(width: 18),
+                        FramedTextField(
+                          width: 90,
+                          height: tfHeight,
+                          textField: MyTextField(
+                            fontSize: 12,
+                            textController: TLInterval.tfController,
+                            unit: 's',
+                            onEditingComplete: () {
                               setState(() {
-                                toggleShotsAndVideoLock();
+                                TLInterval.onTFEdited();
+                                _startingTimeKey.currentState.calcTime();
                               });
                             },
-                            width: 90,
-                            height: tfHeight,
-                            textField: MyTextField(
-                              fontSize: 12,
-                              textController: TLVideo.tfController,
-                              unit: 's',
-                              enabled: true,
-                              onEditingComplete: () {
-                                setState(() {
-                                  lockShotsAndVideo();
-                                  TLVideo.onTFEdited();
-                                  _startingTimeKey.currentState.calcTime();
-                                });
-                              },
-                              onTap: () =>
-                                  jumpCursorToEnd(TLVideo.tfController),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0, 0, 3, 44),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              TLVideo.toggleFPS();
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(5),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 40,
-                            height: 25,
-//                          padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
-//                          margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
-                            child: Text(
-                              (TLVideo.fps).toString() + 'fps',
-                              style: MyTextStyle.normal(fontSize: 10),
-                            ),
+                            onTap: () =>
+                                jumpCursorToEnd(TLInterval.tfController),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Slider(
-                /// Interval Slider
-                onChanged: (double value) {
-                  setState(() {
-                    UpperSlider.onChanged(value);
-                    _startingTimeKey.currentState.calcTime();
-                  });
-                },
-                onChangeStart: (_) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                value: UpperSlider.value,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 30, 20, 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        'DURATION',
-                        style: MyTextStyle.normal(
-                            fontSize: 12.0, letterSpacing: 1.3),
-                      ),
-                      const SizedBox(width: 10),
-                      FramedTextField(
-                        width: 128,
-                        height: tfHeight,
-                        lock: TLDuration.lock,
-                        onLockLongPress: () {
-                          setState(() {
-                            toggleDurationLock();
-                          });
-                        },
-                        textField: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.centerRight,
+                      children: <Widget>[
+                        Row(
                           children: <Widget>[
-                            Container(
-                              width: 36,
-                              child: MyTextField(
-                                fontSize: 12,
-                                textController:
-                                    TLDuration.hoursTFController,
-                                unit: 'h',
-                                onEditingComplete: () {
-                                  setState(() {
-                                    lockDuration();
-                                    TLDuration.onTFEdited();
-                                    _startingTimeKey.currentState
-                                        .calcTime();
-                                  });
-                                },
-                                onTap: () => jumpCursorToEnd(
-                                  TLDuration.hoursTFController,
-                                ),
+                            Text(
+                              'VIDEO',
+                              style: MyTextStyle.normal(
+                                fontSize: 12.0,
+                                letterSpacing: 1.3,
                               ),
                             ),
-                            Container(
-                              width: 52,
-                              child: MyTextField(
+                            const SizedBox(width: 10),
+                            FramedTextField(
+                              lock: TLShots.lock,
+                              onLockLongPress: () {
+                                setState(() {
+                                  toggleShotsAndVideoLock();
+                                });
+                              },
+                              width: 90,
+                              height: tfHeight,
+                              textField: MyTextField(
                                 fontSize: 12,
-                                textController:
-                                    TLDuration.minutesTFController,
-                                unit: 'min',
+                                textController: TLVideo.tfController,
+                                unit: 's',
+                                enabled: true,
                                 onEditingComplete: () {
                                   setState(() {
-                                    lockDuration();
-                                    TLDuration.onTFEdited();
-                                    _startingTimeKey.currentState
-                                        .calcTime();
+                                    lockShotsAndVideo();
+                                    TLVideo.onTFEdited();
+                                    _startingTimeKey.currentState.calcTime();
                                   });
                                 },
-                                onTap: () => jumpCursorToEnd(
-                                  TLDuration.minutesTFController,
-                                ),
+                                onTap: () =>
+                                    jumpCursorToEnd(TLVideo.tfController),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        'SHOTS',
-                        style: MyTextStyle.normal(
-                          fontSize: 12.0,
-                          letterSpacing: 1.3,
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(0, 0, 3, 44),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                TLVideo.toggleFPS();
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(5),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: 40,
+                              height: 25,
+//                          padding: EdgeInsets.fromLTRB(0, 0, 0, 44),
+//                          margin: EdgeInsets.fromLTRB(9, 0, 5, 0),
+                              child: Text(
+                                (TLVideo.fps).toString() + 'fps',
+                                style: MyTextStyle.normal(fontSize: 10),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      FramedTextField(
-                        width: 90,
-                        height: tfHeight,
-                        lock: TLShots.lock,
-                        onLockLongPress: () {
-                          setState(() {
-                            toggleShotsAndVideoLock();
-                          });
-                        },
-                        textField: MyTextField(
-                          fontSize: 12,
-                          textController: TLShots.tfController,
-                          onEditingComplete: () {
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Slider(
+                  /// Interval Slider
+                  onChanged: (double value) {
+                    setState(() {
+                      UpperSlider.onChanged(value);
+                      _startingTimeKey.currentState.calcTime();
+                    });
+                  },
+                  onChangeStart: (_) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  value: UpperSlider.value,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 30, 20, 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          'DURATION',
+                          style: MyTextStyle.normal(
+                              fontSize: 12.0, letterSpacing: 1.3),
+                        ),
+                        const SizedBox(width: 10),
+                        FramedTextField(
+                          width: 128,
+                          height: tfHeight,
+                          lock: TLDuration.lock,
+                          onLockLongPress: () {
                             setState(() {
-                              lockShotsAndVideo();
-                              TLShots.onTFEdited();
-                              _startingTimeKey.currentState.calcTime();
+                              toggleDurationLock();
                             });
                           },
-                          onTap: () =>
-                              jumpCursorToEnd(TLVideo.tfController),
+                          textField: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: 36,
+                                child: MyTextField(
+                                  fontSize: 12,
+                                  textController:
+                                      TLDuration.hoursTFController,
+                                  unit: 'h',
+                                  onEditingComplete: () {
+                                    setState(() {
+                                      lockDuration();
+                                      TLDuration.onTFEdited();
+                                      _startingTimeKey.currentState
+                                          .calcTime();
+                                    });
+                                  },
+                                  onTap: () => jumpCursorToEnd(
+                                    TLDuration.hoursTFController,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 52,
+                                child: MyTextField(
+                                  fontSize: 12,
+                                  textController:
+                                      TLDuration.minutesTFController,
+                                  unit: 'min',
+                                  onEditingComplete: () {
+                                    setState(() {
+                                      lockDuration();
+                                      TLDuration.onTFEdited();
+                                      _startingTimeKey.currentState
+                                          .calcTime();
+                                    });
+                                  },
+                                  onTap: () => jumpCursorToEnd(
+                                    TLDuration.minutesTFController,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          'SHOTS',
+                          style: MyTextStyle.normal(
+                            fontSize: 12.0,
+                            letterSpacing: 1.3,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        FramedTextField(
+                          width: 90,
+                          height: tfHeight,
+                          lock: TLShots.lock,
+                          onLockLongPress: () {
+                            setState(() {
+                              toggleShotsAndVideoLock();
+                            });
+                          },
+                          textField: MyTextField(
+                            fontSize: 12,
+                            textController: TLShots.tfController,
+                            onEditingComplete: () {
+                              setState(() {
+                                lockShotsAndVideo();
+                                TLShots.onTFEdited();
+                                _startingTimeKey.currentState.calcTime();
+                              });
+                            },
+                            onTap: () =>
+                                jumpCursorToEnd(TLVideo.tfController),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Slider(
-                onChanged: (double value) {
-                  setState(() {
-                    LowerSlider.onChanged(value);
-                    _startingTimeKey.currentState.calcTime();
-                  });
-                },
-                onChangeStart: (_) {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                value: LowerSlider.value,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Slider(
+                  onChanged: (double value) {
+                    setState(() {
+                      LowerSlider.onChanged(value);
+                      _startingTimeKey.currentState.calcTime();
+                    });
+                  },
+                  onChangeStart: (_) {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  value: LowerSlider.value,
+                ),
               ),
-            ),
-            const SizedBox(height: 50),
-            StartingTime(_startingTimeKey),
-            const SizedBox(height: 60),
+              const SizedBox(height: 50),
+              StartingTime(_startingTimeKey),
+              const SizedBox(height: 60),
 
-            const SizedBox(height: 42)
-          ],
+              const SizedBox(height: 42)
+            ],
+          ),
         ),
         SaveAndStartButtons(
           onPressSave: () => _saveSettings(),
