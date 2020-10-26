@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> {
               valueIndicatorColor: MyColors.slider.withOpacity(0.8),
             ),
           ),
-          // initialRoute: TimelapseScreen.routeName,
+          initialRoute: TimelapseScreen.routeName,
           routes: {
             MyDrawer.routeName: (_) => MyDrawer(),
             DashboardScreen.routeName: (_) => DashboardScreen(),

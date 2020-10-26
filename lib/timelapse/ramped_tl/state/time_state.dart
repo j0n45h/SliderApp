@@ -39,6 +39,13 @@ class TimeState extends ChangeNotifier {
 
   DateTime get startingTime => _startingTime;
 
+  Duration get startIn {
+    var start = _startingTime.difference(DateTime.now());
+    if (start.isNegative)
+      start = Duration(seconds: 0);
+    return start;
+  }
+
   /// Ending Time
   Duration _duration;
 

@@ -8,6 +8,7 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ra
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
+import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 
 class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   Size globalSize;
@@ -111,24 +112,40 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     if (state.length < 1 || globalSize == null)
       return 0;
 
+    final points = getPointsAsShots(context);
+
+    return points.last.end;
+  }
+
+
+  List<Points> getPointsAsShots(BuildContext context) {
     final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false).rampingPoints;
 
+    List<Points> points = List(rampPointsCount);
+
     double shotsValue = 0;
-    for (int i = 0; i < rampPointsCount - 1; i++) {
-
+    for (int i=0; i < rampPointsCount; i++) {
       final intervalAtPoint = state[i].interval.inMilliseconds / 1000;
-      final pointA = Point<double>(state[i].end.inSeconds.toDouble(), intervalAtPoint);
-
-      final pointB = Point<double>(state[i + 1].start.inSeconds.toDouble(), state[i + 1].interval.inMilliseconds / 1000);
+      final start = shotsValue;
 
       // linear part
       shotsValue += (state[i].end.inSeconds - state[i].start.inSeconds) / intervalAtPoint;
 
+      points[i] = Points(interval: intervalAtPoint, start: start.round(), end: shotsValue.round());
+
+      if (i == rampPointsCount -1) // last point there is no ramping to next point
+        break;
+
+      final pointA = Point<double>(state[i].end.inSeconds.toDouble(), intervalAtPoint);
+
+      final pointB = Point<double>(state[i + 1].start.inSeconds.toDouble(), state[i + 1].interval.inMilliseconds / 1000);
+
+
       final dt = pointB.x - pointA.x; // difference of x (time)
       final dT = pointB.y - pointA.y; // difference of y (interval)
 
-      // ramp part
-      if (dT == 0){ // avoid div by 0 when dT is 0
+      // ramp to next point
+      if (dT == 0) { // avoid div by 0 when dT is 0
         shotsValue += (pointB.x - pointA.x) / intervalAtPoint;
       }
       else {
@@ -138,11 +155,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
         shotsValue += ramp;
       }
     }
-
-    // last linear part
-    shotsValue += (state.last.end.inSeconds - state.last.start.inSeconds) / (state.last.interval.inMilliseconds / 1000);
-
-    return shotsValue.round();
+    return points;
   }
 
   void recreatePoints(BuildContext context) {
