@@ -66,7 +66,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
     if (!locationStateProvider.available()){
       return size.height / 2;
     }
-    if (_hasSunPosition) return _height;
+    // if (_hasSunPosition) return _height;
 
 
     Duration dayLight =  locationStateProvider.sunSetTime.difference(locationStateProvider.sunRiseTime);

@@ -20,7 +20,7 @@ class SunriseSunsetIcons extends StatelessWidget {
       _space = iconSpacing(locationState, MediaQuery.of(context).size);
       return Container(
         alignment: Alignment.center,
-        height: 20,
+        height: 40,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: <Widget>[
@@ -28,16 +28,12 @@ class SunriseSunsetIcons extends StatelessWidget {
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               left: _space,
-              height: 20,
-              // width: 70,
               child: SunRiseIcon(locationState),
             ),
             AnimatedPositioned(
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               right: _space,
-              height: 20,
-              // width: 70,
               child: SunSetIcon(locationState),
             ),
           ],
@@ -51,15 +47,15 @@ class SunriseSunsetIcons extends StatelessWidget {
     if (locationStateProvider.sunSetTime == null) return 80;
 
     // TODO use [SunPath.calculate(sunSetHeight, size).dx]
-    Duration halfDuration = locationStateProvider.sunSetTime
+    Duration dayLight = locationStateProvider.sunSetTime
         .difference(locationStateProvider.sunRiseTime);
 
-    double space = map(halfDuration.inMilliseconds.toDouble(), 0,
-        Duration(hours: 24).inMilliseconds.toDouble(), size.width / 2 - 30, 0);
+    double space = map(dayLight.inMilliseconds.toDouble(), 0,
+        Duration(hours: 24).inMilliseconds.toDouble(), size.width / 2, 0);
 
 
-    if (space > size.width * 0.24)
-      return size.width * 0.24;
+    if (space > size.width * 0.25)
+      return size.width * 0.25;
 
     if (space > size.width - 50)
       return size.width - 50;
@@ -92,15 +88,8 @@ class SunRiseIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-          child: Image.asset(
-            'assets/icons/SunArrow.png',
-            scale: 8,
-          ),
-        ),
         Text(
           _locationState.sunRiseTimeStr(context),
           style: const TextStyle(
@@ -108,6 +97,13 @@ class SunRiseIcon extends StatelessWidget {
               fontWeight: FontWeight.w200,
               color: MyColors.font,
               fontSize: 14),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+          child: Image.asset(
+            'assets/icons/SunArrow.png',
+            scale: 8,
+          ),
         ),
       ],
     );
@@ -121,18 +117,8 @@ class SunSetIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-          child: Transform.rotate(
-            angle: pi / 2,
-            child: Image.asset(
-              'assets/icons/SunArrow.png',
-              scale: 8,
-            ),
-          ),
-        ),
         Text(
           _locationState.sunSetTimeStr(context),
           style: const TextStyle(
@@ -140,6 +126,16 @@ class SunSetIcon extends StatelessWidget {
             fontWeight: FontWeight.w200,
             color: MyColors.font,
             fontSize: 14,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+          child: Transform.rotate(
+            angle: pi / 2,
+            child: Image.asset(
+              'assets/icons/SunArrow.png',
+              scale: 8,
+            ),
           ),
         ),
       ],

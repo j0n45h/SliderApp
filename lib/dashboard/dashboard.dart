@@ -87,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                 pinned: true,
                 delegate: SliverFoldableBoxDelegate(
                   minHeight: 0,
-                  maxHeight: 300,
+                  maxHeight: 320,
                   child: DashboardTopView(),
                 ),
               ),
