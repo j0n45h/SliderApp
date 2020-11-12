@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/linear.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 import 'package:sliderappflutter/drawer.dart';
 
@@ -57,6 +58,7 @@ class TimelapseScreenState extends State<TimelapseScreen>
             'Timelapse',
             style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
           ),
+          actions: [const BtStateIcon(), SizedBox(width: 20)],
           centerTitle: true,
           backgroundColor: MyColors.AppBar,
           bottom: TabBar(
