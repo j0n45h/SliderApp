@@ -83,7 +83,7 @@ class ProvideBtState with ChangeNotifier {
 
     var bluetoothCharacteristic = await getBluetoothCharacteristic();
 
-    await bluetoothCharacteristic.write(utf8.encode(value + '\n'));
+    await bluetoothCharacteristic.write(utf8.encode(value));
   }
 
   Future<BluetoothCharacteristic> getBluetoothCharacteristic() async {
