@@ -14,6 +14,12 @@ class ProvideBtState with ChangeNotifier {
   StreamSubscription<List<int>> listener;
   BluetoothCharacteristic characteristic;
 
+  String log = "Test";
+  void clearLog() {
+    log = "";
+    notifyListeners();
+  }
+
   int _retryCounter = 0;
   int _btStateListeningCounter = 0;
 
@@ -72,7 +78,10 @@ class ProvideBtState with ChangeNotifier {
 
   Future<void> statListening() async {
     characteristic?.value?.listen((value) {
-      print('${utf8.decode(value)}');
+      var received = utf8.decode(value);
+      log += received;
+      notifyListeners();
+      print(received);
     });
     await characteristic?.setNotifyValue(true);
   }
@@ -121,6 +130,7 @@ class ProvideBtState with ChangeNotifier {
         return;
     }
 
+    deviceState = device = null; // not tested
     if (isConnected)
       return;
 
@@ -158,6 +168,8 @@ class ProvideBtState with ChangeNotifier {
       connect(result.first.device);
       subscription.cancel();
     });
+    await getBluetoothCharacteristic();
+    statListening();
   }
 }
 

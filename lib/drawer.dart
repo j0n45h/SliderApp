@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sliderappflutter/loging/logging.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
@@ -91,12 +92,19 @@ class MyDrawer extends StatelessWidget {
                     Navigator.of(context).pushNamed(SettingsScreen.routeName);
                   },
                 ),
+                ListTile(
+                  leading: Icon(Icons.assignment_rounded, color: Colors.grey[100]),
+                  title: Text('Logging', style: MyTextStyle.fetStdSize(),),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(LoggingScreen.routeName);
+                  },
+                ),
               ],
             ),
           ],
         ),
       ),
     );
-
   }
 }
