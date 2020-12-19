@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,29 @@ class NavigateToGraphScreen {
 
     context.cubit<RampCurveCubit>().wasOpened = true;
 
-    Navigator.of(context).pushNamed(RampedGraphScreen.routeName);
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: Duration(milliseconds: 1400),
+        pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return RampedGraphScreen();
+        },
+        transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child) {
+          return Align(
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   void _showTimeNotSetSnakeBar() {

@@ -103,22 +103,25 @@ class _RampedGraphState extends State<RampedGraph> {
               return Stack(
                 children: [
                   CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
-                    builder: (context, state) => ClipPath(
-                      clipper: PathClipper(
-                        context: context,
-                        pointList: state,
-                        length: rampPointsCountState.rampingPoints,
-                      ),
-                      child: Container(
-                        height: size.height,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0xFF2A96FF).withOpacity(0.85),
-                              Color(0xFF2A96FF).withOpacity(0.15),
-                            ],
+                    builder: (context, state) => Hero(
+                      tag: 'graph',
+                      child: ClipPath(
+                        clipper: PathClipper(
+                          context: context,
+                          pointList: state,
+                          length: rampPointsCountState.rampingPoints,
+                        ),
+                        child: Container(
+                          height: size.height,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFF2A96FF).withOpacity(0.85),
+                                Color(0xFF2A96FF).withOpacity(0.15),
+                              ],
+                            ),
                           ),
                         ),
                       ),

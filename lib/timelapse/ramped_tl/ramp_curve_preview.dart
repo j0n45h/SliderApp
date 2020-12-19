@@ -18,9 +18,8 @@ class RampCurvePreview extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          InkWell(
+          GestureDetector(
             onTap: () => NavigateToGraphScreen(context).navigate(),
-            borderRadius: BorderRadius.circular(5),
             child: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
               builder: (context, state) {
                 return Container(
@@ -37,8 +36,11 @@ class RampCurvePreview extends StatelessWidget {
                       if (state.length < 1)
                         return Container();
 
-                      return CustomPaint(
-                        painter: PathPainter(context, state, rampPointsCountState.rampingPoints),
+                      return Hero(
+                        tag: 'graph',
+                        child: CustomPaint(
+                          painter: PathPainter(context, state, rampPointsCountState.rampingPoints),
+                        ),
                       );
 
                     },
