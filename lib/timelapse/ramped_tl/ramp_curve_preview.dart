@@ -42,7 +42,6 @@ class RampCurvePreview extends StatelessWidget {
                           painter: PathPainter(context, state, rampPointsCountState.rampingPoints),
                         ),
                       );
-
                     },
                   ),
                 );
