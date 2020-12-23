@@ -32,9 +32,8 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(10, 25, 20, 10),
+                padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Row(
