@@ -11,6 +11,7 @@ class SaveAndStartButtons extends StatelessWidget {
   const SaveAndStartButtons({this.onPressSave, this.onPressStart, this.saveButton});
 
   static const double _spaceBetweenButtons = 32;
+  static const double _defaultButtonWidth = 160;
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +29,9 @@ class SaveAndStartButtons extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20, right: 20),
         child: LayoutBuilder(builder: (context, constraints) {
           // calc Button width
-          final int defaultWidth = 160;
-          final double buttonWidth = constraints.maxWidth / 2 - _spaceBetweenButtons / 2 < defaultWidth
+          final double buttonWidth = constraints.maxWidth / 2 - _spaceBetweenButtons / 2 < _defaultButtonWidth
               ? constraints.maxWidth / 2 - _spaceBetweenButtons / 2
-              : defaultWidth;
+              : _defaultButtonWidth;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
