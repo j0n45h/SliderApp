@@ -84,6 +84,7 @@ class _MainPageState extends State<MainPage> {
               activeTickMarkColor: MyColors.slider,
               overlayColor: MyColors.slider.withOpacity(0.2),
               valueIndicatorColor: MyColors.slider.withOpacity(0.8),
+              trackHeight: 1.5,
             ),
           ),
           initialRoute: TimelapseScreen.routeName,
