@@ -57,11 +57,16 @@ class StartingTimeState extends State<StartingTime> {
   @override
   Widget build(BuildContext context) {
     calcTime();
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: <Widget>[
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            Text(
+              'STARTING TIME',
+              style: MyTextStyle.normal(fontSize: 12, letterSpacing: 1.3),
+            ),
+            const SizedBox(width: 0),
             MySwitch(
               value: StartTime.picked,
               onChanged: (bool value) {
@@ -71,16 +76,13 @@ class StartingTimeState extends State<StartingTime> {
                 });
               },
             ),
-            const SizedBox(width: 0),
-            Text(
-              'STARTING TIME',
-              style: MyTextStyle.normal(fontSize: 12, letterSpacing: 1.3),
-            ),
           ],
         ),
+        const SizedBox(height: 15),
         Padding(
           padding: const EdgeInsets.only(right: 25),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               ClickableFramedTimeField(
                 time: _startTime,
@@ -88,10 +90,7 @@ class StartingTimeState extends State<StartingTime> {
               ),
               Container(
                 margin: const EdgeInsets.only(left: 8, right: 8),
-                child: Text(
-                  '-',
-                  style: MyTextStyle.fet(fontSize: 12),
-                ),
+                child: Text('-', style: MyTextStyle.fet(fontSize: 12)),
               ),
               ClickableFramedTimeField(
                 time: _endTime,

@@ -271,8 +271,11 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                   value: LowerSlider.value,
                 ),
               ),
-              const SizedBox(height: 50),
-              StartingTime(_startingTimeKey),
+              const SizedBox(height: 35),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: StartingTime(_startingTimeKey),
+              ),
               const SizedBox(height: 60),
 
               const SizedBox(height: 42)
