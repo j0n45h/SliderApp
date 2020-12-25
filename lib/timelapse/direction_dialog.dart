@@ -32,14 +32,14 @@ class DirectionDialog extends StatefulWidget {
 }
 
 class _DirectionDialogState extends State<DirectionDialog> {
-  bool direction = false;
   bool _isDismissed = false;
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height * 0.65;
-    final width = MediaQuery.of(context).size.width * 0.9;
-    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    var popUpWidth = MediaQuery.of(context).size.width * 0.92;
+    if (popUpWidth > 500) popUpWidth = 500; // limit max Width
+    var popUpHeight = MediaQuery.of(context).size.height * 0.65;
+    if (popUpHeight > 270) popUpHeight = 270; // limit max Height
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -49,8 +49,8 @@ class _DirectionDialogState extends State<DirectionDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         alignment: Alignment.center,
-        height: 270,
-        width: width > 500 ? 500 : width,
+        height: popUpHeight,
+        width: popUpWidth,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
           child: BackdropFilter(
@@ -59,7 +59,7 @@ class _DirectionDialogState extends State<DirectionDialog> {
               decoration: BoxDecoration(
                 color: Color(0xffE3E3E3).withOpacity(0.17),
               ),
-              width: width > 500 ? 500 : width,
+              width: popUpWidth,
               child: Column(
                 children: [
                   const SizedBox(height: 20),
@@ -80,9 +80,9 @@ class _DirectionDialogState extends State<DirectionDialog> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(40),
                         child: Container(
-                          width: width > 500 ? (500 - 100).toDouble() : width - 100,
-                          height: 40,
-                          color: MyColors.green.withOpacity(0.40),
+                          width: popUpWidth - 20 < 262 ? popUpWidth - 20 : 262,
+                          height: 45,
+                          color: MyColors.green.withOpacity(0.50),
                           child: Padding(
                             padding: const EdgeInsets.only(left: 15, right: 15),
                             child: Row(
@@ -91,6 +91,7 @@ class _DirectionDialogState extends State<DirectionDialog> {
                                 Shimmer.fromColors(
                                   baseColor: Colors.black,
                                   highlightColor: Colors.white,
+                                  direction: ShimmerDirection.rtl,
                                   child: Icon(
                                     Icons.arrow_back_ios_sharp,
                                     color: Colors.black45,
@@ -122,26 +123,26 @@ class _DirectionDialogState extends State<DirectionDialog> {
                             return Dismissible(
                               key: Key('Send'),
                               direction: DismissDirection.horizontal,
-                              dismissThresholds: {DismissDirection.startToEnd: 1},
+                              dismissThresholds: {DismissDirection.startToEnd: 1, DismissDirection.endToStart: 1},
                               onDismissed: (direction) {
                                 _isDismissed = true;
                                 RampedTlToString().send(context, direction == DismissDirection.startToEnd);
                                 Navigator.of(context, rootNavigator: true).pop();
                               },
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(35),
+                                borderRadius: BorderRadius.circular(38),
                                 child: Container(
-                                  // width: width > 500 ? 500 - 100 : width - 100,
-                                  height: 35,
-                                  width: 75,
+                                  height: 38,
+                                  width: 85,
                                   alignment: Alignment.center,
                                   color: Colors.white,
                                   child: Text(
                                     'SEND',
-                                    style: MyTextStyle.fetStdSize(
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w300,
                                       letterSpacing: 4,
-                                      newColor: Colors.black,
-                                      fontWight: FontWeight.w400,
                                     ),
                                   ),
                                 ),
