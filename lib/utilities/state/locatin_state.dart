@@ -101,10 +101,11 @@ class ProvideLocationState with ChangeNotifier {
     if (_reCallBlocked) return 0;
     blockReCall();
     _permissionGranted = await location.hasPermission();
-    print('permission: ${_permissionGranted.toString()}');
+    print('Location permission: ${_permissionGranted.toString()}');
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
+        print('Location permission: ${_permissionGranted.toString()}');
         return -1;
       }
     } else if (_permissionGranted == PermissionStatus.deniedForever) {
@@ -126,7 +127,7 @@ class ProvideLocationState with ChangeNotifier {
       print('time out! $e');
       return 0;
     } catch (e) {
-      print('could not get location $e');
+      print('could not get GPS location $e');
     }
 
     getSunriseSunsetResult();
