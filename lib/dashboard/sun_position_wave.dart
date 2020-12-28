@@ -19,7 +19,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
   Animation _colorGradientAnimation;
   AnimationController _colorGradientAnimationController;
   bool _hasSunPosition = false;
-  static double _height;
+  double _horizonHeight;
 
   @override
   void initState() {
@@ -54,25 +54,48 @@ class _SunPositionWaveState extends State<SunPositionWave>
 
   void setupColorGradientAnimation(double newHeight) {
     _colorGradientAnimation =
-        Tween<double>(begin: _height, end: newHeight).animate(_colorGradientAnimationController)
+        Tween<double>(begin: _horizonHeight, end: newHeight).animate(_colorGradientAnimationController)
           ..addListener(() {
             setState(() {});
           });
   }
 
 
-  double currentSunPosition(
-      ProvideLocationState locationStateProvider, Size size) {
+  double horizonHeight(ProvideLocationState locationStateProvider, Size size) {
     if (!locationStateProvider.available()){
       return size.height / 2;
     }
-    // if (_hasSunPosition) return _height;
+    if (_horizonHeight != null) return _horizonHeight;
 
 
-    Duration dayLight =  locationStateProvider.sunSetTime.difference(locationStateProvider.sunRiseTime);
+    DateTime solarNoon = locationStateProvider.solarNoon;
 
-    DateTime solarNoon = locationStateProvider.sunSetTime.subtract(
-        Duration(milliseconds: (dayLight.inMilliseconds/2).round()));
+    DateTime beginTime = solarNoon.subtract(Duration(hours: 12));
+    DateTime endTime = solarNoon.add(Duration(hours: 12));
+
+
+    double sunSetHeight = map(
+        locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
+        beginTime.millisecondsSinceEpoch.toDouble(),
+        endTime.millisecondsSinceEpoch.toDouble(),
+        0.0,
+        1.0,
+    );
+    sunSetHeight %= 1;
+
+    var height = SunPath.calculate(sunSetHeight, size).dy;
+
+    setupColorGradientAnimation(height);
+
+    return height;
+  }
+
+  void sunPosX(ProvideLocationState locationStateProvider, Size size) {
+    if (!locationStateProvider.available())
+      return;
+    if (_hasSunPosition)
+      return;
+    DateTime solarNoon = locationStateProvider.solarNoon;
 
     DateTime beginTime = solarNoon.subtract(Duration(hours: 12));
     DateTime endTime = solarNoon.add(Duration(hours: 12));
@@ -85,30 +108,13 @@ class _SunPositionWaveState extends State<SunPositionWave>
         1.0);
     position %= 1;
 
-    print(locationStateProvider.sunSetTime);
-
-
-
-    double sunSetHeight = map(
-        locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
-        beginTime.millisecondsSinceEpoch.toDouble(),
-        endTime.millisecondsSinceEpoch.toDouble(),
-        0.0,
-        1.0,
-    );
-    sunSetHeight %= 1;
-
-    final height = size.height - SunPath.calculate(sunSetHeight, size).dy;
-
-
-    setupColorGradientAnimation(height);
-
     Timer.run(() {
       _sunAnimationController.forward(from: position);
       _colorGradientAnimationController.forward();
     });
+
     _hasSunPosition = true;
-    return height;
+    return;
   }
 
 
@@ -117,7 +123,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
     final size = Size(MediaQuery.of(context).size.width, 80);
     return Consumer<ProvideLocationState>(
       builder: (context, locationStateProvider, _) {
-        _height = currentSunPosition(locationStateProvider, size);
+        _horizonHeight = horizonHeight(locationStateProvider, size);
         return Container(
           alignment: Alignment.center,
           height: size.height + 20,
@@ -136,7 +142,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                       gradient: LinearGradient(
                       begin: Alignment(
                         0, map(_colorGradientAnimation == null
-                          ? _height
+                          ? _horizonHeight
                           : _colorGradientAnimation.value * 0.8,
                           0, size.height, -1, 1)
                           // * _colorGradientAnimation.value
@@ -159,7 +165,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                         begin: Alignment.topCenter,
                         end: Alignment(
                             0, map(_colorGradientAnimation == null
-                            ? _height
+                            ? _horizonHeight
                             : _colorGradientAnimation.value * 1.2,
                             0, size.height, -1, 1)
                               // * _colorGradientAnimation.value
@@ -185,7 +191,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
-                top: _height,
+                top: _horizonHeight,
                 width: size.width,
                 height: 1,
                 child: Divider(
@@ -193,25 +199,34 @@ class _SunPositionWaveState extends State<SunPositionWave>
                   thickness: 0.8,
                 ),
               ),
-              Positioned(
-                top: SunPath.calculate(_sunAnimation.value, size).dy,
-                left: SunPath.calculate(_sunAnimation.value, size).dx,
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  transform: Matrix4.translationValues(-15, -15, 0),
-                  child: AnimatedCrossFade(
-                    crossFadeState: _hasSunPosition
-                        ? CrossFadeState.showFirst
-                        : CrossFadeState.showSecond,
-                    duration: Duration(milliseconds: 2000),
-                    firstChild: const Sun(),
-                    secondChild: Container(
-                      height: 22,
-                      width: 22,
+              Builder(
+                builder: (context) {
+                  sunPosX(locationStateProvider, size);
+                  if (!_hasSunPosition){
+                    return Container();
+                  }
+                  return Positioned(
+                    top: SunPath.calculate(_sunAnimation.value, size).dy,
+                    //left: SunPath.calculate(0.5, size).dx,
+                    left: size.width * _sunAnimation.value,
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      transform: Matrix4.translationValues(-15, -15, 0),
+                      child: AnimatedCrossFade(
+                        crossFadeState: _hasSunPosition
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: Duration(milliseconds: 2000),
+                        firstChild: const Sun(),
+                        secondChild: Container(
+                          height: 22,
+                          width: 22,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                }
               ),
             ],
           ),

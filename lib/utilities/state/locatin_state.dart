@@ -51,6 +51,14 @@ class ProvideLocationState with ChangeNotifier {
     return _sunSetTime;
   }
 
+  Duration get dayLight {
+    return sunSetTime.difference(sunRiseTime);
+  }
+
+  DateTime get solarNoon {
+    return sunSetTime.subtract(Duration(milliseconds: (dayLight.inMilliseconds/2).round()));
+  }
+
   String sunSetTimeStr(BuildContext context) {
     return _timeToString(context, _sunSetTime);
   }
