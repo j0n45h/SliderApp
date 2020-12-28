@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
           title: 'Slider',
           theme: ThemeData(
             primarySwatch: Colors.deepOrange,
-            platform: TargetPlatform.iOS,
+            //platform: TargetPlatform.iOS,
             sliderTheme: SliderThemeData(
               activeTrackColor: MyColors.slider,
               thumbColor: MyColors.slider,
@@ -86,8 +86,9 @@ class _MainPageState extends State<MainPage> {
               valueIndicatorColor: MyColors.slider.withOpacity(0.8),
               trackHeight: 1.5,
             ),
+            fontFamily: 'Roboto',
           ),
-          initialRoute: TimelapseScreen.routeName,
+          //initialRoute: TimelapseScreen.routeName,
           routes: {
             MyDrawer.routeName: (_) => MyDrawer(),
             DashboardScreen.routeName: (_) => DashboardScreen(),
