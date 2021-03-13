@@ -1,27 +1,34 @@
 import 'dart:math';
 
 class NiceScale {
-  double _niceMin, _niceMax;
-  double _tickSpacing;
+  double _niceMin = 1, _niceMax = 1;
+  double _tickSpacing = 1;
 
   double get tickSpacing { return _tickSpacing; }
   double get niceMin { return _niceMin; }
   double get niceMax { return _niceMax; }
 
-  double _minPoint, _maxPoint;
-  double _maxTicks;
-  double _range;
+  double _minPoint = 1, _maxPoint = 1;
+  double _maxTicks = 1;
+  double _range = 1;
 
-  NiceScale(double minP, double maxP, double maxTicks){
-    this._minPoint = minP;
-    this._maxPoint = maxP;
-    this._maxTicks = maxTicks;
+  NiceScale(double minP, double maxP, double maxTicks) {
+    _minPoint = minP;
+    _maxPoint = maxP;
+    _maxTicks = maxTicks;
+
+    if (_maxTicks < 2)
+      _maxTicks = 2;
+
     _calculate();
   }
 
   void _calculate(){
     _range = _niceNum(_maxPoint - _minPoint, false);
     _tickSpacing = _niceNum(_range / (_maxTicks - 1), true);
+    if (_tickSpacing == 0)
+      _tickSpacing = 1;
+
     _niceMin = _calcMin();
     _niceMax = _calcMax();
   }

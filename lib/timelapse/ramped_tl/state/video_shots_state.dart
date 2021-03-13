@@ -17,15 +17,11 @@ class VideoShotsState extends ChangeNotifier {
 
 
   /// Video Length
-  int get videoLength {
-    if (_shots == null)
-      return null;
-    return (shots/fps).round();
-  }
+  int get videoLength => (shots/fps).round();
 
 
   /// Shots
-  int _shots;
+  int _shots = 0;
   set shots(s) {
     _shots = s;
   }

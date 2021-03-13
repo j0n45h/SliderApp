@@ -45,12 +45,12 @@ class StartEndDuration extends StatelessWidget {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: TimeOfDay.fromDateTime(timeState.startingTime) ?? null,
+      initialTime: TimeOfDay.fromDateTime(timeState.startingTime),
     );
 
     final pickedTime = await timePicker.show();
-
-    if (pickedTime == null) return;
+    if (pickedTime == null)
+      return;
 
     timeState.startingTime = pickedTime;
     context.cubit<RampCurveCubit>().updatePoints(context);
@@ -80,15 +80,11 @@ class StartEndDuration extends StatelessWidget {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: timeState.endingTime != null
-          ? TimeOfDay.fromDateTime(timeState.endingTime)
-          : null,
+      initialTime: TimeOfDay.fromDateTime(timeState.endingTime ?? DateTime.now()),
       helpText: 'The Time you want the Timelapse to End',
     );
 
     final pickedTime = await timePicker.show();
-
-    if (pickedTime == null) return;
 
     timeState.endingTime = pickedTime;
     context.cubit<RampCurveCubit>().updatePoints(context);

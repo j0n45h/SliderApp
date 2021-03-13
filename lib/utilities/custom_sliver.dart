@@ -8,9 +8,9 @@ class SliverFoldableBoxDelegate extends SliverPersistentHeaderDelegate {
   final double maxHeight;
   final Widget child;
   SliverFoldableBoxDelegate({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
   });
 
   @override

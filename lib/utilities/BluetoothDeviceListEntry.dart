@@ -4,11 +4,11 @@ import 'package:sliderappflutter/utilities/text_style.dart';
 
 class BluetoothDeviceListEntry extends ListTile {
   BluetoothDeviceListEntry({
-    @required BluetoothDevice device,
-    GestureTapCallback onTap,
-    GestureLongPressCallback onLongPress,
+    required BluetoothDevice device,
+    GestureTapCallback? onTap,
+    GestureLongPressCallback? onLongPress,
     bool enabled = true,
-    Widget trailing,
+    Widget? trailing,
   }) : super(
           onTap: onTap,
           onLongPress: onLongPress,

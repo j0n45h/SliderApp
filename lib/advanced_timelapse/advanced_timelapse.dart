@@ -83,7 +83,7 @@ class _AdvancedTimelapseScreenState extends State<AdvancedTimelapseScreen> {
       ),
       onWillPop: () {
         MyDrawer.navigateHome(context);
-        return;
+        return Future.value(true);
       },
     );
   }

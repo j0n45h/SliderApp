@@ -3,16 +3,16 @@ import 'package:sliderappflutter/utilities/box_decoraation_frame.dart';
 
 class FramedTextField extends StatelessWidget {
   final double width;
-  final double height;
+  final double? height;
   final FramedTF lock;
   final Widget textField;
-  final VoidCallback onLockLongPress;
+  final VoidCallback? onLockLongPress;
   // final ValueChanged<FramedTF> onLockLongPress;
 
 
   FramedTextField({
-    @required this.textField,
-    @required this.width,
+    required this.textField,
+    required this.width,
     this.lock = FramedTF.notLockable,
     this.height,
     this.onLockLongPress,
@@ -34,7 +34,10 @@ class FramedTextField extends StatelessWidget {
           margin: const EdgeInsets.fromLTRB(0, 0, 3, 0),
           width: 27,
           child: InkWell(
-            onLongPress: () => onLockLongPress(),
+            onLongPress: () {
+              if (lock != FramedTF.notLockable && onLockLongPress != null)
+                onLockLongPress!();
+            },
             borderRadius: BorderRadius.circular(10),
             child: lock != FramedTF.notLockable
                 ? Transform.scale(

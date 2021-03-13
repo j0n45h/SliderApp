@@ -14,10 +14,9 @@ class ConnectionScreen extends StatefulWidget {
 }
 
 class _ConnectionScreenState extends State<ConnectionScreen> {
-  String btDeviceAddress;
-  bool isDiscovering;
-  StreamSubscription<BluetoothDiscoveryResult> _streamSubscription;
-  List<BluetoothDiscoveryResult> results = List<BluetoothDiscoveryResult>();
+  bool isDiscovering = false;
+  StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
+  List<BluetoothDiscoveryResult> results = [];
 
 
   @override
@@ -38,7 +37,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
           });
         });
 
-    _streamSubscription.onDone(() {
+    _streamSubscription?.onDone(() {
       setState(() {
         isDiscovering = false;
       });

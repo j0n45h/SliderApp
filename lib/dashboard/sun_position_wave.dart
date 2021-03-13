@@ -7,19 +7,19 @@ import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 
 class SunPositionWave extends StatefulWidget {
-  const SunPositionWave({Key key}) : super(key: key);
+  const SunPositionWave({Key? key}) : super(key: key);
   @override
   _SunPositionWaveState createState() => _SunPositionWaveState();
 }
 
 class _SunPositionWaveState extends State<SunPositionWave>
     with TickerProviderStateMixin {
-  Animation _sunAnimation;
-  AnimationController _sunAnimationController;
-  Animation _colorGradientAnimation;
-  AnimationController _colorGradientAnimationController;
+  Animation? _sunAnimation;
+  AnimationController? _sunAnimationController;
+  Animation? _colorGradientAnimation;
+  AnimationController? _colorGradientAnimationController;
   bool _hasSunPosition = false;
-  double _horizonHeight;
+  double? _horizonHeight;
 
   @override
   void initState() {
@@ -31,30 +31,35 @@ class _SunPositionWaveState extends State<SunPositionWave>
 
   @override
   void dispose() {
-    _sunAnimationController.dispose();
-    _colorGradientAnimationController.dispose();
+    _sunAnimationController?.dispose();
+    _colorGradientAnimationController?.dispose();
     super.dispose();
   }
 
   void setupSunAnimation() {
     _sunAnimationController =
         AnimationController(duration: const Duration(hours: 24), vsync: this);
+    if (_sunAnimationController == null)
+      return;
 
-    _sunAnimation = Tween(begin: 0.0, end: 1.0).animate(_sunAnimationController)
+    _sunAnimation = Tween(begin: 0.0, end: 1.0).animate(_sunAnimationController!)
       ..addListener(() {
         setState(() {});
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          _sunAnimationController.reset();
-          _sunAnimationController.forward();
+          _sunAnimationController!.reset();
+          _sunAnimationController!.forward();
         }
       });
   }
 
   void setupColorGradientAnimation(double newHeight) {
+    if (_colorGradientAnimationController == null)
+      return;
+
     _colorGradientAnimation =
-        Tween<double>(begin: _horizonHeight, end: newHeight).animate(_colorGradientAnimationController)
+        Tween<double>(begin: _horizonHeight, end: newHeight).animate(_colorGradientAnimationController!)
           ..addListener(() {
             setState(() {});
           });
@@ -62,20 +67,22 @@ class _SunPositionWaveState extends State<SunPositionWave>
 
 
   double horizonHeight(ProvideLocationState locationStateProvider, Size size) {
-    if (!locationStateProvider.available()){
+    if (!locationStateProvider.available())
       return size.height / 2;
-    }
-    if (_horizonHeight != null) return _horizonHeight;
+    if (locationStateProvider.solarNoon == null || locationStateProvider.sunSetTime == null)
+      return size.height / 2;
+    if (_horizonHeight != null)
+      return _horizonHeight!;
 
 
-    DateTime solarNoon = locationStateProvider.solarNoon;
+    DateTime solarNoon = locationStateProvider.solarNoon!;
 
     DateTime beginTime = solarNoon.subtract(Duration(hours: 12));
     DateTime endTime = solarNoon.add(Duration(hours: 12));
 
 
     double sunSetHeight = map(
-        locationStateProvider.sunSetTime.millisecondsSinceEpoch.toDouble(),
+        locationStateProvider.sunSetTime!.millisecondsSinceEpoch.toDouble(),
         beginTime.millisecondsSinceEpoch.toDouble(),
         endTime.millisecondsSinceEpoch.toDouble(),
         0.0,
@@ -91,11 +98,11 @@ class _SunPositionWaveState extends State<SunPositionWave>
   }
 
   void sunPosX(ProvideLocationState locationStateProvider, Size size) {
-    if (!locationStateProvider.available())
+    if (!locationStateProvider.available() || locationStateProvider.solarNoon == null)
       return;
     if (_hasSunPosition)
       return;
-    DateTime solarNoon = locationStateProvider.solarNoon;
+    DateTime solarNoon = locationStateProvider.solarNoon!;
 
     DateTime beginTime = solarNoon.subtract(Duration(hours: 12));
     DateTime endTime = solarNoon.add(Duration(hours: 12));
@@ -109,8 +116,8 @@ class _SunPositionWaveState extends State<SunPositionWave>
     position %= 1;
 
     Timer.run(() {
-      _sunAnimationController.forward(from: position);
-      _colorGradientAnimationController.forward();
+      _sunAnimationController?.forward(from: position);
+      _colorGradientAnimationController?.forward();
     });
 
     _hasSunPosition = true;
@@ -143,7 +150,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                       begin: Alignment(
                         0, map(_colorGradientAnimation == null
                           ? _horizonHeight
-                          : _colorGradientAnimation.value * 0.8,
+                          : _colorGradientAnimation!.value * 0.8,
                           0, size.height, -1, 1)
                           // * _colorGradientAnimation.value
                       ),
@@ -166,7 +173,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                         end: Alignment(
                             0, map(_colorGradientAnimation == null
                             ? _horizonHeight
-                            : _colorGradientAnimation.value * 1.2,
+                            : _colorGradientAnimation!.value * 1.2,
                             0, size.height, -1, 1)
                               // * _colorGradientAnimation.value
                         ),
@@ -206,9 +213,9 @@ class _SunPositionWaveState extends State<SunPositionWave>
                     return Container();
                   }
                   return Positioned(
-                    top: SunPath.calculate(_sunAnimation.value, size).dy,
+                    top: SunPath.calculate(_sunAnimation?.value, size).dy,
                     //left: SunPath.calculate(0.5, size).dx,
-                    left: size.width * _sunAnimation.value,
+                    left: size.width * _sunAnimation?.value,
                     child: Container(
                       height: 30,
                       width: 30,

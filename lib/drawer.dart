@@ -47,7 +47,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.of(context).pushNamed(DashboardScreen.routeName);
                   },
                 ),
-                Divider(color: Colors.grey[100].withOpacity(0.4), indent: 6, thickness: 0.6),
+                Divider(color: Colors.grey[100]?.withOpacity(0.4), indent: 6, thickness: 0.6),
                 ListTile(
                   leading: Icon(Icons.camera_alt, color: Colors.grey[100]),
                   title: Text('Timelapse', style: MyTextStyle.fetStdSize(),),
@@ -66,7 +66,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.of(context).pushNamed(AdvancedTimelapseScreen.routeName);
                   },
                 ),
-                Divider(color: Colors.grey[100].withOpacity(0.4), indent: 6, thickness: 0.6),
+                Divider(color: Colors.grey[100]?.withOpacity(0.4), indent: 6, thickness: 0.6),
                 ListTile(
                   leading: Icon(Icons.videocam, color: Colors.grey[100]),
                   title: Text('Video', style: MyTextStyle.fetStdSize(),),
@@ -75,7 +75,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.of(context).pushNamed(VideoScreen.routeName);
                   },
                 ),
-                Divider(color: Colors.grey[100].withOpacity(0.4), indent: 6, thickness: 0.6),
+                Divider(color: Colors.grey[100]?.withOpacity(0.4), indent: 6, thickness: 0.6),
                 ListTile(
                   leading: Icon(Icons.bluetooth, color: Colors.grey[100]),
                   title: Text('Connection', style: MyTextStyle.fetStdSize(),),

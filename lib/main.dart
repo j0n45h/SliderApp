@@ -29,7 +29,7 @@ void main() {
     runApp(MainPage());
 }
 
-TLData tlData;
+TLData tlData = TLData();
 
 
 

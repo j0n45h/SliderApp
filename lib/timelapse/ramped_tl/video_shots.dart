@@ -30,9 +30,11 @@ class VideoShots extends StatelessWidget {
                   textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                     builder: (context, state) {
                       final videoShotsState = Provider.of<VideoShotsState>(context, listen: false);
-                      final videoTime = context.cubit<RampCurveCubit>().getShots(context) / videoShotsState.fps;
+                      final shots = context.cubit<RampCurveCubit>().getShots(context);
+                      final videoTime = shots == null ? null : (shots / videoShotsState.fps);
+                      
                       return Text(
-                        videoTime?.round()?.toString() ?? '-- ' + 's',
+                        videoTime?.round().toString() ?? '-- ' + 's',
                         style: MyTextStyle.normal(fontSize: 12),
                       );
                     },

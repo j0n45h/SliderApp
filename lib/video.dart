@@ -17,7 +17,7 @@ class VideoScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () {
         MyDrawer.navigateHome(context);
-        return;
+        return Future.value(true);
       },
       child: Scaffold(
         appBar: AppBar(

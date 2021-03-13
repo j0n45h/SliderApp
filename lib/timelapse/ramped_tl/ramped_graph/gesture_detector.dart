@@ -33,9 +33,9 @@ class TimeGestureDetector extends StatelessWidget {
   final Size size;
   final bool start; // GestureDetector for start or for end Time
   TimeGestureDetector({
-    @required this.index,
-    @required this.size,
-    @required this.start,
+    required this.index,
+    required this.size,
+    required this.start,
   });
 
   @override

@@ -10,9 +10,13 @@ import 'package:weather/weather.dart';
 class ProvideWeatherState with ChangeNotifier {
   static const String _openWeatherMapKey = 'baa5ee1094f9f173005067c6b168c3c8';
   static var _weatherFactory = WeatherFactory(_openWeatherMapKey);
-  static Weather _weather;
+  static Weather?_weather;
 
-  Weather get getWeather {
+  Future<Weather?> getWeather(BuildContext context) async {
+    if (_weather != null)
+      return _weather;
+
+    await updateWeather(context);
     return _weather;
   }
 
@@ -29,8 +33,9 @@ class ProvideWeatherState with ChangeNotifier {
     if (!await DataConnectionChecker().hasConnection)
       return;
 
+
     try {
-      _weather = await compute(_getTreadWeather, [locationState.getLatitude, locationState.getLongitude]).timeout(Duration(seconds: 15));
+      _weather = await compute(_getTreadWeather, [locationState.getLatitude!, locationState.getLongitude!]).timeout(Duration(seconds: 15));
      // _weather = await _weatherStation.currentWeather(locationState.getLatitude, locationState.getLongitude).timeout(Duration(seconds: 10));
 
     } on TimeoutException catch (_){
@@ -41,7 +46,7 @@ class ProvideWeatherState with ChangeNotifier {
     notifyListeners();
   }
 
-  static Future<Weather> _getTreadWeather(List<double> location) async {
+  static Future<Weather?> _getTreadWeather(List<double> location) async {
     return await _weatherFactory.currentWeatherByLocation(location[0], location[1]);
   }
 }

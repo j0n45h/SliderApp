@@ -67,7 +67,7 @@ class _LoggingScreenState extends State<LoggingScreen> {
       ),
       onWillPop: () {
         MyDrawer.navigateHome(context);
-        return;
+        return Future.value(true);
       },
     );
   }

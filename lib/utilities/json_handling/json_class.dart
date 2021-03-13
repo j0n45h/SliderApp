@@ -4,50 +4,49 @@ import 'package:flutter/services.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 class TLData {
-  List<LinearTL> linearTL;
-  List<RampedTL> rampedTL;
-  List<Video> video;
+  List<LinearTL>? linearTL;
+  List<RampedTL>? rampedTL;
+  List<Video>? video;
 
   bool dataHasBeenLoaded = false;
 
   TLData() {
-    linearTL = new List<LinearTL>();
-    rampedTL = new List<RampedTL>();
-    video    = new List<Video>();
+    linearTL = [];
+    rampedTL = [];
+    video = [];
   }
 
   void fromJson(Map<String, dynamic> json) {
     if (json['LinearTL'] != null) {
-      linearTL = new List<LinearTL>();
+      linearTL = [];
       json['LinearTL'].forEach((v) {
-        linearTL.add(new LinearTL.fromJson(v));
+        linearTL?.add(new LinearTL.fromJson(v));
       });
     }
     if (json['RampedTL'] != null) {
-      rampedTL = new List<RampedTL>();
+      rampedTL = [];
       json['RampedTL'].forEach((v) {
-        rampedTL.add(new RampedTL.fromJson(v));
+        rampedTL?.add(new RampedTL.fromJson(v));
       });
     }
     if (json['Video'] != null) {
-      video = new List<Video>();
+      video = [];
       json['Video'].forEach((v) {
-        video.add(new Video.fromJson(v));
+        video?.add(new Video.fromJson(v));
       });
     }
   }
 
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.linearTL != null) {
-      data['LinearTL'] = this.linearTL.map((v) => v.toJson()).toList();
+      data['LinearTL'] = this.linearTL?.map((v) => v.toJson()).toList();
     }
     if (this.rampedTL != null) {
-      data['RampedTL'] = this.rampedTL.map((v) => v.toJson()).toList();
+      data['RampedTL'] = this.rampedTL?.map((v) => v.toJson()).toList();
     }
     if (this.video != null) {
-      data['Video'] = this.video.map((v) => v.toJson()).toList();
+      data['Video'] = this.video?.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -59,11 +58,13 @@ class TLData {
 
   Future<bool> getFromCache() async {
     final json = await CustomCacheManager.getTLDataAsJson();
-    print('got json: ${json.toString()}');
     if (json == null) {
-      print('json == null');
+      dataHasBeenLoaded = false;
       return false;
     }
+
+    print('got json: ${json.toString()}');
+
     fromJson(json);
     dataHasBeenLoaded = true;
     return true;
@@ -76,14 +77,13 @@ class TLData {
     dataHasBeenLoaded = true;
     return true;
   }
-
 }
 
 class LinearTL {
-  int index;
-  double interval;
-  String name;
-  int shots;
+  int? index;
+  double? interval;
+  String? name;
+  int? shots;
 
   LinearTL({this.index, this.interval, this.name, this.shots});
 
@@ -105,9 +105,9 @@ class LinearTL {
 }
 
 class RampedTL {
-  int index;
-  String name;
-  List<Points> points;
+  int? index;
+  String? name;
+  List<Points>? points;
 
   RampedTL({this.index, this.name, this.points});
 
@@ -115,9 +115,9 @@ class RampedTL {
     index = json['Index'];
     name = json['Name'];
     if (json['Points'] != null) {
-      points = new List<Points>();
+      points = [];
       json['Points'].forEach((v) {
-        points.add(new Points.fromJson(v));
+        points?.add(new Points.fromJson(v));
       });
     }
   }
@@ -127,16 +127,16 @@ class RampedTL {
     data['Index'] = this.index;
     data['Name'] = this.name;
     if (this.points != null) {
-      data['Points'] = this.points.map((v) => v.toJson()).toList();
+      data['Points'] = this.points?.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Points {
-  int end;
-  double interval;
-  int start;
+  int? end;
+  double? interval;
+  int? start;
 
   Points({this.end, this.interval, this.start});
 
@@ -156,20 +156,14 @@ class Points {
 }
 
 class Video {
-  int index;
-  String name;
-  int acceleration;
-  int deceleration;
-  bool infinite;
-  int speed;
+  int? index;
+  String? name;
+  int? acceleration;
+  int? deceleration;
+  bool? infinite;
+  int? speed;
 
-  Video(
-      {this.index,
-        this.name,
-        this.acceleration,
-        this.deceleration,
-        this.infinite,
-        this.speed});
+  Video({this.index, this.name, this.acceleration, this.deceleration, this.infinite, this.speed});
 
   Video.fromJson(Map<String, dynamic> json) {
     index = json['Index'];

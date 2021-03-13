@@ -17,7 +17,7 @@ class RampedTlToString {
     final List<Points> points = context.cubit<RampCurveCubit>().getPointsAsShots(context);
 
     points.forEach((point) {
-      double interval = (point.interval * 100).round() / 100;
+      double interval = ((point.interval ?? 1) * 100).round() / 100;
       parameters += 'TLPoint:${interval.toString()},${point.start},${point.end};';
     });
 

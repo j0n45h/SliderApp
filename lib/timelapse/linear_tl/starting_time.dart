@@ -16,8 +16,8 @@ class StartingTime extends StatefulWidget {
 }
 
 class StartingTimeState extends State<StartingTime> {
-  Timer _timer;
-  DateTime _startTime, _endTime;
+  Timer? _timer;
+  DateTime? _startTime, _endTime;
 
   @override
   void initState() {
@@ -26,7 +26,8 @@ class StartingTimeState extends State<StartingTime> {
       Duration(seconds: 2),
       (Timer t) => setState(
         () {
-          if (!StartTime.picked) calcTime();
+          if (!StartTime.picked)
+            calcTime();
         },
       ),
     );
@@ -36,14 +37,14 @@ class StartingTimeState extends State<StartingTime> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
   void calcTime() {
     // if time is not picked use current time
     if (StartTime.picked) {
-      if (StartTime.time == null || StartTime.time.isBefore(DateTime.now()))
+      if (StartTime.time == null || (StartTime.time?.isBefore(DateTime.now()) ?? false))
         StartTime.time = DateTime.now();
       _startTime = StartTime.time;
     }
@@ -51,7 +52,7 @@ class StartingTimeState extends State<StartingTime> {
       _startTime = DateTime.now();
 
     // Calc ending time and set second TF
-    _endTime = _startTime.add(TLDuration.duration);
+    _endTime = _startTime?.add(TLDuration.duration);
   }
 
   @override
@@ -85,7 +86,7 @@ class StartingTimeState extends State<StartingTime> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               ClickableFramedTimeField(
-                time: _startTime,
+                time: _startTime!,
                 onTap: () => _showTimePicker(context),
               ),
               Container(
@@ -93,7 +94,7 @@ class StartingTimeState extends State<StartingTime> {
                 child: Text('-', style: MyTextStyle.fet(fontSize: 12)),
               ),
               ClickableFramedTimeField(
-                time: _endTime,
+                time: _endTime!,
               ),
             ],
           ),
@@ -106,15 +107,10 @@ class StartingTimeState extends State<StartingTime> {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: StartTime.time != null
-          ? TimeOfDay.fromDateTime(StartTime.time)
-          : null,
+      initialTime: TimeOfDay.fromDateTime(StartTime.time ?? DateTime.now()),
     );
 
     final pickedTime = await timePicker.show();
-
-    if (pickedTime == null)
-      return;
 
     setState(() {
       StartTime.time = pickedTime;

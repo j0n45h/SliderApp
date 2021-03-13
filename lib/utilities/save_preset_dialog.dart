@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class SaveTLDialog extends StatelessWidget {
-  final TextEditingController presetName;
+  final TextEditingController? presetName;
   final VoidCallback onDone;
 
-  SaveTLDialog({@required this.onDone, this.presetName});
+  SaveTLDialog({required this.onDone, this.presetName});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class SaveTLDialog extends StatelessWidget {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Colors.blueGrey[300],
+                            color: Colors.blueGrey[300] ?? Colors.blueGrey,
                             width: 0.8,
                           ),
                           borderRadius: BorderRadius.circular(15),

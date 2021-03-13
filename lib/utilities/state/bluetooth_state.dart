@@ -8,11 +8,11 @@ import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 
 
 class ProvideBtState with ChangeNotifier {
-  BluetoothDevice device;
+  BluetoothDevice? device;
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
-  StreamSubscription<BluetoothDeviceState> deviceStateSubscription;
-  StreamSubscription<List<int>> listener;
-  BluetoothCharacteristic characteristic;
+  StreamSubscription<BluetoothDeviceState>? deviceStateSubscription;
+  StreamSubscription<List<int>>? listener;
+  BluetoothCharacteristic? _characteristic;
 
   String log = "Test";
   void clearLog() {
@@ -28,7 +28,7 @@ class ProvideBtState with ChangeNotifier {
   }
 
   bool get isConnected {
-    if (deviceState == null || device == null)
+    if (device == null)
       return false;
     return deviceState == BluetoothDeviceState.connected;
     // TODO: if (device==null && deviceState == BluetoothDeviceState.connected) get device from lastDevice or uuid
@@ -46,7 +46,7 @@ class ProvideBtState with ChangeNotifier {
     try {
       await device.connect();
     } catch(e) {
-      if (e.code.toString() == 'already_connected')
+      if (e.toString() == 'already_connected')
         print('already_connected');
       else
         print('Exception on connecting: $e');
@@ -54,8 +54,8 @@ class ProvideBtState with ChangeNotifier {
     this.device = device;
     CustomCacheManager.storeDevice(BtDevice(name: device.name, address: device.id.toString()));
 
-    deviceStateSubscription = this.device.state.listen((BluetoothDeviceState state) {
-      print('state changed');
+    deviceStateSubscription = this.device?.state.listen((BluetoothDeviceState state) {
+      print('BT state changed');
       if (state != deviceState) {
         deviceState = state;
         notifyListeners();
@@ -65,7 +65,7 @@ class ProvideBtState with ChangeNotifier {
     statListening();
   }
 
-  Future<void> disconnect(BluetoothDevice device) async {
+  Future<void> disconnect(BluetoothDevice? device) async {
     if (device == null) device = this.device;
     try {
       await device?.disconnect();
@@ -77,6 +77,7 @@ class ProvideBtState with ChangeNotifier {
   }
 
   Future<void> statListening() async {
+    final characteristic = await getBluetoothCharacteristic();
     characteristic?.value?.listen((value) {
       var received = utf8.decode(value);
       log += received;
@@ -92,13 +93,18 @@ class ProvideBtState with ChangeNotifier {
 
     var bluetoothCharacteristic = await getBluetoothCharacteristic();
 
-    await bluetoothCharacteristic.write(utf8.encode(value));
+    await bluetoothCharacteristic?.write(utf8.encode(value));
   }
 
-  Future<BluetoothCharacteristic> getBluetoothCharacteristic() async {
+  Future<BluetoothCharacteristic?> getBluetoothCharacteristic() async {
     if (!isConnected) return null;
-    List<BluetoothService> services = await device.discoverServices();
-    BluetoothCharacteristic bluetoothCharacteristic;
+    if (_characteristic != null)
+      return _characteristic;
+    if (device == null)
+      return null;
+
+    List<BluetoothService> services = await device!.discoverServices();
+    BluetoothCharacteristic? bluetoothCharacteristic;
 
     services.forEach((service) {
       if (service.uuid.toString() != '0000ffe0-0000-1000-8000-00805f9b34fb')
@@ -110,13 +116,21 @@ class ProvideBtState with ChangeNotifier {
       });
 
     });
-    characteristic = bluetoothCharacteristic;
+
+    if (bluetoothCharacteristic == null)
+      print('characteristics not found');
+
+    _characteristic = bluetoothCharacteristic;
     return bluetoothCharacteristic;
   }
 
 
   Future<void> connectToLastDevice() async {
     final flutterBlue = FlutterBlue.instance;
+
+    await flutterBlue.connectedDevices.then((result) => result.forEach((device) {
+      device.disconnect();
+    })); // TODO: Test!
 
     if (!await flutterBlue.isOn) { // if BT is off, wait till it gets turned on
       do {
@@ -129,8 +143,8 @@ class ProvideBtState with ChangeNotifier {
       if (!await flutterBlue.isOn)
         return;
     }
-
-    deviceState = device = null; // not tested
+    deviceState = BluetoothDeviceState.disconnected;
+    device = null;
     if (isConnected)
       return;
 
@@ -163,10 +177,10 @@ class ProvideBtState with ChangeNotifier {
 
     });
 
-    StreamSubscription<List<ScanResult>> subscription;
+    StreamSubscription<List<ScanResult>>? subscription;
     subscription = flutterBlue.scanResults.listen((result) { // scan for devices
       connect(result.first.device);
-      subscription.cancel();
+      subscription?.cancel();
     });
     await getBluetoothCharacteristic();
     statListening();
@@ -176,7 +190,7 @@ class ProvideBtState with ChangeNotifier {
 
 
 class BtDevice {
-  String name;
-  String address;
+  String? name;
+  String? address;
   BtDevice({@required this.name, @required this.address});
 }

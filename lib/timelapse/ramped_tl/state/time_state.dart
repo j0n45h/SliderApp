@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class TimeState extends ChangeNotifier {
-  Timer _timer;
+  Timer? _timer;
 
   TimeState() {
     setup();
@@ -11,7 +12,7 @@ class TimeState extends ChangeNotifier {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -28,7 +29,7 @@ class TimeState extends ChangeNotifier {
   }
 
   /// Starting Time
-  DateTime _startingTime;
+  DateTime _startingTime = DateTime.now();
   bool _isSet = false;
 
   set startingTime(DateTime t) {
@@ -47,26 +48,31 @@ class TimeState extends ChangeNotifier {
   }
 
   /// Ending Time
-  Duration _duration;
+  Duration? _duration;
 
-  set endingTime(DateTime t) {
-    int durationInMs =
-        t.millisecondsSinceEpoch - _startingTime.millisecondsSinceEpoch;
+  set endingTime(DateTime? t) {
+    if (t == null) {
+      _duration = null;
+      notifyListeners();
+      return;
+    }
+    int durationInMs = t.millisecondsSinceEpoch - _startingTime.millisecondsSinceEpoch;
     _duration = Duration(milliseconds: durationInMs);
     notifyListeners();
   }
 
-  DateTime get endingTime {
-    if (_duration == null) return null;
-    return _startingTime.add(_duration);
+  DateTime? get endingTime {
+    if (_duration == null)
+      return null;
+    return _startingTime.add(_duration!);
   }
 
-  set duration(Duration d) {
+  set duration(Duration? d) {
     _duration = d;
     notifyListeners();
   }
 
-  Duration get duration {
+  Duration? get duration {
     return _duration;
   }
 }

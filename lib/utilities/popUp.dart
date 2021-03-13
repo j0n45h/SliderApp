@@ -16,9 +16,9 @@ import 'package:sliderappflutter/utilities/text_style.dart';
 
 class SearchingDialog extends StatefulWidget {
   Future<void> showMyDialog(BuildContext context) async {
-    return showGeneralDialog(
+    await showGeneralDialog(
       context: context,
-      pageBuilder: (_, __, ___) => null,
+      pageBuilder: (context, animation, secondaryAnimation) => SearchingDialog(),
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.4),
       barrierLabel: '',
@@ -40,8 +40,8 @@ class SearchingDialog extends StatefulWidget {
 }
 
 class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProviderStateMixin {
-  Animation _animation;
-  AnimationController _animationController;
+  Animation? _animation;
+  AnimationController? _animationController;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +143,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                           initialData: false,
                           stream: FlutterBlue.instance.isScanning,
                           builder: (context, snapshot) {
-                            if (snapshot.data)
+                            if (snapshot.data ?? false)
                               return InkWell(
                                 focusColor: MyColors.bg,
                                 highlightColor: Colors.white.withOpacity(0.01),
@@ -191,12 +191,12 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
         stream: FlutterBlue.instance.isScanning,
         initialData: false,
         builder: (context, snapshot) {
-          if (snapshot.data) {
-            _animationController.forward();
+          if (snapshot.data ?? false) {
+            _animationController?.forward();
             return Transform(
               transform: Matrix4.identity()
                 ..setEntry(3, 2, 0.0011)
-                ..rotateY(2 * pi * _animation.value),
+                ..rotateY(2 * pi * (_animation?.value ?? 0)),
               alignment: FractionalOffset.center,
               child: SizedBox(
                 width: 70,
@@ -204,7 +204,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
               ),
             );
           } else {
-            _animationController.stop();
+            _animationController?.stop();
             return SizedBox(
               width: 70,
               child: BtStateIcon(),
@@ -263,8 +263,12 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
           StreamBuilder<List<BluetoothDevice>>(
             stream: Stream.periodic(Duration(milliseconds: 500)).asyncMap((_) => FlutterBlue.instance.connectedDevices),
             initialData: [],
-            builder: (c, snapshot) => Column(
-              children: snapshot.data.map((d) {
+            builder: (c, snapshot) {
+              if (snapshot.data == null)
+                return Container();
+
+              return Column(
+              children: snapshot.data!.map((d) {
                 return BluetoothDeviceListEntry(
                   device: d,
                   onTap: () {
@@ -283,7 +287,8 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                   ),
                 );
               }).toList(),
-            ),
+            );
+            },
           ),
           Divider(color: Colors.white, indent: 10, endIndent: 10, height: 8, thickness: 0.3),
           Padding(
@@ -296,8 +301,11 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
           StreamBuilder<List<ScanResult>>(
             stream: FlutterBlue.instance.scanResults,
             initialData: [],
-            builder: (c, snapshot) => Column(
-              children: snapshot.data.map(
+            builder: (c, snapshot) {
+              if (snapshot.data == null)
+                return Container();
+              return Column(
+              children: snapshot.data!.map(
                 (r) {
                   if (r.device.name.length < 1) return Container();
                   return BluetoothDeviceListEntry(
@@ -309,7 +317,8 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                   );
                 },
               ).toList(),
-            ),
+            );
+            },
           ),
         ],
       ),
@@ -319,15 +328,15 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
   void setupAnimation() {
     print('setupAnimation');
     _animationController = AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    final Animation curve = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    final Animation<double> curve = CurvedAnimation(parent: _animationController!, curve: Curves.easeInOut);
     _animation = Tween(begin: 0.0, end: 1.0).animate(curve)
       ..addListener(() {
         setState(() {});
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          _animationController.reset();
-          _animationController.forward();
+          _animationController?.reset();
+          _animationController?.forward();
         }
       });
   }

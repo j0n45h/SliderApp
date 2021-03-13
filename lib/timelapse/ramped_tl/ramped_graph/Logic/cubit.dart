@@ -11,7 +11,7 @@ import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 
 class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
-  Size globalSize;
+  Size? globalSize;
   bool isCreated = false;
   bool wasOpened = false;
   List<int> _revert = [0];
@@ -22,12 +22,12 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     List<CubitRampingPoint> list = [];
 
     for (int i=0; i < 5; i++) {
-      list.add(null);
-//      list.add(CubitRampingPoint(
-//        interval: Duration(milliseconds: 0),
-//        start: Duration(seconds: 0),
-//        end: Duration(seconds: 0),
-//      ));
+      list.add(CubitRampingPoint( // TODO: Test
+        interval: Duration(milliseconds: 0),
+        start: Duration(seconds: 0),
+        end: Duration(seconds: 0),
+      ));
+      // list.add(null);
     }
 
     return list;
@@ -55,47 +55,47 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   void onDragInterval(int index, double delta, BuildContext context) {
     if (globalSize == null)
       return;
-    final oldValue = state[index].getIntervalValue(context, globalSize);
+    final oldValue = state[index].getIntervalValue(context, globalSize!);
     final newValue = oldValue + delta;
 
     var newState = [...state];
-    newState[index].setIntervalValue(newValue, context, globalSize);
+    newState[index].setIntervalValue(newValue, context, globalSize!);
     emit(newState);
   }
 
   void onDragStartTime(int index, double delta, BuildContext context) {
     if (globalSize == null)
       return;
-    final oldValue = state[index].getStartValue(context, globalSize);
+    final oldValue = state[index].getStartValue(context, globalSize!);
     var newValue = oldValue + delta;
 
-    final previousPointValue = state[index-1].getEndValue(context, globalSize);
-    final nextPointValue = state[index].getEndValue(context, globalSize);
+    final previousPointValue = state[index-1].getEndValue(context, globalSize!);
+    final nextPointValue = state[index].getEndValue(context, globalSize!);
     if (newValue - 70 < previousPointValue) // prevent this point to be before previous Point
       newValue = previousPointValue + 70;
     else if (newValue + 70 > nextPointValue) // prevent this point to be after next Point
       newValue =  nextPointValue - 70;
 
     var newState = [...state];
-    newState[index].setStartValue(newValue, context, globalSize);
+    newState[index].setStartValue(newValue, context, globalSize!);
     emit(newState);
   }
 
   void onDragEndTime(int index, double delta, BuildContext context) {
     if (globalSize == null)
       return;
-    final oldValue = state[index].getEndValue(context, globalSize);
+    final oldValue = state[index].getEndValue(context, globalSize!);
     var newValue = oldValue + delta;
 
-    final previousPointValue = state[index].getStartValue(context, globalSize);
-    final nextPointValue = state[index+1].getStartValue(context, globalSize);
+    final previousPointValue = state[index].getStartValue(context, globalSize!);
+    final nextPointValue = state[index+1].getStartValue(context, globalSize!);
     if (newValue - 70 < previousPointValue) // prevent this point to be before previous Point
       newValue = previousPointValue + 70;
     else if (newValue + 70 > nextPointValue) // prevent this point to be after next Point
       newValue =  nextPointValue - 70;
 
     var newState = [...state];
-    newState[index].setEndValue(newValue, context, globalSize);
+    newState[index].setEndValue(newValue, context, globalSize!);
     emit(newState);
   }
 
@@ -108,7 +108,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   }
 
 
-  int getShots(BuildContext context) {
+  int? getShots(BuildContext context) {
     if (state.length < 1 || globalSize == null)
       return 0;
 
@@ -121,7 +121,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
   List<Points> getPointsAsShots(BuildContext context) {
     final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false).rampingPoints;
 
-    List<Points> points = List(rampPointsCount);
+    List<Points> points = List.filled(rampPointsCount, Points());
 
     double shotsValue = 0;
     for (int i=0; i < rampPointsCount; i++) {
@@ -160,7 +160,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
   void recreatePoints(BuildContext context) {
     final timeState = Provider.of<TimeState>(context, listen: false);
-    if (timeState.endingTime == null)
+    if (timeState.endingTime == null || timeState.duration == null)
       return;
 
     List<CubitRampingPoint> list = [];
@@ -173,7 +173,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
     // Time
     final midTimePoints = 2 * rampPointsCount - 1;
-    final timeStep = (timeState.duration.inSeconds / midTimePoints).round();
+    final timeStep = (timeState.duration!.inSeconds / midTimePoints).round();
     int startTime = 0;
 
     for (int i=0; i < rampPointsCount; i++) {
@@ -203,7 +203,7 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
   void updatePoints(BuildContext context) {
     final timeState = Provider.of<TimeState>(context, listen: false);
-    if (timeState.endingTime == null)
+    if (timeState.endingTime == null || timeState.duration == null)
       return;
 
     List<CubitRampingPoint> list = [...state];
@@ -216,23 +216,22 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
 
     // Time
     final midTimePoints = 2 * rampPointsCount - 1;
-    final timeStep = (timeState.duration.inSeconds / midTimePoints).round();
+    final timeStep = (timeState.duration!.inSeconds / midTimePoints).round();
     int startTime = 0;
 
     while(list.length < rampPointsCount) {
       list.add(CubitRampingPoint(
-        interval: null,
-        start: null,
-        end: null,
+        interval: Duration(),
+        start: Duration(),
+        end: Duration(),
       ));
 
     }
 
     for (int i=0; i < rampPointsCount; i++) {
-      if (list[i].interval == null)
-        list[i].interval = Duration(milliseconds:
-            ((intervalRange.start + intervalDelta * 0.3 * i % 2
-            + intervalDelta * 0.7 * ((i + 1) % 2)) * 1000).round());
+      list[i].interval = Duration(milliseconds:
+          ((intervalRange.start + intervalDelta * 0.3 * i % 2
+          + intervalDelta * 0.7 * ((i + 1) % 2)) * 1000).round());
 
 
       list[i].start = Duration(seconds: startTime);

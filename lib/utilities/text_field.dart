@@ -4,20 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class MyTextField extends StatelessWidget {
-  final TextEditingController textController;
-  final String unit;
-  final String labelText;
-  final VoidCallback onEditingComplete;
-  final ValueChanged<String> onChanged;
-  final VoidCallback onTap;
-  final ValueChanged<String> onSubmitted;
+  final TextEditingController? textController;
+  final String? unit;
+  final VoidCallback? onEditingComplete;
+  final ValueChanged<String>? onChanged;
+  final VoidCallback? onTap;
+  final ValueChanged<String>? onSubmitted;
   final bool enabled;
   final double fontSize;
 
   MyTextField({
-    @required this.textController,
+    required this.textController,
     this.unit,
-    this.labelText,
     this.onChanged,
     this.onEditingComplete,
     this.onTap,
@@ -35,7 +33,8 @@ class MyTextField extends StatelessWidget {
       onTap: onTap,
       onSubmitted: (sub) {
         FocusScope.of(context).requestFocus(new FocusNode());
-        onSubmitted(sub);
+        if (onSubmitted != null)
+          onSubmitted!(sub);
       },
       style: MyTextStyle.fet(fontSize: fontSize),
       textAlign: TextAlign.center,

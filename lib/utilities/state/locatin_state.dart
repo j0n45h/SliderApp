@@ -12,32 +12,30 @@ import 'package:sunrise_sunset_calc/sunrise_sunset_calc.dart';
 
 class ProvideLocationState with ChangeNotifier {
   static Location location = new Location();
-  static bool _serviceEnabled;
-  static PermissionStatus _permissionGranted;
-  static LocationData _locationData;
+  static bool _serviceEnabled = false;
+  static PermissionStatus _permissionGranted = PermissionStatus.denied;
+  static LocationData? _locationData;
 
-  static DateTime _sunRiseTime;
-  static DateTime _sunSetTime;
+  static DateTime? _sunRiseTime;
+  static DateTime? _sunSetTime;
 
   /// Location Latitude
-  double get getLatitude {
-    if (_locationData?.latitude == null) return null;
-    return _locationData.latitude;
+  double? get getLatitude {
+    return _locationData?.latitude;
   }
 
   /// Location Longitude
-  double get getLongitude {
-    if (_locationData?.longitude == null) return null;
-    return _locationData.longitude;
+  double? get getLongitude {
+    return _locationData?.longitude;
   }
 
   bool available() {
-    return !(_locationData == null || _locationData.latitude == null || _locationData.longitude == null);
+    return !(_locationData == null || _locationData?.latitude == null || _locationData?.longitude == null);
   }
 
   /// Sun Rise
 
-  DateTime get sunRiseTime {
+  DateTime? get sunRiseTime {
     return _sunRiseTime;
   }
 
@@ -47,23 +45,27 @@ class ProvideLocationState with ChangeNotifier {
 
   /// Sun Set
 
-  DateTime get sunSetTime {
+  DateTime? get sunSetTime {
     return _sunSetTime;
   }
 
-  Duration get dayLight {
-    return sunSetTime.difference(sunRiseTime);
+  Duration? get dayLight {
+    if (sunRiseTime == null)
+      return null;
+    return sunSetTime?.difference(sunRiseTime!);
   }
 
-  DateTime get solarNoon {
-    return sunSetTime.subtract(Duration(milliseconds: (dayLight.inMilliseconds/2).round()));
+  DateTime? get solarNoon {
+    if (dayLight == null)
+      return null;
+    return sunSetTime?.subtract(Duration(milliseconds: (dayLight!.inMilliseconds/2).round()));
   }
 
   String sunSetTimeStr(BuildContext context) {
     return _timeToString(context, _sunSetTime);
   }
 
-  String _timeToString(BuildContext context, DateTime time) {
+  String _timeToString(BuildContext context, DateTime? time) {
     if (time == null) return '--:--';
     if (MediaQuery.of(context).alwaysUse24HourFormat)
       return DateFormat.Hm().format(time);
@@ -72,11 +74,11 @@ class ProvideLocationState with ChangeNotifier {
   }
 
   static void getSunriseSunsetResult() {
-    if (_locationData == null || _locationData.latitude == null || _locationData.longitude == null)
+    if (_locationData?.latitude == null || _locationData?.longitude == null)
       return;
 
     SunriseSunsetResult sunriseSunsetResult =
-        getSunriseSunset(_locationData.latitude, _locationData.longitude, 0, DateTime.now().toUtc());
+        getSunriseSunset(_locationData!.latitude!, _locationData!.longitude!, 0, DateTime.now().toUtc());
     _sunRiseTime = sunriseSunsetResult.sunrise.toLocal();
     _sunSetTime = sunriseSunsetResult.sunset.toLocal();
   }
@@ -139,8 +141,8 @@ class ProvideLocationState with ChangeNotifier {
     }
 
     getSunriseSunsetResult();
-    print('latitude: ${_locationData.latitude}');
-    print('longitude: ${_locationData.longitude}');
+    print('latitude:  ${_locationData?.latitude }');
+    print('longitude: ${_locationData?.longitude}');
 
     return 0;
   }

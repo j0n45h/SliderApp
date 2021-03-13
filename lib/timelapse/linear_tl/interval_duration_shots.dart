@@ -16,9 +16,9 @@ class SetUpLinearTL {
   static void loadData(LinearTL linearTL) {
     print(linearTL.interval.toString());
     TLInterval.tfController.text = linearTL.interval.toString();
-    TLInterval.interval = linearTL.interval;
+    TLInterval.interval = linearTL.interval ?? 0;
     TLShots.tfController.text =  linearTL.shots.toString();
-    TLShots.shots = linearTL.shots;
+    TLShots.shots = linearTL.shots ?? 0;
     TLShots.onTFEdited();
     TLInterval.onTFEdited();
   }
@@ -32,7 +32,7 @@ class SetUpLinearTL {
 }
 
 class TLInterval{ /// Interval
-  static double interval;
+  static double interval = 1;
   static FramedTF lock = FramedTF.open;
   static var tfController = TextEditingController();
 
@@ -169,7 +169,7 @@ class TLDuration{ /// Duration
 
 
 class TLShots{ /// Shots
-  static int shots;
+  static int shots = 0;
   static FramedTF lock = FramedTF.open;
   static var tfController = TextEditingController();
 
@@ -230,7 +230,7 @@ class TLShots{ /// Shots
 
 
 class TLVideo{
-  static int videoLength;
+  static int videoLength = 0;
   static FramedTF lock = FramedTF.open;
   static var tfController = TextEditingController();
 
@@ -286,7 +286,7 @@ class TLVideo{
 
 
 class UpperSlider{
-  static double value;
+  static double value = 0;
 
   static void onChanged(double newValue) {
     value = newValue;
@@ -297,7 +297,7 @@ class UpperSlider{
 
 
 class LowerSlider{
-  static double value;
+  static double value = 0;
 
   static void onChanged(double newValue){
     value = newValue;
@@ -313,6 +313,6 @@ class LowerSlider{
 
 
 class StartTime {
-  static DateTime time;
+  static DateTime? time;
   static bool picked = false;
 }

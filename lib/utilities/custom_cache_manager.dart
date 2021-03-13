@@ -6,59 +6,59 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 
-class CustomCacheManager extends BaseCacheManager {
+class CustomCacheManager {
   static const _addressKey = 'btDeviceAddress';
   static const _nameKey = 'btDeviceName';
   static const _TLDataKey = 'TLData';
 
-  static CustomCacheManager _instance;
+  static CacheManager instance = CacheManager(
+    Config(
+      _addressKey,
+      stalePeriod: const Duration(days: 365),
+      maxNrOfCacheObjects: 5,
+    ),
+  );
 
-  factory CustomCacheManager() {
-    if (_instance == null) {
-      _instance = new CustomCacheManager._();
-    }
-    return _instance;
-  }
 
-  CustomCacheManager._() : super(_addressKey,
-      maxAgeCacheObject: Duration(days: 365),
-      maxNrOfCacheObjects: 5);
-
-  @override
   Future<String> getFilePath() async {
-    var directory = await getTemporaryDirectory();
+    final directory = await getTemporaryDirectory();
     return path.join(directory.path, _addressKey);
   }
 
   static storeDevice(BtDevice btDevice) async {
+    if (btDevice.name == null || btDevice.address == null)
+      return;
+
     try {
-      await CustomCacheManager().putFile(_nameKey, Uint8List.fromList(btDevice.name.codeUnits), fileExtension: 'txt');
-      await CustomCacheManager().putFile(_addressKey, Uint8List.fromList(btDevice.address.codeUnits), fileExtension: 'txt');
+      await instance.putFile(_nameKey, Uint8List.fromList(btDevice.name!.codeUnits), fileExtension: 'txt');
+      await instance.putFile(_addressKey, Uint8List.fromList(btDevice.address!.codeUnits), fileExtension: 'txt');
     } catch (e) {
       print ('not able to store devices Name in cache $e');
     }
   }
 
-  static Future<BtDevice> getLastBtDevice() async {
+  static Future<FileInfo> getFileFromCache(String key) => instance.getFileFromCache(key);
+
+  static Future<BtDevice?> getLastBtDevice() async {
     try {
       // getting file of Name
-      FileInfo cachedName = await CustomCacheManager()?.getFileFromCache(_nameKey);
+      FileInfo cachedName = await instance.getFileFromCache(_nameKey);
 
-      if (cachedName == null || !await cachedName?.file?.exists())
+      if (!await cachedName.file.exists())
         return null;
 
       final name = await cachedName.file.readAsString();
 
 
       // getting file of Address
-      FileInfo cachedAddress = await CustomCacheManager().getFileFromCache(_addressKey);
+      FileInfo cachedAddress = await instance.getFileFromCache(_addressKey);
 
-      if (cachedAddress == null || !await cachedAddress?.file?.exists())
+      if (!await cachedAddress.file.exists())
         return null;
 
       final address = await cachedAddress.file.readAsString();
 
-      if (name == null || address == null)
+      if (name == '' || address == '')
         return null;
 
       return BtDevice(name: name, address: address);
@@ -73,25 +73,25 @@ class CustomCacheManager extends BaseCacheManager {
   static storeTLDataAsJson(Map<String, dynamic> jsonOBJ) async {
     final jsonString = json.encode(jsonOBJ);
     try {
-      await CustomCacheManager().putFile(_TLDataKey, Uint8List.fromList(jsonString.toString().codeUnits), fileExtension: 'json');
+      await instance.putFile(_TLDataKey, Uint8List.fromList(jsonString.toString().codeUnits), fileExtension: 'json');
     } catch (e) {
       print ('not able to store "TLData.json" in cache $e');
     }
   }
 
-  static Future<Map<String, dynamic>> getTLDataAsJson() async {
+  static Future<Map<String, dynamic>?> getTLDataAsJson() async {
     try {
 
       // get file from cache
-      FileInfo cachedFile = await CustomCacheManager()?.getFileFromCache(_TLDataKey);
+      FileInfo cachedFile = await instance.getFileFromCache(_TLDataKey);
 
-      if (cachedFile == null || !await cachedFile?.file?.exists())
+      if (!await cachedFile.file.exists())
         return null;
 
       // get content of file as string
       final jsonStr = await cachedFile.file.readAsString();
 
-      if (jsonStr == null)
+      if (jsonStr == '')
         return null;
 
       // return json
