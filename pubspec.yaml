@@ -37,9 +37,7 @@ dependencies:
   location: ^4.1.1 #^4.0.0-nullsafety.0 # add ios permissions
   location_permissions: ^3.0.0+1
 
-  # sunrise_sunset_calc: ^1.0.1
-  sunrise_sunset_calc:
-    path: ../sunrise-sunset-calc
+  sunrise_sunset_calc: ^2.0.0
 
   flutter_bluetooth_serial: ^0.2.2
 
