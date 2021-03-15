@@ -152,8 +152,8 @@ class ProvideBtState with ChangeNotifier {
     notifyListeners();
 
     // get last device from Cache
-    final lastDevice = await CustomCacheManager.getLastBtDevice();
-    if (lastDevice == null) {
+    BtDevice? lastDevice = await CustomCacheManager.getLastBtDevice();
+    if (lastDevice == null && lastDevice?.address != null) {
       deviceState = BluetoothDeviceState.disconnected;
       notifyListeners();
       return; // TODO: check if a device with this uuid is available
@@ -164,7 +164,7 @@ class ProvideBtState with ChangeNotifier {
       flutterBlue.startScan(
         timeout: Duration(seconds: 8),
         scanMode: ScanMode.lowPower,
-        withDevices: [Guid.fromMac(lastDevice.address)]).then((value) {
+        withDevices: [Guid.fromMac(lastDevice!.address!)]).then((value) {
       if (isConnected) {
         _retryCounter = 0;
         return;

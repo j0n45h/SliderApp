@@ -155,16 +155,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bls.BluetoothState _bluetoothState = bls.BluetoothState.UNKNOWN;
   bls.BluetoothConnection? connection;
 
-  Future<String> getLastBtDeviceAddress() async {
-    FileInfo cacheFile = await CustomCacheManager.getFileFromCache('btDevideAddress');
-    cacheFile.file.openRead();
-    return cacheFile.file.readAsStringSync();
+  Future<String?> getLastBtDeviceAddress() async {
+    FileInfo? cacheFile = await CustomCacheManager.getFileFromCache('btDevideAddress');
+    cacheFile?.file.openRead();
+    return cacheFile?.file.readAsStringSync();
   }
 
   Future<void> connectToDevice() async {
     if (_bluetoothState.isEnabled) {
       try {
-        String address = await getLastBtDeviceAddress();
+        String? address = await getLastBtDeviceAddress();
 
         // set Standard pin to 1234
         bls.FlutterBluetoothSerial.instance.setPairingRequestHandler((bls.BluetoothPairingRequest request) {

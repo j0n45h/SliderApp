@@ -37,26 +37,26 @@ class CustomCacheManager {
     }
   }
 
-  static Future<FileInfo> getFileFromCache(String key) => instance.getFileFromCache(key);
+  static Future<FileInfo?> getFileFromCache(String key) => instance.getFileFromCache(key);
 
   static Future<BtDevice?> getLastBtDevice() async {
     try {
       // getting file of Name
-      FileInfo cachedName = await instance.getFileFromCache(_nameKey);
+      FileInfo? cachedName = await instance.getFileFromCache(_nameKey);
 
-      if (!await cachedName.file.exists())
+      if (cachedName != null && !await cachedName.file.exists())
         return null;
 
-      final name = await cachedName.file.readAsString();
+      final name = await cachedName!.file.readAsString();
 
 
       // getting file of Address
-      FileInfo cachedAddress = await instance.getFileFromCache(_addressKey);
+      FileInfo? cachedAddress = await instance.getFileFromCache(_addressKey);
 
-      if (!await cachedAddress.file.exists())
+      if (cachedAddress != null && !await cachedAddress.file.exists())
         return null;
 
-      final address = await cachedAddress.file.readAsString();
+      final address = await cachedAddress!.file.readAsString();
 
       if (name == '' || address == '')
         return null;
@@ -83,13 +83,13 @@ class CustomCacheManager {
     try {
 
       // get file from cache
-      FileInfo cachedFile = await instance.getFileFromCache(_TLDataKey);
+      FileInfo? cachedFile = await instance.getFileFromCache(_TLDataKey);
 
-      if (!await cachedFile.file.exists())
+      if (cachedFile != null && !await cachedFile.file.exists())
         return null;
 
       // get content of file as string
-      final jsonStr = await cachedFile.file.readAsString();
+      final jsonStr = await cachedFile!.file.readAsString();
 
       if (jsonStr == '')
         return null;

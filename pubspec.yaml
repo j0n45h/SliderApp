@@ -45,7 +45,7 @@ dependencies:
   flutter_blue:
     path: ../flutter_blue
 
-  flutter_cache_manager: ^2.1.1
+  flutter_cache_manager: ^3.0.0-nullsafety.1 #^2.1.1
   path_provider: ^2.0.1
   provider: ^4.1.2
   intl: 0.17.0 #^0.16.1
