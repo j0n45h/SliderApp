@@ -334,7 +334,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
 
     await showDialog(
         context: context,
-        child: SaveTLDialog(
+        builder: (context) => SaveTLDialog(
           presetName: presetName,
           onDone: () {
             if(presetName.text.isEmpty)
