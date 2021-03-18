@@ -8,13 +8,13 @@ class SineWavePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     size = Size(size.width, size.height);
     var paint = Paint();
-    paint.color = Colors.grey[700];
+    paint.color = Colors.grey[700] ?? Colors.grey;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 1.0;
     // paint.style = PaintingStyle.fill;
 
 
-    canvas.drawPath(SunPath.drawPath(size: size), paint);
+    canvas.drawPath(SunPath.drawPath(size, false), paint);
   }
 
   @override
@@ -24,10 +24,11 @@ class SineWavePainter extends CustomPainter {
 
 class SineWaveClipper extends CustomClipper<Path> {
   bool invert;
-  SineWaveClipper({this.invert});
+  SineWaveClipper({required this.invert});
+
   @override
   Path getClip(Size size) {
-    return SunPath.drawPath(size: size, invert: this.invert);
+    return SunPath.drawPath(size, this.invert);
   }
 
   @override
@@ -39,7 +40,7 @@ class SineWaveClipper extends CustomClipper<Path> {
 
 
 class SunPath {
-  static Path drawPath({Size size, bool invert = false}) {
+  static Path drawPath(Size size, bool invert) {
     var path = Path();
     path.moveTo(0, size.height);
 
@@ -54,11 +55,11 @@ class SunPath {
     return path;
   }
 
-  static Offset calculate(value, Size size) {
-    PathMetrics pathMetrics = drawPath(size: size).computeMetrics();
+  static Offset calculate(double value, Size size) {
+    PathMetrics pathMetrics = drawPath(size, false).computeMetrics();
     PathMetric pathMetric = pathMetrics.elementAt(0);
     value = pathMetric.length * value;
-    Tangent pos = pathMetric.getTangentForOffset(value);
-    return pos.position;
+    Tangent? pos = pathMetric.getTangentForOffset(value);
+    return pos?.position ?? Offset(0, 0);
   }
 }

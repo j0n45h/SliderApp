@@ -4,12 +4,11 @@ import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class NewLocation {
-  static bool _serviceEnabled;
-  static PermissionStatus _permissionGranted;
-  static LocationData _locationData;
+  static bool _serviceEnabled = false;
+  static PermissionStatus _permissionGranted = PermissionStatus.denied;
+  static LocationData? _locationData;
 
-  LocationData get locationData {
-    if (_locationData == null) return null;
+  LocationData? get locationData {
     return _locationData;
   }
 
@@ -31,7 +30,8 @@ class NewLocation {
           ),
           duration: Duration(seconds: 10),
         );
-        Scaffold.of(context).showSnackBar(snackBar);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // Scaffold.of(context).showSnackBar(snackBar); // TODO: Test and remove
         return;
       }
     } else if (_permissionGranted == PermissionStatus.deniedForever) {
@@ -39,7 +39,8 @@ class NewLocation {
         content: Text('Location Permission denied'),
         duration: Duration(seconds: 10),
       );
-      Scaffold.of(context).showSnackBar(snackBar);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // Scaffold.of(context).showSnackBar(snackBar); // TODO: Test and remove
     }
 
     _serviceEnabled = await location.serviceEnabled();
@@ -54,7 +55,7 @@ class NewLocation {
 
     _locationData = await location.getLocation();
 
-    print('latitude: ${_locationData.latitude}');
-    print('longitude: ${_locationData.longitude}');
+    print('latitude:  ${_locationData?.latitude }');
+    print('longitude: ${_locationData?.longitude}');
   }
 }

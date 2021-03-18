@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bls;
+// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bls;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
@@ -22,10 +22,10 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  TextEditingController _controller;
+  TextEditingController _controller = TextEditingController();
 
   // bool isConnected = false;
-
+/*
   void initState() {
     super.initState();
 
@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void sendString(String string) {}
-
+*/
   @override
   Widget build(BuildContext context) {
     final provideBtState = Provider.of<ProvideBtState>(context, listen: false);
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         body: Center(
           child: Column(
             children: [
-              FutureBuilder<BluetoothCharacteristic>(
+              FutureBuilder<BluetoothCharacteristic?>(
                 future: provideBtState.getBluetoothCharacteristic(),
                 builder: (context, future) {
                   if (!future.hasData) return Container();
@@ -95,9 +95,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   return StreamBuilder<List<int>>(
                     stream: future.data?.value,
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) return Container();
+                      if (!snapshot.hasData)
+                        return Container();
 
-                      return Text(utf8.decode(snapshot.data));
+                      return Text(utf8.decode(snapshot.data ?? []));
                     },
                   );
                 },
@@ -146,24 +147,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       onWillPop: () {
         MyDrawer.navigateHome(context);
-        return;
+        return Future.value(true);
       },
     );
   }
-
+/*
   bls.BluetoothState _bluetoothState = bls.BluetoothState.UNKNOWN;
-  bls.BluetoothConnection connection;
+  bls.BluetoothConnection? connection;
 
-  Future<String> getLastBtDeviceAddress() async {
-    FileInfo cacheFile = await CustomCacheManager().getFileFromCache('btDevideAddress');
-    cacheFile.file.openRead();
-    return cacheFile.file.readAsStringSync();
+  Future<String?> getLastBtDeviceAddress() async {
+    FileInfo? cacheFile = await CustomCacheManager.getFileFromCache('btDevideAddress');
+    cacheFile?.file.openRead();
+    return cacheFile?.file.readAsStringSync();
   }
 
   Future<void> connectToDevice() async {
     if (_bluetoothState.isEnabled) {
       try {
-        String address = await getLastBtDeviceAddress();
+        String? address = await getLastBtDeviceAddress();
 
         // set Standard pin to 1234
         bls.FlutterBluetoothSerial.instance.setPairingRequestHandler((bls.BluetoothPairingRequest request) {
@@ -175,15 +176,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
 
         connection = await bls.BluetoothConnection.toAddress(address);
-
+        if (connection == null){
+          print('Connecting failed!');
+          return;
+        }
         print('Connected to the device');
 
-        connection.input.listen((Uint8List data) {
+        connection?.input?.listen((Uint8List data) {
           print('Data incoming: ${ascii.decode(data)}');
-          connection.output.add(data); // Sending data
+          connection?.output?.add(data); // Sending data
 
           if (ascii.decode(data).contains('!')) {
-            connection.finish(); // Closing connection
+            connection?.finish(); // Closing connection
             print('Disconnecting by local host');
           }
         }).onDone(() {
@@ -197,7 +201,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget btTaskBarIcon() {
-    if (connection != null && connection.isConnected) {
+    bool connected = connection?.isConnected ?? false;
+    if (connected) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
         child: IconButton(
@@ -208,7 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () {
             /// Disconnect
             future() async {
-              await connection.finish();
+              await connection?.finish();
             }
 
             future().then((_) {
@@ -268,5 +273,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     }
-  }
+  }*/
 }

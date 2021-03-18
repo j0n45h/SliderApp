@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bts;
+// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bts;
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/popUp.dart';
@@ -10,7 +10,7 @@ import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 
 class BluetoothBox extends StatelessWidget {
   String btStatus(ProvideBtState btState) {
-    if (btState != null && btState.isConnected) {
+    if (btState.isConnected) {
       return 'CONNECTED';
     } else {
       return 'NOT\nCONNECTED';
@@ -73,10 +73,10 @@ class BluetoothBox extends StatelessWidget {
 
     if (!await FlutterBlue.instance.isOn) {
       try {
-        await bts.FlutterBluetoothSerial.instance.requestEnable();
+        //await bts.FlutterBluetoothSerial.instance.requestEnable();
         btState.connectToLastDevice();
       } catch (e) {
-        print('could not turn on Bluetooth');
+        print('could not turn on and connect Bluetooth');
       }
     } else if (btState.isConnected) {
       btState.disconnect(null);

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 
@@ -14,12 +14,11 @@ class ConnectionScreen extends StatefulWidget {
 }
 
 class _ConnectionScreenState extends State<ConnectionScreen> {
-  String btDeviceAddress;
-  bool isDiscovering;
-  StreamSubscription<BluetoothDiscoveryResult> _streamSubscription;
-  List<BluetoothDiscoveryResult> results = List<BluetoothDiscoveryResult>();
+  bool isDiscovering = false;
+  // StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
+  // List<BluetoothDiscoveryResult> results = [];
 
-
+/*
   @override
   void initState() {
     super.initState();
@@ -38,13 +37,11 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
           });
         });
 
-    _streamSubscription.onDone(() {
+    _streamSubscription?.onDone(() {
       setState(() {
         isDiscovering = false;
       });
     });
-
-
   }
 
   void _restartDiscovery() {
@@ -63,7 +60,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
     super.dispose();
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Container();

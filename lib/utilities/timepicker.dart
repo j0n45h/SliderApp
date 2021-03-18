@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class TimePicker { // TODO make ios and Android different
-  TimeOfDay initialTime;
+  TimeOfDay? initialTime;
   final String helpText;
   final BuildContext context;
   final bool hintPickedNextDay;
 
   TimePicker({
     this.initialTime,
+    required this.context,
     this.helpText = 'The Time you want the Timelapse to start at',
-    this.context,
-    this.hintPickedNextDay,
+    this.hintPickedNextDay = false,
   });
 
-  Future<DateTime> show() async {
+  Future<DateTime?> show() async {
     initialTime ??= TimeOfDay.now();
 
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: initialTime,
+      initialTime: initialTime!,
       helpText: helpText,
       builder: (context, widget) {
         return Theme(

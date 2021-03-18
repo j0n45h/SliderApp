@@ -4,13 +4,13 @@ import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class ClickableFramedTimeField extends StatelessWidget {
-  final GestureTapCallback onTap;
-  final DateTime time;
+  final GestureTapCallback? onTap;
+  final DateTime? time;
   final double width, height;
   static const String notSet = '-- : --';
 
   const ClickableFramedTimeField({
-    Key key,
+    Key? key,
     this.time,
     this.onTap,
     this.width  = 98,
@@ -37,8 +37,8 @@ class ClickableFramedTimeField extends StatelessWidget {
     if (time == null)
       return notSet;
     if (MediaQuery.of(context).alwaysUse24HourFormat)
-      return DateFormat.Hm().format(time);
+      return DateFormat.Hm().format(time!);
     else
-      return DateFormat.jm().format(time);
+      return DateFormat.jm().format(time!);
   }
 }

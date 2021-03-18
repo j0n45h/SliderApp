@@ -6,7 +6,7 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/niceScale.dart
 
 class IntervalRangeState extends ChangeNotifier {
   RangeValues _intervalRange = RangeValues(3, 15);
-  NiceScale _niceScale;
+  NiceScale? _niceScale;
   bool _upToDate = false;
 
   set intervalRange (RangeValues rangeValues) { // TODO: difference between min and max at least 3 Seconds
@@ -55,7 +55,7 @@ class IntervalRangeState extends ChangeNotifier {
     if (!_upToDate || _niceScale == null)
       _calcNiceValues();
 
-    return _niceScale;
+    return _niceScale!;
   }
 
 }

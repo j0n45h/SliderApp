@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 
 class MyTextStyle {
-  static double fontSize;
   static const Color color = MyColors.font;
 
   const MyTextStyle();
 
   static TextStyle normal({
-    @required double fontSize,
+    required double fontSize,
     double letterSpacing = 1,
   }) {
     return TextStyle(
@@ -31,7 +30,7 @@ class MyTextStyle {
     );
   }
 
-  static TextStyle fet({@required double fontSize}) {
+  static TextStyle fet({required double fontSize}) {
     return TextStyle(
       fontSize: fontSize,
       color: color,

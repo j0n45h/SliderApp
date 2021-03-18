@@ -10,7 +10,7 @@ class DirectionDialog extends StatefulWidget {
   void openDialog(BuildContext context) {
     showGeneralDialog(
       context: context,
-      pageBuilder: (_, __, ___) => null,
+      pageBuilder: (context, animation, secondaryAnimation) => DirectionDialog(),
       barrierDismissible: true,
       barrierLabel: '',
       barrierColor: Colors.black.withOpacity(0.4),

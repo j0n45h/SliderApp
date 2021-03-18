@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class SaveAndStartButtons extends StatelessWidget {
-  final VoidCallback onPressSave;
+  final VoidCallback? onPressSave;
   final VoidCallback onPressStart;
-  final Widget saveButton;
+  final Widget? saveButton;
 
-  const SaveAndStartButtons({this.onPressSave, this.onPressStart, this.saveButton});
+  const SaveAndStartButtons({this.onPressSave, required this.onPressStart, this.saveButton});
 
   static const double _spaceBetweenButtons = 32;
   static const double _defaultButtonWidth = 160;
@@ -74,7 +74,7 @@ class SaveAndStartButtons extends StatelessWidget {
                         elevation: 12,
                       );
                     else
-                      return saveButton;
+                      return saveButton!;
                   },
                 ),
               ),

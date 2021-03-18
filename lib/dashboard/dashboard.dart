@@ -25,20 +25,25 @@ class DashboardScreen extends StatefulWidget {
 
 class PhotoListTitle {
   int index;
-  LinearTL linearTL;
-  RampedTL rampedTL;
+  LinearTL? linearTL;
+  RampedTL? rampedTL;
+  TlType type;
 
-  PhotoListTitle({this.index, this.linearTL, this.rampedTL});
+  PhotoListTitle({required this.index, required this.type, this.linearTL, this.rampedTL});
 }
 
+enum TlType{
+  linear,
+  ramped
+}
 
 class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProviderStateMixin {
-  static TabController _tabController;
+  static TabController? _tabController;
   static const List<String> _tabs = ['Photo', 'Video'];
   static int _tabIndex = 0;
-  static var photoListTitle = List<PhotoListTitle>();
+  static List<PhotoListTitle> photoListTitle = [];
 
-  Future<bool> futureList;
+  Future<bool>? hasList;
 
   @override
   Widget build(BuildContext context) {
@@ -120,16 +125,16 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
           children: [
             // Photo
             FutureBuilder(
-              future: futureList,
+              future: hasList,
               builder: (context, snapshot) {
                 if (snapshot.hasData && photoListTitle.length > 0) {
                   return ListView.builder(
                     itemCount: photoListTitle.length,
                     itemBuilder: (context, index) {
                       var preset = photoListTitle[index];
-                      if (preset.linearTL != null)
+                      if (preset.type == TlType.linear)
                         return ListTile(
-                          title: Text(preset.linearTL.name,
+                          title: Text(preset.linearTL?.name ?? '',
                             style: MyTextStyle.normal(fontSize: 18),
                           ),
                           subtitle: Text(
@@ -137,13 +142,15 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                             style: MyTextStyle.normalStdSize(
                                 newColor: Colors.white),
                           ),
-                          onTap: () =>
-                              loadLinearTlPreset(context, preset.linearTL),
+                          onTap: () {
+                            if (preset.linearTL != null)
+                              loadLinearTlPreset(context, preset.linearTL!);
+                          },
                         );
                       else
                         return ListTile(
                           title: Text(
-                            preset.rampedTL.name,
+                            preset.rampedTL?.name ?? '',
                             style: MyTextStyle.normal(fontSize: 18),
                           ),
                           subtitle: Text(
@@ -151,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                             style: MyTextStyle.normalStdSize(),
                           ),
                           onTap: () =>
-                              print('paped: ${preset.linearTL.name}'),
+                              print('paped: ${preset.linearTL?.name}'),
                         );
                     },
                   );
@@ -167,16 +174,16 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
 
             // Video
             FutureBuilder(
-              future: futureList,
+              future: hasList,
               builder: (context, snapshot) {
-                if (snapshot.hasData && tlData.video.length > 0) {
+                if (snapshot.hasData && tlData.video?.length != null && tlData.video!.length > 0) {
                   return ListView.builder(
-                    itemCount: tlData.video.length,
+                    itemCount: tlData.video!.length,
                     itemBuilder: (context, index) {
-                      var preset = tlData.video[index];
+                      var preset = tlData.video![index];
                       return ListTile(
                         title: Text(
-                          preset.name,
+                          preset.name ?? '',
                           style: MyTextStyle.normal(fontSize: 18),
                         ),
                       );
@@ -205,11 +212,11 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
       initialIndex: _tabIndex,
       vsync: this,
     );
-    _tabController.addListener(() {
+    _tabController?.addListener(() {
       _tabIndex++;
       _tabIndex %= 2;
     });
-    futureList = makeList();
+    hasList = makeList();
 
     super.initState();
   }
@@ -227,22 +234,24 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
 
     /// Photo List
     photoListTitle.clear();
-    for (int i = 0; i < tlData.linearTL.length; i++)
+    for (int i = 0; i < (tlData.linearTL?.length ?? 0); i++)
       photoListTitle.add(PhotoListTitle(
-        index: tlData.linearTL[i].index,
-        linearTL: tlData.linearTL[i],
+        index: tlData.linearTL![i].index ?? i,
+        type: TlType.linear,
+        linearTL: tlData.linearTL![i],
       ));
-    for (int i = 0; i < tlData.rampedTL.length; i++) {
+    for (int i = 0; i < (tlData.rampedTL?.length ?? 0); i++) {
       photoListTitle.add(PhotoListTitle(
-        index: tlData.rampedTL[i].index,
-        rampedTL: tlData.rampedTL[i],
+        index: tlData.rampedTL![i].index ?? i + (tlData.linearTL?.length ?? 0),
+        type: TlType.ramped,
+        rampedTL: tlData.rampedTL![i],
       ));
     }
 
-    photoListTitle?.sort((a, b) => a.index.compareTo(b.index));
+    photoListTitle.sort((a, b) => a.index.compareTo(b.index));
 
     /// Video List
-    tlData.video?.sort((a, b) => a.index.compareTo(b.index));
+    tlData.video?.sort((a, b) => a.index?.compareTo(b.index ?? 0) ?? 0);
 
     return true;
   }

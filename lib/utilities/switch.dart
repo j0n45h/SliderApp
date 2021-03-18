@@ -5,8 +5,8 @@ class MySwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
   MySwitch({
-    @required this.onChanged,
-    this.value,
+    required this.onChanged,
+    required this.value,
   });
   @override
   Widget build(BuildContext context) {

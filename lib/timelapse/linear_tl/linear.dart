@@ -54,7 +54,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                             onEditingComplete: () {
                               setState(() {
                                 TLInterval.onTFEdited();
-                                _startingTimeKey.currentState.calcTime();
+                                _startingTimeKey.currentState?.calcTime();
                               });
                             },
                             onTap: () =>
@@ -94,7 +94,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                                   setState(() {
                                     lockShotsAndVideo();
                                     TLVideo.onTFEdited();
-                                    _startingTimeKey.currentState.calcTime();
+                                    _startingTimeKey.currentState?.calcTime();
                                   });
                                 },
                                 onTap: () =>
@@ -137,7 +137,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                   onChanged: (double value) {
                     setState(() {
                       UpperSlider.onChanged(value);
-                      _startingTimeKey.currentState.calcTime();
+                      _startingTimeKey.currentState?.calcTime();
                     });
                   },
                   onChangeStart: (_) {
@@ -183,8 +183,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                                     setState(() {
                                       lockDuration();
                                       TLDuration.onTFEdited();
-                                      _startingTimeKey.currentState
-                                          .calcTime();
+                                      _startingTimeKey.currentState?.calcTime();
                                     });
                                   },
                                   onTap: () => jumpCursorToEnd(
@@ -203,8 +202,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                                     setState(() {
                                       lockDuration();
                                       TLDuration.onTFEdited();
-                                      _startingTimeKey.currentState
-                                          .calcTime();
+                                      _startingTimeKey.currentState?.calcTime();
                                     });
                                   },
                                   onTap: () => jumpCursorToEnd(
@@ -243,7 +241,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                               setState(() {
                                 lockShotsAndVideo();
                                 TLShots.onTFEdited();
-                                _startingTimeKey.currentState.calcTime();
+                                _startingTimeKey.currentState?.calcTime();
                               });
                             },
                             onTap: () =>
@@ -261,7 +259,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                   onChanged: (double value) {
                     setState(() {
                       LowerSlider.onChanged(value);
-                      _startingTimeKey.currentState.calcTime();
+                      _startingTimeKey.currentState?.calcTime();
                     });
                   },
                   onChangeStart: (_) {
@@ -346,10 +344,11 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
         ),
     );
 
-    if (skip) return; // skips saving step when dialog dismissed
+    if (skip)
+      return; // skips saving step when dialog dismissed
 
-    thisLinearTL.index = tlData.linearTL.length + tlData.rampedTL.length;
-    tlData.linearTL.add(thisLinearTL);
+    thisLinearTL.index = (tlData.linearTL?.length ?? 0) + (tlData.rampedTL?.length ?? 0);
+    tlData.linearTL?.add(thisLinearTL);
     tlData.saveToCache();
   }
 }

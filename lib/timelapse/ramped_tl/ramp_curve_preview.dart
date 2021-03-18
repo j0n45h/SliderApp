@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/navigte_to_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
@@ -20,7 +21,7 @@ class RampCurvePreview extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () => NavigateToGraphScreen(context).navigate(),
-            child: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+            child: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
               builder: (context, state) {
                 return Container(
                   padding: const EdgeInsets.only(top: 3, bottom: 3),

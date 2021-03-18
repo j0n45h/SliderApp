@@ -12,9 +12,9 @@ class CubitRampingPoint {
   Duration end;
 
   CubitRampingPoint(
-      {@required this.interval,
-      @required this.start,
-      @required this.end,
+      {required this.interval,
+      required this.start,
+      required this.end,
       });
 
   double getIntervalValue(BuildContext context, Size size) {
@@ -51,10 +51,13 @@ class CubitRampingPoint {
 
   double getStartValue(BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
+    if (provider.endingTime == null)
+      return 0;
+
     return map(
         start.inSeconds.toDouble(),
         0,
-        (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch) / 1000,
+        (provider.endingTime!.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch) / 1000,
         0,
         size.width,
     );
@@ -62,22 +65,28 @@ class CubitRampingPoint {
 
   void setStartValue(double startValue, BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
+    if (provider.endingTime == null)
+      return;
+
     start = Duration(milliseconds: map(
       startValue,
       0,
       size.width,
       0,
-      (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch).toDouble()
+      (provider.endingTime!.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch).toDouble()
     ).round());
   }
 
 
   double getEndValue(BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
+    if (provider.endingTime == null)
+      return 0;
+
     return map(
         end.inSeconds.toDouble(),
         0,
-        (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch) / 1000,
+        (provider.endingTime!.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch) / 1000,
         0,
         size.width,
     );
@@ -85,12 +94,15 @@ class CubitRampingPoint {
 
   void setEndValue(double endValue, BuildContext context, Size size) {
     final provider = Provider.of<TimeState>(context, listen: false);
+    if (provider.endingTime == null)
+      return;
+
     end = Duration(milliseconds: map(
       endValue,
       0,
       size.width,
       0,
-      (provider.endingTime.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch).toDouble()
+      (provider.endingTime!.millisecondsSinceEpoch - provider.startingTime.millisecondsSinceEpoch).toDouble()
     ).round());
   }
 

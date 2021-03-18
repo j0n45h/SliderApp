@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
@@ -7,6 +7,8 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ra
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
+
+import 'Logic/cubit.dart';
 
 class ToolBar extends StatelessWidget {
   @override
@@ -29,9 +31,9 @@ class ToolBar extends StatelessWidget {
               FramedTextField(
                 width: 75,
                 height: 25,
-                textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                textField: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                   builder: (context, state) {
-                    final shots = context.cubit<RampCurveCubit>().getShots(context);
+                    final shots = BlocProvider.of<RampCurveCubit>(context, listen: false).getShots(context);
                     return Text(
                         shots.toString(),
                         style: MyTextStyle.normal(fontSize: 12),
@@ -55,7 +57,7 @@ class ToolBar extends StatelessWidget {
                   if (rampingPointsState.rampingPoints < 1)
                     rampingPointsState.rampingPoints = 1;
 
-                  context.cubit<RampCurveCubit>().updatePoints(context);
+                  BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
                 },
               ),
               IconButton(
@@ -66,7 +68,7 @@ class ToolBar extends StatelessWidget {
                   if (rampingPointsState.rampingPoints > 5)
                     rampingPointsState.rampingPoints = 5;
 
-                  context.cubit<RampCurveCubit>().updatePoints(context);
+                  BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
                 },
               ),
               IconButton(

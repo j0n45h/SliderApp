@@ -8,7 +8,7 @@ import 'package:sliderappflutter/utilities/state/locatin_state.dart';
 
 class SunriseSunsetIcons extends StatelessWidget {
   static bool _didBuild = false;
-  static double _space;
+  static double? _space;
 
   const SunriseSunsetIcons();
 
@@ -44,11 +44,12 @@ class SunriseSunsetIcons extends StatelessWidget {
 
 
   double iconSpacing(ProvideLocationState locationStateProvider, Size size) {
-    if (locationStateProvider.sunSetTime == null) return 80;
+    if (locationStateProvider.sunSetTime == null || locationStateProvider.sunRiseTime == null)
+      return 80;
 
     // TODO use [SunPath.calculate(sunSetHeight, size).dx]
-    Duration dayLight = locationStateProvider.sunSetTime
-        .difference(locationStateProvider.sunRiseTime);
+    Duration dayLight = locationStateProvider.sunSetTime!
+        .difference(locationStateProvider.sunRiseTime!);
 
     double space = map(dayLight.inMilliseconds.toDouble(), 0,
         Duration(hours: 24).inMilliseconds.toDouble(), size.width / 2, 0);

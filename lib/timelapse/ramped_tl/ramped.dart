@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliderappflutter/timelapse/direction_dialog.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/interval_range.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramp_curve_preview.dart';
@@ -50,12 +50,12 @@ class _RampedTLState extends State<RampedTL> {
             ),
           ),
         ),
-        CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+        BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
           builder: (context, state) {
             return SaveAndStartButtons(
               onPressSave: null,
               onPressStart: () => DirectionDialog().openDialog(context),
-              saveButton: context.cubit<RampCurveCubit>().wasOpened ? null : SetButton(),
+              saveButton: BlocProvider.of<RampCurveCubit>(context, listen: false).wasOpened ? null : SetButton(),
             );
           },
         ),

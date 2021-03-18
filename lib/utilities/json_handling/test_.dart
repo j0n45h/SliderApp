@@ -15,7 +15,7 @@ class TestJson {
     // await tlData.getFromCache();
     await tlData.openFromAssets();
 
-    print(tlData.video.length);
+    print(tlData.video?.length);
 
     // tlData.saveToCache();
   }

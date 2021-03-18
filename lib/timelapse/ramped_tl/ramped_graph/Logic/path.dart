@@ -10,7 +10,7 @@ class PathClipper extends CustomClipper<Path> {
   final List<CubitRampingPoint> pointList;
   final int length;
 
-  PathClipper({@required this.context, @required this.pointList, @required this.length});
+  PathClipper({required this.context, required this.pointList, required this.length});
 
   @override
   Path getClip(Size size) {
@@ -82,11 +82,11 @@ class RampPath {
   static Path _pathBetween(Path path, Point pointA, Point pointB){
     path.cubicTo(
       pointA.x + (pointB.x - pointA.x) * 0.5,
-      pointA.y,
+      pointA.y.toDouble(),
       pointA.x + (pointB.x - pointA.x) * 0.5,
-      pointB.y,
-      pointB.x,
-      pointB.y,
+      pointB.y.toDouble(),
+      pointB.x.toDouble(),
+      pointB.y.toDouble(),
     );
     return path;
   }

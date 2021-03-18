@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
@@ -45,15 +45,15 @@ class StartEndDuration extends StatelessWidget {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: TimeOfDay.fromDateTime(timeState.startingTime) ?? null,
+      initialTime: TimeOfDay.fromDateTime(timeState.startingTime),
     );
 
     final pickedTime = await timePicker.show();
-
-    if (pickedTime == null) return;
+    if (pickedTime == null)
+      return;
 
     timeState.startingTime = pickedTime;
-    context.cubit<RampCurveCubit>().updatePoints(context);
+    BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
   }
 
   Widget end(BuildContext context) {
@@ -80,18 +80,14 @@ class StartEndDuration extends StatelessWidget {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: timeState.endingTime != null
-          ? TimeOfDay.fromDateTime(timeState.endingTime)
-          : null,
+      initialTime: TimeOfDay.fromDateTime(timeState.endingTime ?? DateTime.now()),
       helpText: 'The Time you want the Timelapse to End',
     );
 
     final pickedTime = await timePicker.show();
 
-    if (pickedTime == null) return;
-
     timeState.endingTime = pickedTime;
-    context.cubit<RampCurveCubit>().updatePoints(context);
+    BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
   }
 
   Widget duration(BuildContext context) {

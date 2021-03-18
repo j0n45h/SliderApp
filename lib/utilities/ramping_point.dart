@@ -3,5 +3,5 @@ class RampingPoint {
   Duration startTime;
   Duration endTime;
 
-  RampingPoint({this.interval, this.startTime, this.endTime});
+  RampingPoint({required this.interval, required this.startTime, required this.endTime});
 }

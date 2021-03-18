@@ -18,7 +18,7 @@ class TimelapseScreen extends StatefulWidget {
 
 class TimelapseScreenState extends State<TimelapseScreen>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   static set tabIndex(int i) {
     _tabIndex = i;
     _tabIndex %= 2;
@@ -32,8 +32,8 @@ class TimelapseScreenState extends State<TimelapseScreen>
       initialIndex: _tabIndex,
       vsync: this,
     );
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
+    _tabController?.addListener(() {
+      if (_tabController?.indexIsChanging ?? false) {
         _tabIndex++;
         _tabIndex %= 2;
       }
@@ -43,7 +43,7 @@ class TimelapseScreenState extends State<TimelapseScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
@@ -87,7 +87,7 @@ class TimelapseScreenState extends State<TimelapseScreen>
       ),
       onWillPop: () {
         MyDrawer.navigateHome(context);
-        return;
+        return Future.value(true);
       },
     );
   }
