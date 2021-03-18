@@ -14,12 +14,12 @@ class SunPositionWave extends StatefulWidget {
 
 class _SunPositionWaveState extends State<SunPositionWave>
     with TickerProviderStateMixin {
-  Animation? _sunAnimation;
+  Animation<double>? _sunAnimation;
   AnimationController? _sunAnimationController;
-  Animation? _colorGradientAnimation;
+  Animation<double>? _colorGradientAnimation;
   AnimationController? _colorGradientAnimationController;
   bool _hasSunPosition = false;
-  double? _horizonHeight;
+  static double? _horizonHeight;
 
   @override
   void initState() {
@@ -42,24 +42,24 @@ class _SunPositionWaveState extends State<SunPositionWave>
     if (_sunAnimationController == null)
       return;
 
-    _sunAnimation = Tween(begin: 0.0, end: 1.0).animate(_sunAnimationController!)
+    _sunAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_sunAnimationController!)
       ..addListener(() {
         setState(() {});
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          _sunAnimationController!.reset();
-          _sunAnimationController!.forward();
+          _sunAnimationController?.reset();
+          _sunAnimationController?.forward();
         }
       });
   }
 
-  void setupColorGradientAnimation(double newHeight) {
+  void setupColorGradientAnimation(double oldHeight, double newHeight) {
     if (_colorGradientAnimationController == null)
       return;
 
     _colorGradientAnimation =
-        Tween<double>(begin: _horizonHeight, end: newHeight).animate(_colorGradientAnimationController!)
+        Tween<double>(begin: oldHeight, end: newHeight).animate(_colorGradientAnimationController!)
           ..addListener(() {
             setState(() {});
           });
@@ -92,12 +92,12 @@ class _SunPositionWaveState extends State<SunPositionWave>
 
     var height = SunPath.calculate(sunSetHeight, size).dy;
 
-    setupColorGradientAnimation(height);
+    setupColorGradientAnimation(_horizonHeight ?? size.height/2, height);
 
     return height;
   }
 
-  void sunPosX(ProvideLocationState locationStateProvider, Size size) {
+  void startSunAnimation(ProvideLocationState locationStateProvider, Size size) {
     if (!locationStateProvider.available() || locationStateProvider.solarNoon == null)
       return;
     if (_hasSunPosition)
@@ -128,9 +128,11 @@ class _SunPositionWaveState extends State<SunPositionWave>
   @override
   Widget build(BuildContext context) {
     final size = Size(MediaQuery.of(context).size.width, 80);
+
     return Consumer<ProvideLocationState>(
       builder: (context, locationStateProvider, _) {
         _horizonHeight = horizonHeight(locationStateProvider, size);
+        assert(_horizonHeight != null);
         return Container(
           alignment: Alignment.center,
           height: size.height + 20,
@@ -149,10 +151,9 @@ class _SunPositionWaveState extends State<SunPositionWave>
                       gradient: LinearGradient(
                       begin: Alignment(
                         0, map(_colorGradientAnimation == null
-                          ? _horizonHeight
+                          ? (_horizonHeight ?? size.height/2)
                           : _colorGradientAnimation!.value * 0.8,
                           0, size.height, -1, 1)
-                          // * _colorGradientAnimation.value
                       ),
                       end: Alignment.bottomCenter,
                       colors: [
@@ -172,10 +173,9 @@ class _SunPositionWaveState extends State<SunPositionWave>
                         begin: Alignment.topCenter,
                         end: Alignment(
                             0, map(_colorGradientAnimation == null
-                            ? _horizonHeight
+                            ? (_horizonHeight ?? size.height/2)
                             : _colorGradientAnimation!.value * 1.2,
                             0, size.height, -1, 1)
-                              // * _colorGradientAnimation.value
                         ),
                         colors: [
                           Color(0xFFFF9900).withOpacity(0.80),
@@ -208,14 +208,14 @@ class _SunPositionWaveState extends State<SunPositionWave>
               ),
               Builder(
                 builder: (context) {
-                  sunPosX(locationStateProvider, size);
+                  startSunAnimation(locationStateProvider, size);
                   if (!_hasSunPosition){
                     return Container();
                   }
                   return Positioned(
-                    top: SunPath.calculate(_sunAnimation?.value, size).dy,
+                    top: SunPath.calculate(_sunAnimation?.value ?? 0.5, size).dy,
                     //left: SunPath.calculate(0.5, size).dx,
-                    left: size.width * _sunAnimation?.value,
+                    left: size.width * (_sunAnimation?.value ?? 0.5),
                     child: Container(
                       height: 30,
                       width: 30,
