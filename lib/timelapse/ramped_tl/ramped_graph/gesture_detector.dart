@@ -5,7 +5,6 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.da
 class IntervalGestureDetector extends StatelessWidget {
   final int index;
   final Size size;
-  late RampCurveCubit _provider;
 
   IntervalGestureDetector(this.index, this.size);
 
@@ -13,17 +12,17 @@ class IntervalGestureDetector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _provider = BlocProvider.of<RampCurveCubit>(context);
+    final rampCurveCubit = context.read<RampCurveCubit>();
     return Positioned(
-      left: _provider.state[index].getStartValue(context, size),
+      left: rampCurveCubit.state[index].getStartValue(context, size),
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
-          _provider.onDragInterval(index, details.delta.dy, context);
+          rampCurveCubit.onDragInterval(index, details.delta.dy, context);
         },
         child: Container(
           // height: double.maxFinite,
           height: size.height + 15,
-          width: _provider.state[index].getEndValue(context, size) - _provider.state[index].getStartValue(context, size),
+          width: rampCurveCubit.state[index].getEndValue(context, size) - rampCurveCubit.state[index].getStartValue(context, size),
           color: Colors.red.withOpacity(0),
         ),
       ),
@@ -43,7 +42,7 @@ class TimeGestureDetector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = BlocProvider.of<RampCurveCubit>(context);
+    final provider = context.read<RampCurveCubit>();
 
     return GestureDetector(
       onHorizontalDragUpdate: (details) {

@@ -10,7 +10,6 @@ import 'package:sliderappflutter/utilities/box_decoraation_frame.dart';
 import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
-import 'Logic/cubit.dart';
 
 class RampedGraph extends StatefulWidget {
   @override
@@ -28,7 +27,9 @@ class _RampedGraphState extends State<RampedGraph> {
           final size = Size(constraints.maxWidth, constraints.maxHeight - 50);
           return BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
             builder: (context, state) {
-              BlocProvider.of<RampCurveCubit>(context, listen: false).globalSize = size;
+              if (state.length < 1) return Container();
+
+              context.read<RampCurveCubit>().globalSize = size;
 
               List<Widget> intervalGCList = List.empty(growable: true);
               List<Widget> timeList = List.empty(growable: true);

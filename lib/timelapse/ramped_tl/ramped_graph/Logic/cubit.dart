@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
@@ -47,6 +47,7 @@ class RampCurveCubit extends Cubit<List<CubitRampingPoint>> {
     newState[index].setIntervalValue(newValue, context, globalSize!);
     emit(newState);
   }
+
 
   void onDragStartTime(int index, double delta, BuildContext context) {
     if (globalSize == null)
@@ -235,7 +236,7 @@ class RampCurveCubit extends Cubit<List<CubitRampingPoint>> {
     final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false).rampingPoints;
     final intervalRange = Provider.of<IntervalRangeState>(context, listen: false).intervalRange;
 
-    for (int i=0; i < rampPointsCount; i++) {
+    for (int i=0; i < rampPointsCount && i < list.length; i++) {
       if (list[i].interval.inMilliseconds/1000 < intervalRange.start)
         list[i].interval = Duration(milliseconds: (intervalRange.start * 1000).ceil());
       else  if (list[i].interval.inMilliseconds/1000 > intervalRange.end)

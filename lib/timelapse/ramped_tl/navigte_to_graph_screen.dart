@@ -20,14 +20,12 @@ class NavigateToGraphScreen {
       return;
     }
 
-    final rampCurveCubit = BlocProvider.of<RampCurveCubit>(context, listen: false);
+    if (!context.read<RampCurveCubit>().isCreated || !context.read<RampCurveCubit>().wasOpened)
+      context.read<RampCurveCubit>().updatePoints(context);
 
-    if (!rampCurveCubit.isCreated || !rampCurveCubit.wasOpened)
-      rampCurveCubit.updatePoints(context);
+    context.read<RampCurveCubit>().trimPoints(context);
 
-    rampCurveCubit.trimPoints(context);
-    rampCurveCubit.wasOpened = true;
-    rampCurveCubit.close();
+    context.read<RampCurveCubit>().wasOpened = true;
 
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -55,8 +53,8 @@ class NavigateToGraphScreen {
   }
 
   void _showTimeNotSetSnakeBar() {
-    Scaffold.of(context).removeCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Colors.redAccent,
       elevation: 40,
       behavior: SnackBarBehavior.fixed,

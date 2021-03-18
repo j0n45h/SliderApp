@@ -16,7 +16,7 @@ class RampedTlToString {
 
   send(BuildContext context, bool direction) async {
     String parameters = '{';
-    final List<Points> points = BlocProvider.of<RampCurveCubit>(context, listen: false).getPointsAsShots(context);
+    final List<Points> points = context.read<RampCurveCubit>().getPointsAsShots(context);
 
     points.forEach((point) {
       double interval = ((point.interval ?? 1) * 100).round() / 100;

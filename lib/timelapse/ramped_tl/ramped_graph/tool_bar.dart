@@ -33,7 +33,7 @@ class ToolBar extends StatelessWidget {
                 height: 25,
                 textField: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                   builder: (context, state) {
-                    final shots = BlocProvider.of<RampCurveCubit>(context, listen: false).getShots(context);
+                    final shots = context.read<RampCurveCubit>().getShots(context);
                     return Text(
                         shots.toString(),
                         style: MyTextStyle.normal(fontSize: 12),
@@ -57,7 +57,7 @@ class ToolBar extends StatelessWidget {
                   if (rampingPointsState.rampingPoints < 1)
                     rampingPointsState.rampingPoints = 1;
 
-                  BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
+                  context.read<RampCurveCubit>().updatePoints(context);
                 },
               ),
               IconButton(
@@ -68,7 +68,7 @@ class ToolBar extends StatelessWidget {
                   if (rampingPointsState.rampingPoints > 5)
                     rampingPointsState.rampingPoints = 5;
 
-                  BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
+                  context.read<RampCurveCubit>().updatePoints(context);
                 },
               ),
               IconButton(

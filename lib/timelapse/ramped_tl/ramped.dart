@@ -55,7 +55,7 @@ class _RampedTLState extends State<RampedTL> {
             return SaveAndStartButtons(
               onPressSave: null,
               onPressStart: () => DirectionDialog().openDialog(context),
-              saveButton: BlocProvider.of<RampCurveCubit>(context, listen: false).wasOpened ? null : SetButton(),
+              saveButton: context.read<RampCurveCubit>().wasOpened ? null : SetButton(),
             );
           },
         ),

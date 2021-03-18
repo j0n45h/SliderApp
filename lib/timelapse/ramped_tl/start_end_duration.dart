@@ -87,7 +87,7 @@ class StartEndDuration extends StatelessWidget {
     final pickedTime = await timePicker.show();
 
     timeState.endingTime = pickedTime;
-    BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
+    context.read<RampCurveCubit>().updatePoints(context);
   }
 
   Widget duration(BuildContext context) {

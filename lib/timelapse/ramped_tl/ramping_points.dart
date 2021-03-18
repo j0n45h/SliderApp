@@ -27,7 +27,7 @@ class RampingPoints extends StatelessWidget {
               //if (BlocProvider.of<RampCurveCubit>(context, listen: false).canUndo && context.cubit<RampCurveCubit>().wasOpened)
                 //showSnakeBar = true;
 
-              BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
+              context.read<RampCurveCubit>().updatePoints(context);
             },
             onChangeEnd: (value) {
               if (!showSnakeBar)

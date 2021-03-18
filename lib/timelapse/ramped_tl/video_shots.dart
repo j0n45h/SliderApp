@@ -30,7 +30,7 @@ class VideoShots extends StatelessWidget {
                   textField: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                     builder: (context, state) {
                       final videoShotsState = Provider.of<VideoShotsState>(context, listen: false);
-                      final shots = BlocProvider.of<RampCurveCubit>(context, listen: false).getShots(context);
+                      final shots = context.read<RampCurveCubit>().getShots(context);
                       final videoTime = shots == null ? null : (shots / videoShotsState.fps);
                       
                       return Text(
@@ -76,7 +76,7 @@ class VideoShots extends StatelessWidget {
               height: 30,
               textField: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                 builder: (context, state) {
-                  final shots = BlocProvider.of<RampCurveCubit>(context, listen: false).getShots(context);
+                  final shots = context.read<RampCurveCubit>().getShots(context);
                   final shotsStr = shots.toString();
                   return Text(
                     shotsStr,

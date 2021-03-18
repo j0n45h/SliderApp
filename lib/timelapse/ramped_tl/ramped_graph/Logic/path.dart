@@ -59,7 +59,7 @@ class RampPath {
     path.moveTo(0, intervalP0);
     path.lineTo(pointList[0].getEndValue(context, size), intervalP0);
 
-    for (int i=1; i < length; i++){
+    for (int i=1; i < length && i < pointList.length; i++){
       final currentInterval = pointList[i].getIntervalValue(context, size);
       final pointA = Point(pointList[i-1].getEndValue  (context, size), pointList[i-1].getIntervalValue(context, size));
       final pointB = Point(pointList[i  ].getStartValue(context, size), currentInterval);
