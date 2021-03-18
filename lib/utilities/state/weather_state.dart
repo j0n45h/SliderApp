@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +29,7 @@ class ProvideWeatherState with ChangeNotifier {
     if (!locationState.available())
       return;
 
-    if (!await DataConnectionChecker().hasConnection)
+    if (!await InternetConnectionChecker().hasConnection)
       return;
 
 
