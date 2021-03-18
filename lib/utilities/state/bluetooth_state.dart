@@ -78,7 +78,7 @@ class ProvideBtState with ChangeNotifier {
 
   Future<void> statListening() async {
     final characteristic = await getBluetoothCharacteristic();
-    characteristic?.value?.listen((value) {
+    characteristic?.value.listen((value) {
       var received = utf8.decode(value);
       log += received;
       notifyListeners();

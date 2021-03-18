@@ -15,7 +15,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -35,25 +35,26 @@ dependencies:
 
   geolocator: ^7.0.1 # add ios permissions
   location: ^4.1.1 #^4.0.0-nullsafety.0 # add ios permissions
-  location_permissions: ^3.0.0+1
+  # location_permissions: ^3.0.0+1
 
   sunrise_sunset_calc: ^2.0.0
 
   # flutter_bluetooth_serial: ^0.2.2
 
-  # flutter_blue: ^0.7.3
-  flutter_blue:
-    path: ../flutter_blue
+  flutter_blue: ^0.8.0 #^0.7.3
 
   flutter_cache_manager: ^3.0.0-nullsafety.1 #^2.1.1
+
   path_provider: ^2.0.1
-  provider: ^4.1.2
+  provider: ^5.0.0
   intl: 0.17.0 #^0.16.1
   # data_connection_checker: ^0.3.4
   internet_connection_checker: ^0.0.1
 
   replay_bloc: 0.0.1-nullsafety.3
   flutter_bloc: 7.0.0-nullsafety.6
+  #flutter_cubit: ^0.1.0
+  #replay_cubit: ^0.2.0-dev.1
 
   # html:
 
