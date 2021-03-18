@@ -39,7 +39,7 @@ dependencies:
 
   sunrise_sunset_calc: ^2.0.0
 
-  flutter_bluetooth_serial: ^0.2.2
+  # flutter_bluetooth_serial: ^0.2.2
 
   # flutter_blue: ^0.7.3
   flutter_blue:

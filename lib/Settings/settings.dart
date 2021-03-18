@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bls;
+// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bls;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
@@ -25,7 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   TextEditingController _controller = TextEditingController();
 
   // bool isConnected = false;
-
+/*
   void initState() {
     super.initState();
 
@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void sendString(String string) {}
-
+*/
   @override
   Widget build(BuildContext context) {
     final provideBtState = Provider.of<ProvideBtState>(context, listen: false);
@@ -151,7 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
-
+/*
   bls.BluetoothState _bluetoothState = bls.BluetoothState.UNKNOWN;
   bls.BluetoothConnection? connection;
 
@@ -273,5 +273,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     }
-  }
+  }*/
 }
