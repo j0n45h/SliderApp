@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
+
+import 'cubit.dart';
 
 
 class RampedTlToString {
@@ -14,7 +16,7 @@ class RampedTlToString {
 
   send(BuildContext context, bool direction) async {
     String parameters = '{';
-    final List<Points> points = context.cubit<RampCurveCubit>().getPointsAsShots(context);
+    final List<Points> points = BlocProvider.of<RampCurveCubit>(context, listen: false).getPointsAsShots(context);
 
     points.forEach((point) {
       double interval = ((point.interval ?? 1) * 100).round() / 100;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
@@ -27,10 +27,10 @@ class VideoShots extends StatelessWidget {
                 FramedTextField(
                   width: 80,
                   height: 30,
-                  textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                  textField: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                     builder: (context, state) {
                       final videoShotsState = Provider.of<VideoShotsState>(context, listen: false);
-                      final shots = context.cubit<RampCurveCubit>().getShots(context);
+                      final shots = BlocProvider.of<RampCurveCubit>(context, listen: false).getShots(context);
                       final videoTime = shots == null ? null : (shots / videoShotsState.fps);
                       
                       return Text(
@@ -74,9 +74,9 @@ class VideoShots extends StatelessWidget {
             FramedTextField(
               width: 80,
               height: 30,
-              textField: CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+              textField: BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                 builder: (context, state) {
-                  final shots = context.cubit<RampCurveCubit>().getShots(context);
+                  final shots = BlocProvider.of<RampCurveCubit>(context, listen: false).getShots(context);
                   final shotsStr = shots.toString();
                   return Text(
                     shotsStr,

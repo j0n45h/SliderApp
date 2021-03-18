@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
@@ -19,17 +19,15 @@ class RampingPoints extends StatelessWidget {
         ),
         Consumer<RampingPointsState>(
           builder: (context, rampingPointsState, child) => Slider(
-            onChangeStart: (value) {
-              context.cubit<RampCurveCubit>().newEvent();
-            },
+            onChangeStart: (value) {},
             onChanged: (value) {
               rampingPointsState.rampingPoints = value.floor();
 
               // check if undo is possible and if it has been created
-              if (context.cubit<RampCurveCubit>().canUndo && context.cubit<RampCurveCubit>().wasOpened)
-                showSnakeBar = true;
+              //if (BlocProvider.of<RampCurveCubit>(context, listen: false).canUndo && context.cubit<RampCurveCubit>().wasOpened)
+                //showSnakeBar = true;
 
-              context.cubit<RampCurveCubit>().updatePoints(context);
+              BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
             },
             onChangeEnd: (value) {
               if (!showSnakeBar)
@@ -50,8 +48,8 @@ class RampingPoints extends StatelessWidget {
   }
 
   void _showSnakeBar(BuildContext context) {
-    Scaffold.of(context).removeCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    /*ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.redAccent,
         elevation: 40,
@@ -77,6 +75,6 @@ class RampingPoints extends StatelessWidget {
           },
         ),
       ),
-    );
+    );*/
   }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph_screen.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
+
+import 'ramped_graph/Logic/cubit.dart';
 
 class NavigateToGraphScreen {
   final BuildContext context;
@@ -18,12 +20,14 @@ class NavigateToGraphScreen {
       return;
     }
 
-    if (!context.cubit<RampCurveCubit>().isCreated || !context.cubit<RampCurveCubit>().wasOpened)
-      context.cubit<RampCurveCubit>().updatePoints(context);
+    final rampCurveCubit = BlocProvider.of<RampCurveCubit>(context, listen: false);
 
-    context.cubit<RampCurveCubit>().trimPoints(context);
+    if (!rampCurveCubit.isCreated || !rampCurveCubit.wasOpened)
+      rampCurveCubit.updatePoints(context);
 
-    context.cubit<RampCurveCubit>().wasOpened = true;
+    rampCurveCubit.trimPoints(context);
+    rampCurveCubit.wasOpened = true;
+    rampCurveCubit.close();
 
     Navigator.of(context).push(
       PageRouteBuilder(

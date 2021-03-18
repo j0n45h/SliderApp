@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sliderappflutter/loging/logging.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/ramped_graph_screen.dart';
@@ -26,7 +29,7 @@ import 'video.dart';
 void main() {
   // WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    runApp(MainPage());
+  runApp(MainPage());
 }
 
 TLData tlData = TLData();
@@ -48,9 +51,10 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return CubitProvider(
+    return BlocProvider(
       create: (context) => RampCurveCubit(),
       child: MultiProvider(
         providers: [

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
@@ -53,7 +53,7 @@ class StartEndDuration extends StatelessWidget {
       return;
 
     timeState.startingTime = pickedTime;
-    context.cubit<RampCurveCubit>().updatePoints(context);
+    BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
   }
 
   Widget end(BuildContext context) {
@@ -87,7 +87,7 @@ class StartEndDuration extends StatelessWidget {
     final pickedTime = await timePicker.show();
 
     timeState.endingTime = pickedTime;
-    context.cubit<RampCurveCubit>().updatePoints(context);
+    BlocProvider.of<RampCurveCubit>(context, listen: false).updatePoints(context);
   }
 
   Widget duration(BuildContext context) {

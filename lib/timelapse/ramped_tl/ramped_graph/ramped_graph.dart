@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
@@ -9,6 +9,8 @@ import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.
 import 'package:sliderappflutter/utilities/box_decoraation_frame.dart';
 import 'package:sliderappflutter/utilities/map.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
+
+import 'Logic/cubit.dart';
 
 class RampedGraph extends StatefulWidget {
   @override
@@ -24,9 +26,9 @@ class _RampedGraphState extends State<RampedGraph> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final size = Size(constraints.maxWidth, constraints.maxHeight - 50);
-          return CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+          return BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
             builder: (context, state) {
-              context.cubit<RampCurveCubit>().globalSize = size;
+              BlocProvider.of<RampCurveCubit>(context, listen: false).globalSize = size;
 
               List<Widget> intervalGCList = List.empty(growable: true);
               List<Widget> timeList = List.empty(growable: true);
@@ -52,7 +54,7 @@ class _RampedGraphState extends State<RampedGraph> {
                           color: Colors.white.withOpacity(0.7),
                         ),
                       ),
-                      CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                      BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                         builder: (context, state) {
                           final interval = ((state[i].interval.inMilliseconds / 100).round() / 10).toString();
                           return Text(
@@ -102,7 +104,7 @@ class _RampedGraphState extends State<RampedGraph> {
 
               return Stack(
                 children: [
-                  CubitBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                  BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
                     builder: (context, state) => Hero(
                       tag: 'graph',
                       child: ClipPath(

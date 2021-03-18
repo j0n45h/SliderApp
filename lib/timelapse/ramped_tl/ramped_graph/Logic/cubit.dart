@@ -1,20 +1,18 @@
 import 'dart:math';
 
-import 'package:cubit/cubit.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:replay_cubit/replay_cubit.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 
-class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
+class RampCurveCubit extends Cubit<List<CubitRampingPoint>> {
   Size? globalSize;
   bool isCreated = false;
   bool wasOpened = false;
-  List<int> _revert = [0];
 
   RampCurveCubit() : super(List.empty(growable: true));
 
@@ -31,19 +29,6 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     }
 
     return list;
-  }
-
-  @override
-  void onTransition(Transition<List<CubitRampingPoint>> transition) {
-    // print("currentState Transition: ${transition.currentState}");
-    // print("nextState Transition:    ${transition.nextState}");
-    super.onTransition(transition);
-  }
-
-  void add(CubitRampingPoint newPoint) {
-    var newState = [...state];
-    newState.add(newPoint);
-    emit(newState);
   }
 
   void addList(List<CubitRampingPoint> newPoints) {
@@ -294,21 +279,5 @@ class RampCurveCubit extends ReplayCubit<List<CubitRampingPoint>> {
     addList(list);
     isCreated = true;
   }*/
-
-  @override
-  void emit(List<CubitRampingPoint> state) {
-    _revert.last++;
-    super.emit(state);
-  }
-
-  void newEvent() {
-    _revert.add(0);
-  }
-
-  void myUndo() {
-    for (int i=0; i<_revert.last*2; i++)
-      undo();
-    _revert.removeLast();
-  }
 
 }
