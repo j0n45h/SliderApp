@@ -185,6 +185,12 @@ class ProvideBtState with ChangeNotifier {
     await getBluetoothCharacteristic();
     statListening();
   }
+
+  @override
+  void dispose() {
+    disconnect(device);
+    super.dispose();
+  }
 }
 
 
