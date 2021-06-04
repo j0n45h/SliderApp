@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sliderappflutter/connection.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
 import 'package:weather/weather.dart';
@@ -28,9 +27,7 @@ class WeatherWidget extends StatelessWidget {
       children: [
         Transform.scale(
           scale: 0.8,
-          child: weather?.weatherIcon != null
-              ? Image(image: NetworkImage('http://openweathermap.org/img/wn/${weather!.weatherIcon}@2x.png'))
-              : Image.asset('assets/icons/noConnection.png'),
+          child: _getWeatherImage(weather),
         ),
         new Container(
           margin: const EdgeInsets.fromLTRB(0, 45, 0, 0),
@@ -44,5 +41,17 @@ class WeatherWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Image _getWeatherImage(Weather? weather) {
+    if (weather?.weatherIcon != null) {
+      try {
+        var url = 'https://openweathermap.org/img/wn/${weather!.weatherIcon}@2x.png';
+        return Image(image: NetworkImage(url));
+      } catch (ex) {
+        print('could not get weather image: $ex');
+      }
+    }
+    return Image.asset('assets/icons/noConnection.png');
   }
 }
