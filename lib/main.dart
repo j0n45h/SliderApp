@@ -79,6 +79,7 @@ class _MainPageState extends State<MainPage> {
         child: MaterialApp(
           title: 'Slider',
           theme: ThemeData(
+            appBarTheme: Theme.of(context).appBarTheme.copyWith(brightness: Brightness.dark),
             primarySwatch: Colors.deepOrange,
             //platform: TargetPlatform.iOS,
             sliderTheme: SliderThemeData(
