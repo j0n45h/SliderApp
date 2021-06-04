@@ -28,15 +28,15 @@ class WeatherWidget extends StatelessWidget {
       children: [
         Transform.scale(
           scale: 0.8,
-          child: weather != null
-              ? Image(image: NetworkImage('http://openweathermap.org/img/wn/${weather.weatherIcon.toString()}@2x.png'))
+          child: weather?.weatherIcon != null
+              ? Image(image: NetworkImage('http://openweathermap.org/img/wn/${weather!.weatherIcon}@2x.png'))
               : Image.asset('assets/icons/noConnection.png'),
         ),
         new Container(
           margin: const EdgeInsets.fromLTRB(0, 45, 0, 0),
-          child: weather != null
+          child: weather?.temperature?.celsius != null
               ? Text(
-                  '${((weather.temperature.celsius * 10).round() / 10).toString()}°C',
+                  '${((weather!.temperature!.celsius! * 10).round() / 10).toString()}°C',
                   style: const TextStyle(
                       fontFamily: 'Roboto', fontWeight: FontWeight.w200, color: MyColors.font, fontSize: 15),
                 )
