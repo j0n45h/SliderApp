@@ -63,7 +63,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
           ),
         ),
         title: const Text(
-          'J Slide',
+          'SLYDER',
           style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
         ),
         centerTitle: true,
