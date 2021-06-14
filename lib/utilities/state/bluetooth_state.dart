@@ -14,7 +14,7 @@ class ProvideBtState with ChangeNotifier {
   StreamSubscription<List<int>>? listener;
   BluetoothCharacteristic? _characteristic;
 
-  String log = "Test";
+  String log = "";
   void clearLog() {
     log = "";
     notifyListeners();
@@ -74,17 +74,22 @@ class ProvideBtState with ChangeNotifier {
     }
     // if (this.device == null || device != this.device) return;
     device = null;
+    listener?.cancel();
   }
 
   Future<void> statListening() async {
-    final characteristic = await getBluetoothCharacteristic();
-    characteristic?.value.listen((value) {
-      var received = utf8.decode(value);
-      log += received;
-      notifyListeners();
-      print(received);
+    _characteristic = await getBluetoothCharacteristic();
+    listener = _characteristic?.value.listen((value) {
+      try {
+        var received = utf8.decode(value);
+        log += received;
+        notifyListeners();
+        print(received);
+      } catch (e) {
+        print(e);
+      }
     });
-    await characteristic?.setNotifyValue(true);
+    await _characteristic?.setNotifyValue(true);
   }
 
   Future<void> sendToBtDevice(String value) async {
@@ -161,20 +166,19 @@ class ProvideBtState with ChangeNotifier {
 
     await FlutterBlue.instance.stopScan();
 
-      flutterBlue.startScan(
-        timeout: Duration(seconds: 8),
-        scanMode: ScanMode.lowPower,
-        withDevices: [Guid.fromMac(lastDevice!.address!)]).then((value) {
-      if (isConnected) {
-        _retryCounter = 0;
-        return;
-      }
+    flutterBlue.startScan(
+      timeout: Duration(seconds: 8),
+      scanMode: ScanMode.lowPower,
+      withDevices: [Guid.fromMac(lastDevice!.address!)]).then((value) {
+        if (isConnected) {
+          _retryCounter = 0;
+          return;
+        }
 
-      if (_retryCounter > 15) return; // retry limit exceeded
+        if (_retryCounter > 15) return; // retry limit exceeded
 
-      _retryCounter++;
-      Timer(Duration(seconds: 3), connectToLastDevice); // wait another 10sec than retry
-
+        _retryCounter++;
+        Timer(Duration(seconds: 3), connectToLastDevice); // wait another 10sec than retry
     });
 
     StreamSubscription<List<ScanResult>>? subscription;
@@ -188,6 +192,7 @@ class ProvideBtState with ChangeNotifier {
 
   @override
   void dispose() {
+    close();
     disconnect(device);
     super.dispose();
   }

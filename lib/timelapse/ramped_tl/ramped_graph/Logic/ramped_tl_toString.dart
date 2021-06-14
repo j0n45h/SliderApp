@@ -35,6 +35,7 @@ class RampedTlToString {
     var second = parameters.substring((parameters.length/2).round());
 
     final provideBtState = Provider.of<ProvideBtState>(context, listen: false);
+    await provideBtState.statListening();
     await provideBtState.sendToBtDevice(first);
     Future.delayed(const Duration(milliseconds: 400), () => provideBtState.sendToBtDevice(second));
 
