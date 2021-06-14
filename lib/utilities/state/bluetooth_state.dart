@@ -153,7 +153,7 @@ class ProvideBtState with ChangeNotifier {
 
     // get last device from Cache
     BtDevice? lastDevice = await CustomCacheManager.getLastBtDevice();
-    if (lastDevice == null && lastDevice?.address != null) {
+    if (lastDevice?.address == null) {
       deviceState = BluetoothDeviceState.disconnected;
       notifyListeners();
       return; // TODO: check if a device with this uuid is available
