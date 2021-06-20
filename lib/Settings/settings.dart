@@ -87,22 +87,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         body: Center(
           child: Column(
             children: [
-              FutureBuilder<BluetoothCharacteristic?>(
-                future: provideBtState.getBluetoothCharacteristic(),
-                builder: (context, future) {
-                  if (!future.hasData) return Container();
-
-                  return StreamBuilder<List<int>>(
-                    stream: future.data?.value,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData)
-                        return Container();
-
-                      return Text(utf8.decode(snapshot.data ?? []));
-                    },
-                  );
-                },
-              ),
               Container(
                 padding: EdgeInsets.all(10),
                 child: TextField(

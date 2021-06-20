@@ -8,50 +8,43 @@ class BtStateIcon extends StatelessWidget {
   const BtStateIcon();
 
   Widget build(BuildContext context) {
-    return StreamBuilder<BluetoothState>(
-      stream: FlutterBlue.instance.state,
-      initialData: BluetoothState.unavailable,
-      builder: (context, snapshot) {
-        final state = snapshot.data;
-        switch (state) {
+    return Consumer<ProvideBtState>(
+      builder: (context, btStateProvider, child) {
+        switch (btStateProvider.bluetoothState) {
           case BluetoothState.on:
-            return Consumer<ProvideBtState>(
-              builder: (context, btState, child) {
-                switch (btState.deviceState) {
-                  case BluetoothDeviceState.connected:
-                    return const Icon(
-                      Icons.bluetooth_connected,
-                      color: MyColors.blue,
-                      size: 30,
-                    );
-                  case BluetoothDeviceState.disconnected:
-                    return const Icon(
-                      Icons.bluetooth,
-                      color: MyColors.blue,
-                      size: 30,
-                    );
-                  case BluetoothDeviceState.connecting:
-                    return const Icon(
-                      Icons.bluetooth_searching,
-                      color: MyColors.blue,
-                      size: 30,
-                    );
-                  case BluetoothDeviceState.disconnecting:
-                    return const Icon(
-                      Icons.bluetooth_searching,
-                      color: Colors.grey,
-                      size: 30,
-                    );
-                  default:
-                    print('Bt State: ' + snapshot.data.toString());
-                    return const Icon(
-                      Icons.bluetooth,
-                      color: Colors.grey,
-                      size: 30,
-                    );
-                }
-              },
-            );
+            switch (btStateProvider.deviceState) {
+              case BluetoothDeviceState.connected:
+                return const Icon(
+                  Icons.bluetooth_connected,
+                  color: MyColors.blue,
+                  size: 30,
+                );
+              case BluetoothDeviceState.disconnected:
+                return const Icon(
+                  Icons.bluetooth,
+                  color: MyColors.blue,
+                  size: 30,
+                );
+              case BluetoothDeviceState.connecting:
+                return const Icon(
+                  Icons.bluetooth_searching,
+                  color: MyColors.blue,
+                  size: 30,
+                );
+              case BluetoothDeviceState.disconnecting:
+                return const Icon(
+                  Icons.bluetooth_searching,
+                  color: Colors.grey,
+                  size: 30,
+                );
+              default:
+                print('Bt State: ' + btStateProvider.deviceState.toString());
+                return const Icon(
+                  Icons.bluetooth,
+                  color: Colors.grey,
+                  size: 30,
+                );
+            }
           case BluetoothState.off:
             return const Icon(
               Icons.bluetooth_disabled,

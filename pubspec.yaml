@@ -49,6 +49,8 @@ dependencies:
   #flutter_cubit: ^0.1.0
   #replay_cubit: ^0.2.0-dev.1
 
+  synchronized: ^3.0.0
+
   # html:
 
 dev_dependencies:

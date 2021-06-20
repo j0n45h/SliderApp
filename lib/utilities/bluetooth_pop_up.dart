@@ -48,6 +48,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
     final height = MediaQuery.of(context).size.height * 0.65;
     final width = MediaQuery.of(context).size.width * 0.9;
     final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final provideBtState = Provider.of<ProvideBtState>(context, listen: false);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -85,12 +86,6 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                               child: btIcon(),
                             ),
                             discoveredDevicesText(),
-                            // Divider(
-                            //   color: Colors.white.withOpacity(0.6),
-                            //   height: 30,
-                            //   indent: 20,
-                            //   endIndent: 20,
-                            // ),
                           ],
                         );
                       } else {
@@ -122,7 +117,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                   ),
                   Column(
                     children: <Widget>[
-                      Container(height: isPortrait ? 125 : 70),
+                      Container(height: isPortrait ? 115 : 70),
                       Divider(
                         color: Colors.white.withOpacity(0.1),
                         height: 0,
@@ -164,7 +159,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                               highlightColor: Colors.white.withOpacity(0.01),
                               borderRadius: BorderRadius.circular(15.0),
                               splashColor: Colors.white.withOpacity(0.2),
-                              onTap: () => startScanning(),
+                              onTap: () => provideBtState.startScanning(),
                               child: Container(
                                 height: 60,
                                 alignment: Alignment.center,
@@ -224,7 +219,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
   void initState() {
     super.initState();
     setupAnimation();
-    startScanning();
+    //startScanning();
   }
 
   @override
@@ -232,12 +227,8 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
     // Avoid memory leak (`setState` after dispose) and cancel discovery
     _animationController?.dispose();
     FlutterBlue.instance.stopScan();
-    super.dispose();
-  }
 
-  Future<void> startScanning({int timeout = 10}) async {
-    await FlutterBlue.instance.stopScan();
-    FlutterBlue.instance.startScan(timeout: Duration(seconds: timeout));
+    super.dispose();
   }
 
   Widget deviceListView() {
@@ -249,48 +240,50 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
         children: <Widget>[
           Consumer<ProvideBtState>(
             builder: (context, provideBtState, child) {
-              if (provideBtState.isConnected)
+              if (provideBtState.isConnected) {
                 return Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 3),
-                    child: Text(
-                      'Connected:',
-                      style: MyTextStyle.normal(fontSize: 12),
-                    ));
-              else
-                return Container();
-            },
-          ),
-          StreamBuilder<List<BluetoothDevice>>(
-            stream: Stream.periodic(Duration(milliseconds: 500)).asyncMap((_) => FlutterBlue.instance.connectedDevices),
-            initialData: [],
-            builder: (c, snapshot) {
-              if (snapshot.data == null)
-                return Container();
-
-              return Column(
-              children: snapshot.data!.map((d) {
-                return BluetoothDeviceListEntry(
-                  device: d,
-                  onTap: () {
-                    provideBtState.disconnect(d);
-                    startScanning(timeout: 1);
-                  },
-                  trailing: StreamBuilder<BluetoothDeviceState>(
-                    stream: d.state,
-                    initialData: BluetoothDeviceState.disconnected,
-                    builder: (c, snapshot) {
-                      if (snapshot.data == BluetoothDeviceState.connected) {
-                        return Icon(Icons.import_export, color: Colors.white);
-                      }
-                      return const SizedBox(height: 20);
-                    },
+                  padding: const EdgeInsets.only(left: 15, top: 3, right: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Connected to:',
+                        style: MyTextStyle.normal(fontSize: 12),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            provideBtState.device?.name ?? '',
+                            style: MyTextStyle.normal(fontSize: 16),
+                          ),
+                          TextButton(
+                            onPressed: () => provideBtState.disconnect(null),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(color: Colors.red),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'disconnect',
+                              style: MyTextStyle.fetStdSize(newColor: Colors.red, letterSpacing: 0.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                    ],
                   ),
                 );
-              }).toList(),
-            );
+              } else
+                return Container();
             },
           ),
-          Divider(color: Colors.white, indent: 10, endIndent: 10, height: 8, thickness: 0.3),
+          Divider(color: Colors.white, indent: 10, endIndent: 10, height: 25, thickness: 0.3),
           Padding(
             padding: const EdgeInsets.only(left: 15, top: 3),
             child: Text(
@@ -302,22 +295,21 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
             stream: FlutterBlue.instance.scanResults,
             initialData: [],
             builder: (c, snapshot) {
-              if (snapshot.data == null)
-                return Container();
+              if (snapshot.data == null) return Container();
               return Column(
-              children: snapshot.data!.map(
-                (r) {
-                  if (r.device.name.length < 1) return Container();
-                  return BluetoothDeviceListEntry(
-                    device: r.device,
-                    onTap: () {
-                      provideBtState.connect(r.device);
-                      FlutterBlue.instance.stopScan();
-                    },
-                  );
-                },
-              ).toList(),
-            );
+                children: snapshot.data!.map(
+                  (result) {
+                    if (result.device.name.length < 1) return Container();
+                    return BluetoothDeviceListEntry(
+                      device: result.device,
+                      onTap: () async {
+                        await provideBtState.connect(result.device);
+                        FlutterBlue.instance.stopScan();
+                      },
+                    );
+                  },
+                ).toList(),
+              );
             },
           ),
         ],
@@ -326,7 +318,6 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
   }
 
   void setupAnimation() {
-    print('setupAnimation');
     _animationController = AnimationController(duration: const Duration(seconds: 2), vsync: this);
     final Animation<double> curve = CurvedAnimation(parent: _animationController!, curve: Curves.easeInOut);
     _animation = Tween(begin: 0.0, end: 1.0).animate(curve)
