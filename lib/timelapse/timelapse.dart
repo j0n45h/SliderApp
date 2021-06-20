@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/linear.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped.dart';
+import 'package:sliderappflutter/utilities/bluetooth_pop_up.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/state/bt_state_icon.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
@@ -58,7 +60,20 @@ class TimelapseScreenState extends State<TimelapseScreen>
             'Timelapse',
             style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
           ),
-          actions: [const BtStateIcon(), SizedBox(width: 20)],
+          actions: [
+            InkWell(
+              customBorder: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              onLongPress: () => _inkWellLongPress(context),
+              
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: const BtStateIcon(),
+              ),
+            ),
+            SizedBox(width: 15),
+          ],
           centerTitle: true,
           backgroundColor: MyColors.AppBar,
           bottom: TabBar(
@@ -90,5 +105,10 @@ class TimelapseScreenState extends State<TimelapseScreen>
         return Future.value(true);
       },
     );
+  }
+
+  Future<void> _inkWellLongPress(BuildContext context) async {
+    if (!await FlutterBlue.instance.isOn) return;
+    SearchingDialog().showMyDialog(context);
   }
 }

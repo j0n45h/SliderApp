@@ -40,6 +40,7 @@ class SearchingDialog extends StatefulWidget {
 }
 
 class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProviderStateMixin {
+  static const double _searchButtonHeight = 50;
   Animation? _animation;
   AnimationController? _animationController;
 
@@ -124,7 +125,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                         thickness: 1,
                       ),
                       Container(
-                        height: isPortrait ? height - 125 - 60 : height - 70 - 60,
+                        height: isPortrait ? height - 125 - _searchButtonHeight : height - 70 - _searchButtonHeight,
                         // color: Colors.black.withOpacity(0.23),
                         color: Color(0xffE3E3E3).withOpacity(0.05),
                         child: deviceListView(),
@@ -146,7 +147,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                                 splashColor: Colors.white.withOpacity(0.2),
                                 onTap: () => FlutterBlue.instance.stopScan(),
                                 child: Container(
-                                  height: 60,
+                                  height: _searchButtonHeight,
                                   alignment: Alignment.center,
                                   child: Text(
                                     'Stop',
@@ -161,7 +162,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                               splashColor: Colors.white.withOpacity(0.2),
                               onTap: () => provideBtState.startScanning(),
                               child: Container(
-                                height: 60,
+                                height: _searchButtonHeight,
                                 alignment: Alignment.center,
                                 child: Text(
                                   'Search',
@@ -318,7 +319,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
   }
 
   void setupAnimation() {
-    _animationController = AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    _animationController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
     final Animation<double> curve = CurvedAnimation(parent: _animationController!, curve: Curves.easeInOut);
     _animation = Tween(begin: 0.0, end: 1.0).animate(curve)
       ..addListener(() {

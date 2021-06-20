@@ -24,9 +24,7 @@ class BluetoothBox extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
         onLongPress: () => _inkWellLongPress(context),
-        onTap: () {
-          _inkWellTap(context);
-        },
+        onTap: () => _inkWellTap(context),
         child: Padding(
           padding: const EdgeInsets.only(left: 0, right: 10),
           child: Row(
@@ -37,22 +35,20 @@ class BluetoothBox extends StatelessWidget {
                 padding: const EdgeInsets.all(14),
                 child: const BtStateIcon(),
               ),
-              Consumer<ProvideBtState>(
-                builder: (context, btState, child) {
-                  return Text(
-                    // Bluetooth text
-                    btStatus(btState),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: MyColors.font,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: 2,
-                      fontSize: 14,
-                    ),
-                  );
-                }
-              ),
+              Consumer<ProvideBtState>(builder: (context, btState, child) {
+                return Text(
+                  // Bluetooth text
+                  btStatus(btState),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: MyColors.font,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w200,
+                    letterSpacing: 2,
+                    fontSize: 14,
+                  ),
+                );
+              }),
             ],
           ),
         ),
