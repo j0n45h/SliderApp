@@ -31,7 +31,6 @@ class NewLocation {
           duration: Duration(seconds: 10),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        // Scaffold.of(context).showSnackBar(snackBar); // TODO: Test and remove
         return;
       }
     } else if (_permissionGranted == PermissionStatus.deniedForever) {
@@ -40,7 +39,6 @@ class NewLocation {
         duration: Duration(seconds: 10),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // Scaffold.of(context).showSnackBar(snackBar); // TODO: Test and remove
     }
 
     _serviceEnabled = await location.serviceEnabled();

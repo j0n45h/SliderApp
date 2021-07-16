@@ -7,6 +7,7 @@ import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.da
 import 'package:sliderappflutter/timelapse/ramped_tl/state/time_state.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
+import 'package:sliderappflutter/utilities/state/running_tl_state.dart';
 
 import 'cubit.dart';
 
@@ -34,10 +35,12 @@ class RampedTlToString {
     var first = parameters.substring(0, (parameters.length/2).round());
     var second = parameters.substring((parameters.length/2).round());
 
+    final runningTlState = Provider.of<RunningTlState>(context, listen: false);
+    runningTlState.resetAll();
+
     final provideBtState = Provider.of<ProvideBtState>(context, listen: false);
     await provideBtState.statListening();
     await provideBtState.sendToBtDevice(first);
     Future.delayed(const Duration(milliseconds: 400), () => provideBtState.sendToBtDevice(second));
-
   }
 }

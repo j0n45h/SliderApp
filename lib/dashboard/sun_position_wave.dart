@@ -18,7 +18,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
   AnimationController? _sunAnimationController;
   Animation<double>? _colorGradientAnimation;
   AnimationController? _colorGradientAnimationController;
-  bool _hasSunPosition = false;
+  bool _sunAnimationStarted = false;
   static double? _horizonHeight;
 
   @override
@@ -74,7 +74,6 @@ class _SunPositionWaveState extends State<SunPositionWave>
     if (_horizonHeight != null)
       return _horizonHeight!;
 
-
     DateTime solarNoon = locationStateProvider.solarNoon!;
 
     DateTime beginTime = solarNoon.subtract(Duration(hours: 12));
@@ -100,7 +99,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
   void startSunAnimation(ProvideLocationState locationStateProvider, Size size) {
     if (!locationStateProvider.available() || locationStateProvider.solarNoon == null)
       return;
-    if (_hasSunPosition)
+    if (_sunAnimationStarted)
       return;
     DateTime solarNoon = locationStateProvider.solarNoon!;
 
@@ -120,7 +119,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
       _colorGradientAnimationController?.forward();
     });
 
-    _hasSunPosition = true;
+    _sunAnimationStarted = true;
     return;
   }
 
@@ -132,7 +131,6 @@ class _SunPositionWaveState extends State<SunPositionWave>
     return Consumer<ProvideLocationState>(
       builder: (context, locationStateProvider, _) {
         _horizonHeight = horizonHeight(locationStateProvider, size);
-        assert(_horizonHeight != null);
         return Container(
           alignment: Alignment.center,
           height: size.height + 20,
@@ -209,7 +207,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
               Builder(
                 builder: (context) {
                   startSunAnimation(locationStateProvider, size);
-                  if (!_hasSunPosition){
+                  if (!_sunAnimationStarted){
                     return Container();
                   }
                   return Positioned(
@@ -221,7 +219,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                       width: 30,
                       transform: Matrix4.translationValues(-15, -15, 0),
                       child: AnimatedCrossFade(
-                        crossFadeState: _hasSunPosition
+                        crossFadeState: _sunAnimationStarted
                             ? CrossFadeState.showFirst
                             : CrossFadeState.showSecond,
                         duration: Duration(milliseconds: 2000),

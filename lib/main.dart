@@ -15,6 +15,7 @@ import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/json_handling/json_class.dart';
 import 'package:sliderappflutter/utilities/state/bluetooth_state.dart';
 import 'package:sliderappflutter/utilities/state/locatin_state.dart';
+import 'package:sliderappflutter/utilities/state/running_tl_state.dart';
 import 'package:sliderappflutter/utilities/state/weather_state.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 
@@ -58,14 +59,6 @@ class _MainPageState extends State<MainPage> {
       create: (context) => RampCurveCubit(),
       child: MultiProvider(
         providers: [
-          /// Dashboard
-          ChangeNotifierProvider<ProvideBtState>(
-            create: (context) => ProvideBtState()),
-          ChangeNotifierProvider<ProvideLocationState>(
-            create: (context) => ProvideLocationState()),
-          ChangeNotifierProvider<ProvideWeatherState>(
-            create: (context) => ProvideWeatherState()),
-
           /// Ramping
           ChangeNotifierProvider<TimeState>(
             create: (context) => TimeState()),
@@ -74,7 +67,17 @@ class _MainPageState extends State<MainPage> {
           ChangeNotifierProvider<RampingPointsState>(
             create: (context) => RampingPointsState()),
           ChangeNotifierProvider<VideoShotsState>(
-            create: (context) => VideoShotsState(),),
+            create: (context) => VideoShotsState()),
+          ChangeNotifierProvider<RunningTlState>(
+              create: (context) => RunningTlState(context)),
+
+          /// Dashboard
+          ChangeNotifierProvider<ProvideBtState>(
+            create: (context) => ProvideBtState(context)),
+          ChangeNotifierProvider<ProvideLocationState>(
+            create: (context) => ProvideLocationState()),
+          ChangeNotifierProvider<ProvideWeatherState>(
+            create: (context) => ProvideWeatherState()),
         ],
         child: MaterialApp(
           title: 'Slider',

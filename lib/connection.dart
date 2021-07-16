@@ -1,180 +1,158 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:sliderappflutter/utilities/BluetoothDeviceListEntry.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:sliderappflutter/timelapse/framed_textfield.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/path.dart';
+import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
+
 import 'package:sliderappflutter/utilities/colors.dart';
+import 'package:sliderappflutter/utilities/state/running_tl_state.dart';
+import 'package:sliderappflutter/utilities/text_field.dart';
+import 'package:sliderappflutter/utilities/text_style.dart';
 
 import 'drawer.dart';
 
 class ConnectionScreen extends StatefulWidget {
-  static const routeName = '/connection-screen';
+  static const routeName = '/runningTL-screen';
 
   @override
   _ConnectionScreenState createState() => _ConnectionScreenState();
 }
 
 class _ConnectionScreenState extends State<ConnectionScreen> {
-  bool isDiscovering = false;
-  // StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
-  // List<BluetoothDiscoveryResult> results = [];
-
-/*
-  @override
-  void initState() {
-    super.initState();
-    results.clear();
-    isDiscovering = true;
-    if (isDiscovering) {
-      _startDiscovery();
-    }
-  }
-
-  void _startDiscovery() async {
-    _streamSubscription =
-        FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
-          setState(() {
-            results.add(r);
-          });
-        });
-
-    _streamSubscription?.onDone(() {
-      setState(() {
-        isDiscovering = false;
-      });
-    });
-  }
-
-  void _restartDiscovery() {
-    setState(() {
-      results.clear();
-      isDiscovering = true;
-    });
-
-    _startDiscovery();
-  }
-
-  @override
-  void dispose() {
-    // Avoid memory leak (`setState` after dispose) and cancel discovery
-    //_streamSubscription?.cancel();
-
-    super.dispose();
-  }
-*/
   @override
   Widget build(BuildContext context) {
-    return Container();
-    /*
-    print('Discovery Page: ${isDiscovering.toString()}');
-    print('Devices found: ${results.length}');
+    final rampPointsCountState = Provider.of<RampingPointsState>(context, listen: false);
     return WillPopScope(
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
-          leading: new Builder(builder: (context) {
-            return IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                try {
-                  Navigator.pop(context); //close the popup
-                } catch (e) {}
-              },
-            );
-          }),
-          backgroundColor: MyColors.AppBar,
           elevation: 1,
           title: const Text(
-            'Searching',
-            style: TextStyle(
-              fontFamily: 'Bellezza',
-              letterSpacing: 5,
-            ),
+            'Running Timelapse',
+            style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
           ),
           centerTitle: true,
-          actions: <Widget>[
-            isDiscovering
-                ? Transform.scale(
-                    scale: 0.7,
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(0, 10, 40, 10),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.grey[200]),
-                      ),
-                    ))
-                : IconButton(
-              icon: Icon(Icons.replay),
-              onPressed: _restartDiscovery,
-            ),
-          ],
+          backgroundColor: MyColors.AppBar,
         ),
         drawer: MyDrawer(),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              height: 200,
+              width: MediaQuery.of(context).size.width - 20,
+              child: Stack(
+                alignment: Alignment.topLeft,
+                fit: StackFit.expand,
+                children: [
+                  BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                      builder: (context, state) {
+                    if (state.length < 1) return Container();
 
-        body: ListView.builder(
-          itemCount: results.length,
-          itemBuilder: (BuildContext context, index) {
-            BluetoothDiscoveryResult result = results[index];
-            return BluetoothDeviceListEntry(
-              device: result.device,
-              onTap: () {
-                // CustomCacheManager.storeDeviceAddress(result.device.address.toString());
-                print('getting Devices address');
-              },
-              onLongPress: () async {
-                try {
-                  bool bonded = false;
-                  if (result.device.isBonded) {
-                    print('Unbonding from ${result.device.address}...');
-                    await FlutterBluetoothSerial.instance
-                        .removeDeviceBondWithAddress(result.device.address);
-                    print('Unbonding from ${result.device.address} has succed');
-                  } else {
-                    print('Bonding with ${result.device.address}...');
-                    bonded = await FlutterBluetoothSerial.instance
-                        .bondDeviceAtAddress(result.device.address);
-                    print(
-                        'Bonding with ${result.device.address} has ${bonded ? 'succed' : 'failed'}.');
-                  }
-                  setState(() {
-                    results[results.indexOf(result)] = BluetoothDiscoveryResult(
-                        device: BluetoothDevice(
-                          name: result.device.name ?? '',
-                          address: result.device.address,
-                          type: result.device.type,
-                          bondState: bonded
-                              ? BluetoothBondState.bonded
-                              : BluetoothBondState.none,
+                    return CustomPaint(
+                      painter: PathPainter(context, state, rampPointsCountState.rampingPoints),
+                    );
+                  }),
+                  BlocBuilder<RampCurveCubit, List<CubitRampingPoint>>(
+                    builder: (context, state) {
+                      final runningTl = Provider.of<RunningTlState>(context, listen: false);
+                      final shots = context.read<RampCurveCubit>().getShots(context) ?? 1;
+                      final size = Size(MediaQuery.of(context).size.width - 20, 200);
+
+                      // Calc y-position
+                      final path = RampPath.getPath(size, context, state, rampPointsCountState.rampingPoints, false);
+                      final metrics = path.computeMetrics().elementAt(0);
+                      final offset = metrics.getTangentForOffset(metrics.length * (runningTl.shotsTaken/shots))?.position ?? Offset(0, 0);
+                      return Positioned(
+                        top: offset.dy,
+                        left: size.width * (runningTl.shotsTaken/shots),
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          transform: Matrix4.translationValues(-15, -15, 0),
+                          child: Icon(Icons.adjust, color: MyColors.green),
                         ),
-                        rssi: result.rssi);
-                  });
-                } catch (ex) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Error occured while bonding'),
-                        content: Text("${ex.toString()}"),
-                        actions: <Widget>[
-                          new FlatButton(
-                            child: new Text("Close"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
                       );
-                    },
-                  );
-                }
-              },
-            );
-          },
+                    }
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 50),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 50),
+              child: Consumer<RunningTlState>(builder: (context, tlState, child) {
+                const double tfWidth = 120;
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('ShotsTaken:', style: MyTextStyle.fetStdSize()),
+                        FramedTextField(
+                          textField: MyTextField(
+                            enabled: false,
+                            textController: TextEditingController(
+                              text: '${tlState.shotsTaken}/${context.read<RampCurveCubit>().getShots(context)}',
+                            ),
+                            fontSize: 14,
+                          ),
+                          height: 30,
+                          width: tfWidth,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Current Interval:', style: MyTextStyle.fetStdSize()),
+                        FramedTextField(
+                          textField: MyTextField(
+                            enabled: false,
+                            textController: TextEditingController(
+                              text: tlState.currentIntervalString(),
+                            ),
+                            unit: 'sec',
+                            fontSize: 14,
+                          ),
+                          height: 30,
+                          width: tfWidth,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Maximal Exposuere Time:', style: MyTextStyle.fetStdSize()),
+                        FramedTextField(
+                          textField: MyTextField(
+                            textController: TextEditingController(
+                              text: tlState.maxExposureString(),
+                            ),
+                            enabled: false,
+                            unit: 'sec',
+                            fontSize: 14,
+                          ),
+                          height: 30,
+                          width: tfWidth,
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }),
+            )
+          ],
         ),
       ),
       onWillPop: () {
         MyDrawer.navigateHome(context);
-        return;
+        return Future.value(true);
       },
-    );*/
+    );
   }
 }

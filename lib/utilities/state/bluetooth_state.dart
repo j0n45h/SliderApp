@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
+import 'package:sliderappflutter/utilities/state/running_tl_state.dart';
 import 'package:synchronized/synchronized.dart';
 
 
@@ -18,16 +20,10 @@ class ProvideBtState with ChangeNotifier {
   bool isScanning = false;
   BluetoothState bluetoothState = BluetoothState.unknown;
   StreamSubscription<BluetoothState>? _bluetoothStateListener;
+  final BuildContext internalContext;
 
-  String log = "";
-  void clearLog() {
-    log = "";
-    notifyListeners();
-  }
 
-  int _btStateListeningCounter = 0;
-
-  ProvideBtState() {
+  ProvideBtState(this.internalContext) {
     _bluetoothStateListener = FlutterBlue.instance.state.listen((event) {
       bluetoothState = event;
       notifyListeners();
@@ -38,6 +34,9 @@ class ProvideBtState with ChangeNotifier {
     });
     connectToLastDevice();
   }
+
+  int _btStateListeningCounter = 0;
+
 
   @override
   void dispose() {
@@ -115,10 +114,13 @@ class ProvideBtState with ChangeNotifier {
 
     listener = _characteristic?.value.listen((value) {
       try {
+        final runningTl = Provider.of<RunningTlState>(internalContext, listen: false);
         var received = utf8.decode(value);
-        log += received;
-        notifyListeners();
+
+        runningTl.rawLogAdd = received;
+        runningTl.updateValues();
         print(received);
+
       } catch (e) {
         print(e);
       }

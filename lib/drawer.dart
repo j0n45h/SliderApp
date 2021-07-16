@@ -77,8 +77,8 @@ class MyDrawer extends StatelessWidget {
                 ),
                 Divider(color: Colors.grey[100]?.withOpacity(0.4), indent: 6, thickness: 0.6),
                 ListTile(
-                  leading: Icon(Icons.bluetooth, color: Colors.grey[100]),
-                  title: Text('Connection', style: MyTextStyle.fetStdSize(),),
+                  leading: Icon(Icons.av_timer, color: Colors.grey[100]),
+                  title: Text('Running Timelapse', style: MyTextStyle.fetStdSize(),),
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed(ConnectionScreen.routeName);
