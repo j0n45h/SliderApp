@@ -17,7 +17,8 @@ class StartingTime extends StatefulWidget {
 
 class StartingTimeState extends State<StartingTime> {
   Timer? _timer;
-  DateTime? _startTime, _endTime;
+  DateTime _startTime = DateTime.now();
+  DateTime _endTime = DateTime.now();
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class StartingTimeState extends State<StartingTime> {
       _startTime = StartTime.time;
 
     // Calc ending time and set second TF
-    _endTime = _startTime?.add(TLDuration.duration);
+    _endTime = _startTime.add(TLDuration.duration);
   }
 
   @override
@@ -82,7 +83,7 @@ class StartingTimeState extends State<StartingTime> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               ClickableFramedTimeField(
-                time: _startTime!,
+                time: _startTime,
                 onTap: () => _showTimePicker(context),
               ),
               Container(
@@ -90,7 +91,7 @@ class StartingTimeState extends State<StartingTime> {
                 child: Text('-', style: MyTextStyle.fet(fontSize: 12)),
               ),
               ClickableFramedTimeField(
-                time: _endTime!,
+                time: _endTime,
               ),
             ],
           ),
@@ -121,10 +122,9 @@ class StartingTimeState extends State<StartingTime> {
     final now = DateTime.now();
     var dateTime = DateTime(now.year, now.month, now.day, t.hour, t.minute);
     print(dateTime.toString());
-    if (dateTime.isBefore(now)) {
-      // dateTime.add(Duration(days: 1)); // is not working
+    if (dateTime.isBefore(now))
       dateTime = DateTime(now.year, now.month, now.day + 1, t.hour, t.minute);
-    }
+
     print(dateTime.toString());
     return dateTime;
   }

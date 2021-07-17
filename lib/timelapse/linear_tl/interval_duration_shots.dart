@@ -38,7 +38,7 @@ class TLInterval{ /// Interval
 
 
   static void onTFEdited(){
-    interval = double.parse(tfController.text);
+    interval = double.tryParse(tfController.text) ?? 0;
     if (interval < 1) {
       tfController.text = '1';
       interval = 1;
@@ -69,7 +69,10 @@ class TLInterval{ /// Interval
   }
 
   static void _updateTF() {
-    tfController.text = interval.round().toString();
+    if (interval < 10)
+      tfController.text = ((interval * 10).round() / 10).toString();
+    else
+      tfController.text = interval.round().toString();
   }
 
   static void updateSlider() {
@@ -97,27 +100,22 @@ class TLDuration{ /// Duration
   }
 
   static void onTFEdited(){ // usable from outside
-    var hours = int.parse(hoursTFController.text);
-    var min   = int.parse(minutesTFController.text);
-    if(hours <= 0) {
-      if (min < 1) {
-        minutesTFController.text = '1';
-        min = 1;
-      }
-      hoursTFController.text = '0';
-    }
-    if(min < 0) {
-      minutesTFController.text = '0';
+    int hours = int.tryParse(hoursTFController.text) ?? 0;
+    int min = int.tryParse(minutesTFController.text) ?? 0;
+
+    if (hours < 0)
+      hours = 0;
+    if (min < 0)
       min = 0;
-    }
-    if (hours == 0 && min < 1){
-      minutesTFController.text = '1';
+
+    if (hours == 0 && min == 0)
       min = 1;
-    }
-    duration = Duration(
-      hours: hours,
-      minutes: min,
-    );
+
+    duration = Duration(minutes: hours * 60 + min);
+
+    hoursTFController.text = duration.inHours.toString();
+    minutesTFController.text = (duration.inMinutes - duration.inHours * 60).toString();
+
     updateSlider();
     _notifyChange();
   }
@@ -178,7 +176,7 @@ class TLShots{ /// Shots
   }
 
   static void onTFEdited(){
-    shots = int.parse(tfController.text);
+    shots = int.tryParse(tfController.text) ?? 0;
     if (shots < 1) {
       tfController.text = '1';
       shots = 1;
@@ -248,7 +246,7 @@ class TLVideo{
   }
 
   static void onTFEdited() {
-    videoLength = int.parse(tfController.text);
+    videoLength = int.tryParse(tfController.text) ?? 0;
     if (videoLength < 1){
       tfController.text = '1';
       videoLength = 1;
