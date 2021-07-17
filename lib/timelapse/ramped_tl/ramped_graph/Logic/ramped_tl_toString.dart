@@ -13,9 +13,8 @@ import 'cubit.dart';
 
 
 class RampedTlToString {
-  RampedTlToString();
 
-  send(BuildContext context, bool direction) async {
+  static Future<void> send(BuildContext context, bool direction) async {
     String parameters = '{';
     final List<Points> points = context.read<RampCurveCubit>().getPointsAsShots(context);
 

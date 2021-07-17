@@ -43,13 +43,10 @@ class StartingTimeState extends State<StartingTime> {
 
   void calcTime() {
     // if time is not picked use current time
-    if (StartTime.picked) {
-      if (StartTime.time == null || (StartTime.time?.isBefore(DateTime.now()) ?? false))
-        StartTime.time = DateTime.now();
-      _startTime = StartTime.time;
-    }
-    else
+    if (!StartTime.picked)
       _startTime = DateTime.now();
+    else
+      _startTime = StartTime.time;
 
     // Calc ending time and set second TF
     _endTime = _startTime?.add(TLDuration.duration);
@@ -71,9 +68,8 @@ class StartingTimeState extends State<StartingTime> {
             MySwitch(
               value: StartTime.picked,
               onChanged: (bool value) {
-                print(value);
                 setState(() {
-                  StartTime.picked = !StartTime.picked;
+                  StartTime.picked = value;
                 });
               },
             ),
@@ -107,14 +103,16 @@ class StartingTimeState extends State<StartingTime> {
     final timePicker = TimePicker(
       context: context,
       hintPickedNextDay: true,
-      initialTime: TimeOfDay.fromDateTime(StartTime.time ?? DateTime.now()),
+      initialTime: TimeOfDay.fromDateTime(StartTime.time),
     );
 
     final pickedTime = await timePicker.show();
 
     setState(() {
-      StartTime.time = pickedTime;
-      StartTime.picked = true;
+      if (pickedTime != null){
+        StartTime.time = pickedTime;
+        StartTime.picked = true;
+      }
       calcTime();
     });
   }

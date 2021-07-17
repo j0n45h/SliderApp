@@ -1,16 +1,20 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:sliderappflutter/timelapse/linear_tl/LinearTlToString.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/ramped_tl_toString.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 import 'package:sliderappflutter/utilities/lib/shimmer.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
 
 class DirectionDialog extends StatefulWidget {
+  final TimelapseMode tlMode;
+  DirectionDialog(this.tlMode);
+
   void openDialog(BuildContext context) {
     showGeneralDialog(
       context: context,
-      pageBuilder: (context, animation, secondaryAnimation) => DirectionDialog(),
+      pageBuilder: (context, animation, secondaryAnimation) => DirectionDialog(tlMode),
       barrierDismissible: true,
       barrierLabel: '',
       barrierColor: Colors.black.withOpacity(0.4),
@@ -19,7 +23,7 @@ class DirectionDialog extends StatefulWidget {
           scale: anim1.value,
           child: Opacity(
             opacity: anim1.value,
-            child: DirectionDialog(),
+            child: DirectionDialog(tlMode),
           ),
         );
       },
@@ -126,7 +130,10 @@ class _DirectionDialogState extends State<DirectionDialog> {
                               dismissThresholds: {DismissDirection.startToEnd: 1, DismissDirection.endToStart: 1},
                               onDismissed: (direction) {
                                 _isDismissed = true;
-                                RampedTlToString().send(context, direction == DismissDirection.startToEnd);
+                                if (widget.tlMode == TimelapseMode.ramped)
+                                  RampedTlToString.send(context, direction == DismissDirection.startToEnd);
+                                else
+                                  LinearTlToString.send(context, direction == DismissDirection.startToEnd);
                                 Navigator.of(context, rootNavigator: true).pop();
                               },
                               child: ClipRRect(
@@ -160,4 +167,9 @@ class _DirectionDialogState extends State<DirectionDialog> {
       ),
     );
   }
+}
+
+enum TimelapseMode {
+  linear,
+  ramped,
 }

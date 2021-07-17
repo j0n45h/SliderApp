@@ -54,7 +54,7 @@ class _RampedTLState extends State<RampedTL> {
           builder: (context, state) {
             return SaveAndStartButtons(
               onPressSave: null,
-              onPressStart: () => DirectionDialog().openDialog(context),
+              onPressStart: () => DirectionDialog(TimelapseMode.ramped).openDialog(context),
               saveButton: context.read<RampCurveCubit>().wasOpened ? null : SetButton(),
             );
           },

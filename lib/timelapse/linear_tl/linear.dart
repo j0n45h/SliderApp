@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sliderappflutter/main.dart';
+import 'package:sliderappflutter/timelapse/direction_dialog.dart';
 import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
@@ -281,9 +282,7 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
         ),
         SaveAndStartButtons(
           onPressSave: () => _saveSettings(),
-          onPressStart: () {
-            print('pressed Start');
-          },
+          onPressStart: () => DirectionDialog(TimelapseMode.linear).openDialog(context)
         ),
       ],
     );

@@ -313,6 +313,11 @@ class LowerSlider{
 
 
 class StartTime {
-  static DateTime? time;
+  static DateTime? _time;
   static bool picked = false;
+
+  static DateTime get time => _time ?? DateTime.now();
+  static set time (DateTime t) => _time = t;
+
+  static Duration get startIn => time.difference(DateTime.now());
 }
