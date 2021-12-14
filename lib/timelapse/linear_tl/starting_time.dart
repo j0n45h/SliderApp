@@ -25,12 +25,10 @@ class StartingTimeState extends State<StartingTime> {
     calcTime();
     _timer = Timer.periodic(
       Duration(seconds: 2),
-      (Timer t) => setState(
-        () {
-          if (!StartTime.picked)
-            calcTime();
-        },
-      ),
+      (Timer t) {
+        if (!StartTime.picked)
+          setState(() { calcTime(); });
+      }
     );
 
     super.initState();

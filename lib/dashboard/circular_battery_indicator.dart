@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:sliderappflutter/utilities/colors.dart';
 
-
 class CircularBatteryIndicator extends StatelessWidget {
   final int batteryPercentage;
+  final gradient = new List<Color>.empty(growable: true);
 
-  const CircularBatteryIndicator(this.batteryPercentage);
+  CircularBatteryIndicator(this.batteryPercentage) {
+    if (batteryPercentage > 35)
+      gradient.addAll([MyColors.green, Color(0x6600FF3C)]);
+    else if (batteryPercentage > 20)
+      gradient.addAll([Colors.amber]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,20 +40,23 @@ class CircularBatteryIndicator extends StatelessWidget {
           ),
           radius: 100.0,
           lineWidth: 2.0,
-          percent: batteryPercentage/100,
+          percent: batteryPercentage / 100,
           reverse: true,
-          backgroundColor: Color(0x00ffffff), // transparent
+          backgroundColor: Colors.transparent,
           // progressColor: MyColors.green,
           center: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                batteryPercentage.toString() + '%',
+                batteryPercentage.toString(),
                 style: TextStyle(
-                    fontFamily: 'Roboto',
-                    color: Color(0xffffffff),
-                    fontSize: 25,
-                    fontWeight: FontWeight.w200),
+                    fontFamily: 'Roboto', color: Color(0xffffffff), fontSize: 25, fontWeight: FontWeight.w200),
+              ),
+              Text(
+                '%',
+                style: TextStyle(
+                    fontFamily: 'Roboto', color: Color(0xffffffff), fontSize: 15, fontWeight: FontWeight.w200),
               ),
             ],
           ),

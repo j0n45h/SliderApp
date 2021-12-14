@@ -17,8 +17,9 @@ class SaveTLDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 24,
       insetAnimationDuration: Duration(milliseconds: 500),
+      insetAnimationCurve: Curves.easeInOut,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      insetPadding: EdgeInsets.all(5),
+      insetPadding: const EdgeInsets.all(5),
       child: Container(
         alignment: Alignment.center,
         height: 155,

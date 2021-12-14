@@ -22,7 +22,7 @@ class DashboardTopView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const CircularBatteryIndicator(75),
+              CircularBatteryIndicator(75),
               Container(
                 // Weather and BT Box
                 alignment: Alignment.topLeft,

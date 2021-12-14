@@ -9,7 +9,6 @@ class FramedTextField extends StatelessWidget {
   final VoidCallback? onLockLongPress;
   // final ValueChanged<FramedTF> onLockLongPress;
 
-
   FramedTextField({
     required this.textField,
     required this.width,
@@ -17,8 +16,6 @@ class FramedTextField extends StatelessWidget {
     this.height,
     this.onLockLongPress,
   });
-
-
 
   @override
   Widget build(BuildContext context) {
