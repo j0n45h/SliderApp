@@ -71,8 +71,8 @@ class _SunPositionWaveState extends State<SunPositionWave>
       return size.height / 2;
     if (locationStateProvider.solarNoon == null || locationStateProvider.sunSetTime == null)
       return size.height / 2;
-    if (_horizonHeight != null)
-      return _horizonHeight!;
+    //if (_horizonHeight != null)
+      //return _horizonHeight!;
 
     DateTime solarNoon = locationStateProvider.solarNoon!;
 
@@ -224,7 +224,7 @@ class _SunPositionWaveState extends State<SunPositionWave>
                             : CrossFadeState.showSecond,
                         duration: Duration(milliseconds: 2000),
                         firstChild: const Sun(),
-                        secondChild: Container(
+                        secondChild: const SizedBox(
                           height: 22,
                           width: 22,
                         ),
