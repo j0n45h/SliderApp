@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 // import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as bts;
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/bluetooth_pop_up.dart';
@@ -57,17 +57,17 @@ class BluetoothBox extends StatelessWidget {
   }
 
   Future<void> _inkWellLongPress(BuildContext context) async {
-    if (!await FlutterBlue.instance.isOn) return;
+    if (!await FlutterBluePlus.instance.isOn) return;
     SearchingDialog().showMyDialog(context);
   }
 
   Future<void> _inkWellTap(BuildContext context) async {
-    if (!await FlutterBlue.instance.isAvailable)
+    if (!await FlutterBluePlus.instance.isAvailable)
       return;
 
     final btState = Provider.of<ProvideBtState>(context, listen: false);
 
-    if (!await FlutterBlue.instance.isOn) {
+    if (!await FlutterBluePlus.instance.isOn) {
       try {
         //await bts.FlutterBluetoothSerial.instance.requestEnable();
         //btState.connectToLastDevice();

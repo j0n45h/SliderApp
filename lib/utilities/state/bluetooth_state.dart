@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:sliderappflutter/utilities/custom_cache_manager.dart';
 import 'package:sliderappflutter/utilities/state/running_tl_state.dart';
@@ -24,11 +24,11 @@ class ProvideBtState with ChangeNotifier {
 
 
   ProvideBtState(this.internalContext) {
-    _bluetoothStateListener = FlutterBlue.instance.state.listen((event) {
+    _bluetoothStateListener = FlutterBluePlus.instance.state.listen((event) {
       bluetoothState = event;
       notifyListeners();
     });
-    _isScanningListener = FlutterBlue.instance.isScanning.listen((event) {
+    _isScanningListener = FlutterBluePlus.instance.isScanning.listen((event) {
       isScanning = event;
       notifyListeners();
     });
@@ -101,6 +101,8 @@ class ProvideBtState with ChangeNotifier {
 
   final _lockStartListening = new Lock();
   Future<void> statListening() async {
+    if (!isConnected)
+      return;
     _characteristic = await _getBluetoothCharacteristic();
 
     try {
@@ -142,21 +144,28 @@ class ProvideBtState with ChangeNotifier {
     if (device == null)
       return null;
 
-    List<BluetoothService> services = await device!.discoverServices();
     BluetoothCharacteristic? bluetoothCharacteristic;
 
-    services.forEach((service) {
-      if (service.uuid.toString() != '0000ffe0-0000-1000-8000-00805f9b34fb')
-        return;
+    try {
+      List<BluetoothService> services = await device!.discoverServices();
 
-      service.characteristics.forEach((blueChar) async {
-        if (blueChar.uuid.toString() == '0000ffe1-0000-1000-8000-00805f9b34fb') {
-          bluetoothCharacteristic = blueChar;
-          // await bluetoothCharacteristic?.setNotifyValue(true);
-        }
+      services.forEach((service) {
+        if (service.uuid.toString() != '0000ffe0-0000-1000-8000-00805f9b34fb')
+          return;
+
+        service.characteristics.forEach((blueChar) async {
+          if (blueChar.uuid.toString() ==
+              '0000ffe1-0000-1000-8000-00805f9b34fb') {
+            bluetoothCharacteristic = blueChar;
+            // await bluetoothCharacteristic?.setNotifyValue(true);
+          }
+        });
       });
-
-    });
+    }
+    catch(ex) {
+      print(ex);
+      bluetoothCharacteristic = null;
+    }
 
     if (bluetoothCharacteristic == null)
       print('characteristics not found');
@@ -171,9 +180,9 @@ class ProvideBtState with ChangeNotifier {
     if (deviceState == BluetoothDeviceState.connecting)
       return;
     if (isScanning)
-      await FlutterBlue.instance.stopScan();
+      await FlutterBluePlus.instance.stopScan();
 
-    final flutterBlue = FlutterBlue.instance;
+    final flutterBlue = FlutterBluePlus.instance;
 
     await disconnect(device);
     await flutterBlue.connectedDevices.then((result) => result.forEach((device) {
@@ -211,24 +220,24 @@ class ProvideBtState with ChangeNotifier {
     }
     var charService = [Guid('0000ffe0-0000-1000-8000-00805f9b34fb')];
     var lastDevices = [Guid.fromMac(lastDevice!.address!)];
-    await FlutterBlue.instance.stopScan();
-    FlutterBlue.instance.startScan(
+    await FlutterBluePlus.instance.stopScan();
+    FlutterBluePlus.instance.startScan(
       timeout: Duration(seconds: 15),
       scanMode: ScanMode.lowLatency,
       withServices: charService,
       // withDevices: lastDevices,
     ).then((value) async {
       if (!isConnected) {
-        await FlutterBlue.instance.stopScan();
-        FlutterBlue.instance.startScan(
+        await FlutterBluePlus.instance.stopScan();
+        FlutterBluePlus.instance.startScan(
           timeout: Duration(minutes: 3),
           scanMode: ScanMode.lowPower,
           withServices: charService,
           // withDevices: lastDevices,
         ).then((value) async {
           if (!isConnected) {
-            await FlutterBlue.instance.stopScan();
-            FlutterBlue.instance.startScan(
+            await FlutterBluePlus.instance.stopScan();
+            FlutterBluePlus.instance.startScan(
               timeout: Duration(minutes: 10),
               scanMode: ScanMode.lowPower,
               withServices: charService,
@@ -245,15 +254,15 @@ class ProvideBtState with ChangeNotifier {
 
       connect(result.first.device);
       _scanSubscription?.cancel();
-      FlutterBlue.instance.stopScan();
+      FlutterBluePlus.instance.stopScan();
     });
     await _getBluetoothCharacteristic();
     statListening();
   }
 
   Future<void> startScanning({int timeout = 10}) async {
-    await FlutterBlue.instance.stopScan();
-    FlutterBlue.instance.startScan(
+    await FlutterBluePlus.instance.stopScan();
+    FlutterBluePlus.instance.startScan(
       timeout: Duration(seconds: timeout),
       withServices: [Guid('0000ffe0-0000-1000-8000-00805f9b34fb')],
     );

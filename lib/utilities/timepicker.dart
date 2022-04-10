@@ -26,6 +26,7 @@ class TimePicker { // TODO make ios and Android different
         return Theme(
           data: ThemeData(
               primarySwatch: Colors.lime,
+              platform: TargetPlatform.iOS,
               timePickerTheme: TimePickerThemeData(
                   backgroundColor: Colors.white60,
                   dialBackgroundColor: Colors.white70,

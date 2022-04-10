@@ -6,6 +6,7 @@ import 'package:sliderappflutter/timelapse/framed_textfield.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/starting_time.dart';
 import 'package:sliderappflutter/timelapse/save_start_buttons.dart';
+import 'package:sliderappflutter/utilities/field_editor_popup.dart';
 import 'package:sliderappflutter/utilities/save_preset_dialog.dart';
 import 'package:sliderappflutter/utilities/text_field.dart';
 import 'package:sliderappflutter/utilities/text_style.dart';
@@ -45,21 +46,23 @@ class _LinearTLScreenState extends State<LinearTLScreen> {
                               fontSize: 12.0, letterSpacing: 1.3),
                         ),
                         const SizedBox(width: 18),
-                        FramedTextField(
-                          width: 90,
-                          height: tfHeight,
-                          textField: MyTextField(
-                            fontSize: 12,
-                            textController: TLInterval.tfController,
-                            unit: 's',
-                            onEditingComplete: () {
-                              setState(() {
-                                TLInterval.onTFEdited();
-                                _startingTimeKey.currentState?.calcTime();
-                              });
-                            },
-                            onTap: () =>
-                                jumpCursorToEnd(TLInterval.tfController),
+                        FieldEditorPopup(
+                          child: FramedTextField(
+                            width: 90,
+                            height: tfHeight,
+                            textField: MyTextField(
+                              fontSize: 12,
+                              textController: TLInterval.tfController,
+                              unit: 's',
+                              onEditingComplete: () {
+                                setState(() {
+                                  TLInterval.onTFEdited();
+                                  _startingTimeKey.currentState?.calcTime();
+                                });
+                              },
+                              onTap: () =>
+                                  jumpCursorToEnd(TLInterval.tfController),
+                            ),
                           ),
                         ),
                       ],

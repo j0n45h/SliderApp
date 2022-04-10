@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -137,7 +137,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                       ),
                       StreamBuilder<bool>(
                           initialData: false,
-                          stream: FlutterBlue.instance.isScanning,
+                          stream: FlutterBluePlus.instance.isScanning,
                           builder: (context, snapshot) {
                             if (snapshot.data ?? false)
                               return InkWell(
@@ -145,7 +145,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                                 highlightColor: Colors.white.withOpacity(0.01),
                                 borderRadius: BorderRadius.circular(15.0),
                                 splashColor: Colors.white.withOpacity(0.2),
-                                onTap: () => FlutterBlue.instance.stopScan(),
+                                onTap: () => FlutterBluePlus.instance.stopScan(),
                                 child: Container(
                                   height: _searchButtonHeight,
                                   alignment: Alignment.center,
@@ -184,7 +184,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
 
   Widget btIcon() {
     return StreamBuilder<bool>(
-        stream: FlutterBlue.instance.isScanning,
+        stream: FlutterBluePlus.instance.isScanning,
         initialData: false,
         builder: (context, snapshot) {
           if (snapshot.data ?? false) {
@@ -227,7 +227,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
   void dispose() {
     // Avoid memory leak (`setState` after dispose) and cancel discovery
     _animationController?.dispose();
-    FlutterBlue.instance.stopScan();
+    FlutterBluePlus.instance.stopScan();
 
     super.dispose();
   }
@@ -293,7 +293,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
             ),
           ),
           StreamBuilder<List<ScanResult>>(
-            stream: FlutterBlue.instance.scanResults,
+            stream: FlutterBluePlus.instance.scanResults,
             initialData: [],
             builder: (c, snapshot) {
               if (snapshot.data == null) return Container();
@@ -305,7 +305,7 @@ class _SearchingDialogState extends State<SearchingDialog> with SingleTickerProv
                       device: result.device,
                       onTap: () async {
                         await provideBtState.connect(result.device);
-                        FlutterBlue.instance.stopScan();
+                        FlutterBluePlus.instance.stopScan();
                       },
                     );
                   },

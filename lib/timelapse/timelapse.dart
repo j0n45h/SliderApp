@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:sliderappflutter/timelapse/linear_tl/linear.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped.dart';
 import 'package:sliderappflutter/utilities/bluetooth_pop_up.dart';
@@ -108,7 +108,7 @@ class TimelapseScreenState extends State<TimelapseScreen>
   }
 
   Future<void> _inkWellLongPress(BuildContext context) async {
-    if (!await FlutterBlue.instance.isOn) return;
+    if (!await FlutterBluePlus.instance.isOn) return;
     SearchingDialog().showMyDialog(context);
   }
 }

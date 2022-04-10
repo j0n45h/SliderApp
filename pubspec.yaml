@@ -27,14 +27,10 @@ dependencies:
 
   weather: ^2.0.1
   #geolocator: ^7.0.1 # add ios permissions
-  location: ^4.1.1 # add ios permissions
+  location: ^4.3.0 # add ios permissions
   # location_permissions: ^3.0.0+1
 
   sunrise_sunset_calc: ^2.0.0
-
-  # flutter_bluetooth_serial: ^0.2.2
-
-  flutter_blue: ^0.8.0
 
   flutter_cache_manager: ^3.0.0-nullsafety.1
 
@@ -50,6 +46,7 @@ dependencies:
   #replay_cubit: ^0.2.0-dev.1
 
   synchronized: ^3.0.0
+  flutter_blue_plus: ^1.1.2
 
   # html:
 

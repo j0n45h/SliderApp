@@ -127,7 +127,7 @@ class _DirectionDialogState extends State<DirectionDialog> {
                             return Dismissible(
                               key: Key('Send'),
                               direction: DismissDirection.horizontal,
-                              dismissThresholds: {DismissDirection.startToEnd: 1, DismissDirection.endToStart: 1},
+                              dismissThresholds: {DismissDirection.startToEnd: 0.9, DismissDirection.endToStart: 0.9},
                               onDismissed: (direction) {
                                 _isDismissed = true;
                                 if (widget.tlMode == TimelapseMode.ramped)
