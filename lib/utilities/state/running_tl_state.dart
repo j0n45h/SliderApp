@@ -20,9 +20,9 @@ class RunningTlState with ChangeNotifier {
     final lines = _rawLog.split('\n');
     List<String> values = [];
 
-    values.add(lines.lastWhere((element) => element.contains('shotsTaken')));
-    values.add(lines.lastWhere((element) => element.contains('currentInterval')));
-    values.add(lines.lastWhere((element) => element.contains('drivingTime')));
+    values.add(lines.lastWhere((element) => element.contains('sT'))); // shotsTaken
+    values.add(lines.lastWhere((element) => element.contains('cI'))); // currentInterval
+    values.add(lines.lastWhere((element) => element.contains('dT'))); // drivingTime
 
     values.forEach((item) {
       try {
@@ -33,16 +33,16 @@ class RunningTlState with ChangeNotifier {
         final key = keyValues[0].replaceAll('TLDependencies->', '').trim();
         final value = keyValues[1].trim();
 
-        if (key.contains('shotsTaken')) {
+        if (key.contains('sT')) {
           _shotsTaken = int.tryParse(value) ?? _shotsTaken;
         }
-        else if (key.contains('currentInterval')) {
+        else if (key.contains('cI')) {
           final seconds = double.tryParse(value) ?? 0;
           _currentInterval = Duration(
             milliseconds: (seconds * 1000).round()
           );
         }
-        else if (key.contains('drivingTime')) {
+        else if (key.contains('dT')) {
           final milliseconds = int.tryParse(value) ?? 0;
           _drivingTime = Duration(
             milliseconds: milliseconds,

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -100,6 +101,7 @@ class TimelapseScreenState extends State<TimelapseScreen>
         drawer: MyDrawer(),
         body: TabBarView(
           controller: _tabController,
+          physics: NeverScrollableScrollPhysics(),
           children: [
             LinearTLScreen(),
             RampedTL(),
