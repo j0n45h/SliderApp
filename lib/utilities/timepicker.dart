@@ -51,7 +51,7 @@ class TimePicker { // TODO make ios and Android different
   }
 
   void _showSnakeBar() {
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Colors.redAccent,
       elevation: 40,
       behavior: SnackBarBehavior.fixed,

@@ -78,7 +78,7 @@ class ProvideLocationState with ChangeNotifier {
       return;
 
     SunriseSunsetResult sunriseSunsetResult =
-        getSunriseSunset(_locationData!.latitude!, _locationData!.longitude!, 0, DateTime.now().toUtc());
+        getSunriseSunset(_locationData!.latitude!, _locationData!.longitude!, Duration.zero, DateTime.now().toUtc());
     _sunRiseTime = sunriseSunsetResult.sunrise.toLocal();
     _sunSetTime = sunriseSunsetResult.sunset.toLocal();
   }
@@ -94,7 +94,7 @@ class ProvideLocationState with ChangeNotifier {
       ),
       duration: Duration(seconds: 10),
     );
-    Scaffold.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     return;
   }
 

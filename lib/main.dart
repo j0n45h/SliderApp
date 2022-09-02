@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 // import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'package:sliderappflutter/loging/logging.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit.dart';
@@ -35,15 +37,12 @@ void main() {
 
 TLData tlData = TLData();
 
-
-
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-
   @override
   void initState() {
     tlData = TLData();
@@ -52,37 +51,45 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
+    Wakelock.enable();
     return BlocProvider(
       create: (context) => RampCurveCubit(),
       child: MultiProvider(
         providers: [
           /// Ramping
-          ChangeNotifierProvider<TimeState>(
-            create: (context) => TimeState()),
+          ChangeNotifierProvider<TimeState>(create: (context) => TimeState()),
           ChangeNotifierProvider<IntervalRangeState>(
-            create: (context) => IntervalRangeState()),
+              create: (context) => IntervalRangeState()),
           ChangeNotifierProvider<RampingPointsState>(
-            create: (context) => RampingPointsState()),
+              create: (context) => RampingPointsState()),
           ChangeNotifierProvider<VideoShotsState>(
-            create: (context) => VideoShotsState()),
+              create: (context) => VideoShotsState()),
           ChangeNotifierProvider<RunningTlState>(
               create: (context) => RunningTlState(context)),
 
           /// Dashboard
           ChangeNotifierProvider<ProvideBtState>(
-            create: (context) => ProvideBtState(context)),
+              create: (context) => ProvideBtState(context)),
           ChangeNotifierProvider<ProvideLocationState>(
-            create: (context) => ProvideLocationState()),
+              create: (context) => ProvideLocationState()),
           ChangeNotifierProvider<ProvideWeatherState>(
-            create: (context) => ProvideWeatherState()),
+              create: (context) => ProvideWeatherState()),
         ],
         child: MaterialApp(
           title: 'Slider',
           theme: ThemeData(
-            appBarTheme: Theme.of(context).appBarTheme.copyWith(brightness: Brightness.dark),
+            useMaterial3: true,
+            appBarTheme: Theme.of(context).appBarTheme.copyWith(
+                backgroundColor: MyColors.AppBar,
+                titleTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                  fontWeight: FontWeight.w100,
+                  fontFamily: 'Bellezza',
+                  letterSpacing: 5,
+                )),
             primarySwatch: Colors.deepOrange,
             //platform: TargetPlatform.iOS,
             sliderTheme: SliderThemeData(

@@ -59,10 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
             ),
           ),
         ),
-        title: const Text(
-          'SLYDER',
-          style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
-        ),
+        title: const Text('SLYDER'),
         centerTitle: true,
         actions: <Widget>[
           Transform.rotate(

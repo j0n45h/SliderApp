@@ -56,10 +56,16 @@ class TimelapseScreenState extends State<TimelapseScreen>
         backgroundColor: Colors.black,
         appBar: AppBar(
           elevation: 1.0,
-          title: const Text(
-            'Timelapse',
-            style: TextStyle(fontFamily: 'Bellezza', letterSpacing: 5),
+          leading: Builder(
+            builder: (context) => Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+              child: IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: Image.asset('assets/icons/DrawerIcon.png'),
+              ),
+            ),
           ),
+          title: const Text('Timelapse'),
           actions: [
             InkWell(
               customBorder: RoundedRectangleBorder(

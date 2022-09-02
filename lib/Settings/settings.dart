@@ -105,13 +105,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: const Text('Send this String:'),
                           content: Text(value),
                           actions: <Widget>[
-                            FlatButton(
+                            MaterialButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                               child: const Text('Cancel'),
                             ),
-                            FlatButton(
+                            MaterialButton(
                               onPressed: () {
                                 provideBtState.sendToBtDevice(value);
                                 Navigator.pop(context);
