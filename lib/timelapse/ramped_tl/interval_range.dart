@@ -47,6 +47,8 @@ class IntervalRange extends StatelessWidget {
           height: 25,
           textField: Consumer<IntervalRangeState>(
             builder: (context, intervalRangeState, child) => Text(
+              interval < 10 ?
+              ((interval * 10).round() / 10).toString() + ' s' :
               interval.round().toString() + ' s',
               style: MyTextStyle.normal(fontSize: 10),
             ),

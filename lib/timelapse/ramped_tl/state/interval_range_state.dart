@@ -36,13 +36,13 @@ class IntervalRangeState extends ChangeNotifier {
   }
 
   double _parseValueUp(double newValue) {
-    return 99 * (newValue * newValue) + 1;
+    return 99 * (newValue * newValue) + 0.2;
   }
 
   double _parseValeDown(double value) {
     if (value > 100)
       value = 100;
-    return sqrt((value - 1) / 99);
+    return sqrt((value - 0.2) / 99);
   }
 
   /// Nice  Scaling
