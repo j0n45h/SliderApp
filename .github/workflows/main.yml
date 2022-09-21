@@ -28,7 +28,7 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run flutter_launcher_icons:main
       # - run: flutter test
-      - run: flutter build apk --release --split-per-abi
+      - run: flutter build apk --release
 #      - run: |
 #          flutter build ios --no-codesign
 #          cd build/ios/iphoneos
