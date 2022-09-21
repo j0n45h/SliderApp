@@ -20,8 +20,10 @@ jobs:
         with:
           java-version: '12.x'
       - uses: subosito/flutter-action@v1
-        #with:
-          #flutter-version: '2.2.0'
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+      - run: flutter doctor
       - run: flutter pub get
       # - run: flutter test
       - run: flutter build apk --release --split-per-abi
@@ -39,11 +41,3 @@ jobs:
           artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.BuildDeployToken }}
-
-
-
-
-
-
-# push to master, main, develop
-# pull request on main master
