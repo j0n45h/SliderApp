@@ -55,11 +55,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: "^0.9.0"
+  flutter_launcher_icons: ^0.10.0
 
 flutter_icons:
   android: "launcher_icon"
-  ios: true
+  ios: false
   image_path: "assets/launcher_icon/SLYDER-icon.png" # run: flutter pub run flutter_launcher_icons:main
 
 
