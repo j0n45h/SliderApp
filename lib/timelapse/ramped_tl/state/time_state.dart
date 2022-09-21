@@ -21,8 +21,9 @@ class TimeState extends ChangeNotifier {
       if (!_isSet) {
         _startingTime = DateTime.now();
         notifyListeners();
-      } else if (_startingTime.isBefore(DateTime.now())) {
-        _startingTime = DateTime.now();
+      } else if (!_isInPast && _startingTime.isBefore(DateTime.now())) {
+        // _startingTime = DateTime.now();
+        _isInPast = true;
         notifyListeners();
       }
     });
@@ -31,10 +32,13 @@ class TimeState extends ChangeNotifier {
   /// Starting Time
   DateTime _startingTime = DateTime.now();
   bool _isSet = false;
+  bool _isInPast = false;
+  bool get isInPast => _isInPast;
 
   set startingTime(DateTime t) {
     _startingTime = t;
     _isSet = true;
+    _isInPast = false;
     notifyListeners();
   }
 

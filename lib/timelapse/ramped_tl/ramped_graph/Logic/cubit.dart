@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:sliderappflutter/timelapse/linear_tl/interval_duration_shots.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/ramped_graph/Logic/cubit_ramping_points.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/interval_range_state.dart';
 import 'package:sliderappflutter/timelapse/ramped_tl/state/ramping_points_state.dart';
@@ -103,28 +104,79 @@ class RampCurveCubit extends Cubit<List<CubitRampingPoint>> {
     return points.last.end;
   }
 
+  Duration getIntervalAtDuration(Duration x){
+    if (state[0].start <= x)
+      return state[0].interval;
+
+    for (int i = 0; i < state.length; i++){
+      if (state[i].end < x)
+        continue;
+      if (state[i].start < x){ // x is in spline
+        // spline formula:
+        // deltaInterval = intervalA - intervalB
+        // deltaDuration = durationA - durationB
+        // f(x) = -2*deltaInterval/deltaDuration^3 * (x-durationA)^3 + 3*deltaInterval/deltaDuration * (x-durationA)^2 + intervalA
+        final A = state[i-1], B = state[i];
+        final deltaInterval = (A.interval - B.interval).inMilliseconds;
+        final deltaDuration = (A.end - B.start).inMilliseconds;
+        final intervalMs = -2 * deltaInterval / pow(deltaDuration, 3) * pow(x.inMilliseconds - A.end.inMilliseconds, 3) + 3 * deltaInterval / pow(deltaDuration, 2) * pow(x.inMilliseconds - A.end.inMilliseconds, 2) + A.interval.inMilliseconds;
+        return Duration(milliseconds: intervalMs.round());
+      }
+
+      if (x < state[i].end)
+        return state[i].interval;
+    }
+
+    throw Exception("Duration x not in Range");
+  }
 
   List<Points> getPointsAsShots(BuildContext context) {
     final rampPointsCount = Provider.of<RampingPointsState>(context, listen: false).rampingPoints;
+    final timeState = Provider.of<TimeState>(context, listen: false);
 
     List<Points> points = List.filled(rampPointsCount, Points());
+    var timeBasedPoints = [...state];
+
+    if (timeState.isInPast) {
+      final startOffset = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - timeState.startingTime.millisecondsSinceEpoch);
+      final interval = getIntervalAtDuration(startOffset);
+
+      for (int i = 0; i < timeBasedPoints.length; i++) {
+        if (timeBasedPoints[i].end < startOffset)
+          continue;
+
+        if (startOffset < timeBasedPoints[i].start){ // start is in spline
+          timeBasedPoints.insert(i, CubitRampingPoint(interval: interval, start: startOffset, end: startOffset));
+        }
+        else if (startOffset <= timeBasedPoints[i].end){
+          timeBasedPoints[i].start = startOffset;
+        }
+
+        // remove all points before inserted point
+        for (int j = 0; j < i; j++){
+          timeBasedPoints.removeAt(j);
+        }
+        break;
+
+      }
+    }
 
     double shotsValue = 0;
     for (int i=0; i < rampPointsCount; i++) {
-      final intervalAtPoint = state[i].interval.inMilliseconds / 1000;
+      final intervalAtPoint = timeBasedPoints[i].interval.inMilliseconds / 1000;
       final start = shotsValue;
 
       // linear part
-      shotsValue += (state[i].end.inSeconds - state[i].start.inSeconds) / intervalAtPoint;
+      shotsValue += (timeBasedPoints[i].end.inSeconds - timeBasedPoints[i].start.inSeconds) / intervalAtPoint;
 
       points[i] = Points(interval: intervalAtPoint, start: start.round(), end: shotsValue.round());
 
       if (i == rampPointsCount -1) // last point there is no ramping to next point
         break;
 
-      final pointA = Point<double>(state[i].end.inSeconds.toDouble(), intervalAtPoint);
+      final pointA = Point<double>(timeBasedPoints[i].end.inSeconds.toDouble(), intervalAtPoint);
 
-      final pointB = Point<double>(state[i + 1].start.inSeconds.toDouble(), state[i + 1].interval.inMilliseconds / 1000);
+      final pointB = Point<double>(timeBasedPoints[i + 1].start.inSeconds.toDouble(), timeBasedPoints[i + 1].interval.inMilliseconds / 1000);
 
 
       final dt = pointB.x - pointA.x; // difference of x (time)
@@ -239,7 +291,7 @@ class RampCurveCubit extends Cubit<List<CubitRampingPoint>> {
     for (int i=0; i < rampPointsCount && i < list.length; i++) {
       if (list[i].interval.inMilliseconds/1000 < intervalRange.start)
         list[i].interval = Duration(milliseconds: (intervalRange.start * 1000).ceil());
-      else  if (list[i].interval.inMilliseconds/1000 > intervalRange.end)
+      else if (list[i].interval.inMilliseconds/1000 > intervalRange.end)
         list[i].interval = Duration(milliseconds: (intervalRange.end * 1000).floor());
     }
     state.clear();

@@ -23,7 +23,7 @@ class NavigateToGraphScreen {
     if (!context.read<RampCurveCubit>().isCreated || !context.read<RampCurveCubit>().wasOpened)
       context.read<RampCurveCubit>().updatePoints(context);
 
-    context.read<RampCurveCubit>().trimPoints(context);
+    // context.read<RampCurveCubit>().trimPoints(context);
 
     context.read<RampCurveCubit>().wasOpened = true;
 
