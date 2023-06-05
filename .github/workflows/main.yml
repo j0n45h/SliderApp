@@ -29,6 +29,7 @@ jobs:
       - run: flutter pub run flutter_launcher_icons:main
       # - run: flutter test
       - run: flutter build apk --release
+      - run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/SLYDER_v1.0.${{ github.run_number }}_release.apk
 #      - run: |
 #          flutter build ios --no-codesign
 #          cd build/ios/iphoneos
