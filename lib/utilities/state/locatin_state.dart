@@ -77,10 +77,13 @@ class ProvideLocationState with ChangeNotifier {
     if (_locationData?.latitude == null || _locationData?.longitude == null)
       return;
 
+    final time = DateTime.now();
+
     SunriseSunsetResult sunriseSunsetResult =
-        getSunriseSunset(_locationData!.latitude!, _locationData!.longitude!, Duration.zero, DateTime.now().toUtc());
-    _sunRiseTime = sunriseSunsetResult.sunrise.toLocal();
-    _sunSetTime = sunriseSunsetResult.sunset.toLocal();
+        getSunriseSunset(_locationData!.latitude!, _locationData!.longitude!, time.timeZoneOffset, time);
+    _sunRiseTime = sunriseSunsetResult.sunrise;
+    _sunSetTime = sunriseSunsetResult.sunset;
+
   }
 
   void showSnackBar(BuildContext context) {
